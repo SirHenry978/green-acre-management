@@ -8,6 +8,7 @@ export interface User {
   role: UserRole;
   branchId?: string;
   avatar?: string;
+  phone?: string;
 }
 
 export interface Branch {
@@ -99,16 +100,69 @@ export interface Activity {
   staffId: string;
 }
 
+// Document types for Finance
+export interface DocumentItem {
+  id: string;
+  description: string;
+  quantity: number;
+  unitPrice: number;
+  total: number;
+}
+
+export interface Quotation {
+  id: string;
+  quotationNumber: string;
+  customerId: string;
+  branchId: string;
+  items: DocumentItem[];
+  subtotal: number;
+  tax: number;
+  total: number;
+  status: 'draft' | 'sent' | 'accepted' | 'rejected' | 'converted';
+  validUntil: string;
+  createdAt: string;
+  notes?: string;
+}
+
+export interface Invoice {
+  id: string;
+  invoiceNumber: string;
+  customerId: string;
+  branchId: string;
+  quotationId?: string;
+  items: DocumentItem[];
+  subtotal: number;
+  tax: number;
+  total: number;
+  status: 'draft' | 'sent' | 'paid' | 'overdue' | 'cancelled';
+  dueDate: string;
+  createdAt: string;
+  paidAt?: string;
+  notes?: string;
+}
+
+export interface Receipt {
+  id: string;
+  receiptNumber: string;
+  invoiceId: string;
+  customerId: string;
+  branchId: string;
+  amount: number;
+  paymentMethod: 'cash' | 'card' | 'bank_transfer' | 'check';
+  createdAt: string;
+  notes?: string;
+}
+
 // Dummy Users
 export const users: User[] = [
-  { id: 'u1', name: 'John Greenfield', email: 'john@farmhub.com', role: 'super_admin', avatar: '' },
-  { id: 'u2', name: 'Sarah Harvest', email: 'sarah@farmhub.com', role: 'branch_manager', branchId: 'b1' },
-  { id: 'u3', name: 'Mike Fields', email: 'mike@farmhub.com', role: 'branch_manager', branchId: 'b2' },
-  { id: 'u4', name: 'Emily Crops', email: 'emily@farmhub.com', role: 'field_staff', branchId: 'b1' },
-  { id: 'u5', name: 'David Ranch', email: 'david@farmhub.com', role: 'field_staff', branchId: 'b2' },
-  { id: 'u6', name: 'Lisa Accounts', email: 'lisa@farmhub.com', role: 'accountant', branchId: 'b1' },
-  { id: 'u7', name: 'Tom Stock', email: 'tom@farmhub.com', role: 'inventory_staff', branchId: 'b1' },
-  { id: 'u8', name: 'Anna Dairy', email: 'anna@farmhub.com', role: 'field_staff', branchId: 'b3' },
+  { id: 'u1', name: 'John Greenfield', email: 'john@farmhub.com', role: 'super_admin', avatar: '', phone: '+1-555-0100' },
+  { id: 'u2', name: 'Sarah Harvest', email: 'sarah@farmhub.com', role: 'branch_manager', branchId: 'b1', phone: '+1-555-0101' },
+  { id: 'u3', name: 'Mike Fields', email: 'mike@farmhub.com', role: 'branch_manager', branchId: 'b2', phone: '+1-555-0102' },
+  { id: 'u4', name: 'Emily Crops', email: 'emily@farmhub.com', role: 'field_staff', branchId: 'b1', phone: '+1-555-0103' },
+  { id: 'u5', name: 'David Ranch', email: 'david@farmhub.com', role: 'field_staff', branchId: 'b2', phone: '+1-555-0104' },
+  { id: 'u6', name: 'Lisa Accounts', email: 'lisa@farmhub.com', role: 'accountant', branchId: 'b1', phone: '+1-555-0105' },
+  { id: 'u7', name: 'Tom Stock', email: 'tom@farmhub.com', role: 'inventory_staff', branchId: 'b1', phone: '+1-555-0106' },
+  { id: 'u8', name: 'Anna Dairy', email: 'anna@farmhub.com', role: 'field_staff', branchId: 'b3', phone: '+1-555-0107' },
 ];
 
 // Dummy Branches
@@ -201,6 +255,136 @@ export const activities: Activity[] = [
   { id: 'act7', type: 'purchase', description: 'Received 2000kg fish feed from NutriFeed', date: '2024-01-10', branchId: 'b4', staffId: 'u7' },
 ];
 
+// Dummy Quotations
+export const quotations: Quotation[] = [
+  {
+    id: 'q1',
+    quotationNumber: 'QT-2024-001',
+    customerId: 'c1',
+    branchId: 'b1',
+    items: [
+      { id: 'qi1', description: 'Organic Corn (Premium)', quantity: 500, unitPrice: 50, total: 25000 },
+      { id: 'qi2', description: 'Wheat Grain (Grade A)', quantity: 300, unitPrice: 45, total: 13500 },
+    ],
+    subtotal: 38500,
+    tax: 3850,
+    total: 42350,
+    status: 'sent',
+    validUntil: '2024-02-15',
+    createdAt: '2024-01-10',
+    notes: 'Bulk order discount applied',
+  },
+  {
+    id: 'q2',
+    quotationNumber: 'QT-2024-002',
+    customerId: 'c3',
+    branchId: 'b2',
+    items: [
+      { id: 'qi3', description: 'Beef Cattle (Prime)', quantity: 50, unitPrice: 1200, total: 60000 },
+    ],
+    subtotal: 60000,
+    tax: 6000,
+    total: 66000,
+    status: 'accepted',
+    validUntil: '2024-02-20',
+    createdAt: '2024-01-08',
+  },
+  {
+    id: 'q3',
+    quotationNumber: 'QT-2024-003',
+    customerId: 'c4',
+    branchId: 'b3',
+    items: [
+      { id: 'qi4', description: 'Fresh Milk (1000L)', quantity: 1000, unitPrice: 3, total: 3000 },
+      { id: 'qi5', description: 'Cream (500L)', quantity: 500, unitPrice: 8, total: 4000 },
+    ],
+    subtotal: 7000,
+    tax: 700,
+    total: 7700,
+    status: 'draft',
+    validUntil: '2024-02-10',
+    createdAt: '2024-01-12',
+  },
+];
+
+// Dummy Invoices
+export const invoices: Invoice[] = [
+  {
+    id: 'inv1',
+    invoiceNumber: 'INV-2024-001',
+    customerId: 'c3',
+    branchId: 'b2',
+    quotationId: 'q2',
+    items: [
+      { id: 'ii1', description: 'Beef Cattle (Prime)', quantity: 50, unitPrice: 1200, total: 60000 },
+    ],
+    subtotal: 60000,
+    tax: 6000,
+    total: 66000,
+    status: 'paid',
+    dueDate: '2024-02-08',
+    createdAt: '2024-01-08',
+    paidAt: '2024-01-15',
+  },
+  {
+    id: 'inv2',
+    invoiceNumber: 'INV-2024-002',
+    customerId: 'c1',
+    branchId: 'b1',
+    items: [
+      { id: 'ii2', description: 'Organic Corn (Premium)', quantity: 200, unitPrice: 50, total: 10000 },
+    ],
+    subtotal: 10000,
+    tax: 1000,
+    total: 11000,
+    status: 'sent',
+    dueDate: '2024-02-01',
+    createdAt: '2024-01-05',
+  },
+  {
+    id: 'inv3',
+    invoiceNumber: 'INV-2024-003',
+    customerId: 'c5',
+    branchId: 'b4',
+    items: [
+      { id: 'ii3', description: 'Fresh Tilapia (500kg)', quantity: 500, unitPrice: 15, total: 7500 },
+      { id: 'ii4', description: 'Catfish (300kg)', quantity: 300, unitPrice: 12, total: 3600 },
+    ],
+    subtotal: 11100,
+    tax: 1110,
+    total: 12210,
+    status: 'overdue',
+    dueDate: '2024-01-10',
+    createdAt: '2024-01-01',
+  },
+];
+
+// Dummy Receipts
+export const receipts: Receipt[] = [
+  {
+    id: 'r1',
+    receiptNumber: 'REC-2024-001',
+    invoiceId: 'inv1',
+    customerId: 'c3',
+    branchId: 'b2',
+    amount: 66000,
+    paymentMethod: 'bank_transfer',
+    createdAt: '2024-01-15',
+    notes: 'Full payment received',
+  },
+  {
+    id: 'r2',
+    receiptNumber: 'REC-2024-002',
+    invoiceId: 'inv2',
+    customerId: 'c1',
+    branchId: 'b1',
+    amount: 5000,
+    paymentMethod: 'check',
+    createdAt: '2024-01-12',
+    notes: 'Partial payment - 50%',
+  },
+];
+
 // Monthly revenue data for charts
 export const monthlyRevenueData = [
   { month: 'Jan', income: 285000, expenses: 175000 },
@@ -256,4 +440,14 @@ export const getFarmTypeIcon = (type: string): string => {
     mixed: '🏡',
   };
   return icons[type] || '🌱';
+};
+
+// Helper function to get customer name
+export const getCustomerName = (customerId: string): string => {
+  return customers.find(c => c.id === customerId)?.name || 'Unknown Customer';
+};
+
+// Helper function to get branch name
+export const getBranchName = (branchId: string): string => {
+  return branches.find(b => b.id === branchId)?.name || 'Unknown Branch';
 };
