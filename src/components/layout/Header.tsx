@@ -1,6 +1,7 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { branches } from '@/data/dummyData';
 import { Bell, Search, ChevronDown } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,7 +18,8 @@ interface HeaderProps {
 }
 
 export const Header = ({ sidebarCollapsed = false }: HeaderProps) => {
-  const { user, branch, switchBranch } = useAuth();
+  const { user, branch, switchBranch, logout } = useAuth();
+  const navigate = useNavigate();
   const isSuperAdmin = user?.role === 'super_admin';
 
   const getInitials = (name: string) => {
@@ -26,6 +28,11 @@ export const Header = ({ sidebarCollapsed = false }: HeaderProps) => {
       .map(n => n[0])
       .join('')
       .toUpperCase();
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
   };
 
   return (
@@ -101,10 +108,10 @@ export const Header = ({ sidebarCollapsed = false }: HeaderProps) => {
           <DropdownMenuContent align="end" className="w-48">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Settings</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigate('/profile')}>Profile</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigate('/settings')}>Settings</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-destructive">Logout</DropdownMenuItem>
+            <DropdownMenuItem className="text-destructive" onClick={handleLogout}>Logout</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
