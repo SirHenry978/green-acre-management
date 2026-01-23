@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import { branches, users, getFarmTypeIcon } from '@/data/dummyData';
+import { branches as initialBranches, users, getFarmTypeIcon, Branch } from '@/data/dummyData';
+import { useAuth } from '@/contexts/AuthContext';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
 import { 
   Plus, 
   Search, 
@@ -27,8 +29,12 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 const Branches = () => {
+  const { user } = useAuth();
+  const isSuperAdmin = user?.role === 'super_admin';
+  const [branches, setBranches] = useState<Branch[]>(initialBranches);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'inactive'>('all');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -42,6 +48,15 @@ const Branches = () => {
 
   const getManagerName = (managerId: string) => {
     return users.find(u => u.id === managerId)?.name || 'Unassigned';
+  };
+
+  const handleToggleStatus = (branchId: string) => {
+    setBranches(prev => prev.map(b => 
+      b.id === branchId 
+        ? { ...b, status: b.status === 'active' ? 'inactive' : 'active' }
+        : b
+    ));
+    toast.success('Branch status updated successfully');
   };
 
   return (
@@ -182,15 +197,23 @@ const Branches = () => {
                     </td>
                     <td className="font-medium">${branch.monthlyRevenue.toLocaleString()}</td>
                     <td>
-                      <Badge
-                        className={cn(
-                          branch.status === 'active'
-                            ? 'bg-success/10 text-success hover:bg-success/20'
-                            : 'bg-muted text-muted-foreground'
+                      <div className="flex items-center gap-2">
+                        {isSuperAdmin && (
+                          <Switch
+                            checked={branch.status === 'active'}
+                            onCheckedChange={() => handleToggleStatus(branch.id)}
+                          />
                         )}
-                      >
-                        {branch.status}
-                      </Badge>
+                        <Badge
+                          className={cn(
+                            branch.status === 'active'
+                              ? 'bg-success/10 text-success hover:bg-success/20'
+                              : 'bg-muted text-muted-foreground'
+                          )}
+                        >
+                          {branch.status}
+                        </Badge>
+                      </div>
                     </td>
                     <td className="text-right">
                       <DropdownMenu>

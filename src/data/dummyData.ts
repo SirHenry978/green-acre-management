@@ -151,6 +151,7 @@ export interface Receipt {
   paymentMethod: 'cash' | 'card' | 'bank_transfer' | 'check';
   createdAt: string;
   notes?: string;
+  isPrinted?: boolean;
 }
 
 // Dummy Users
@@ -371,6 +372,7 @@ export const receipts: Receipt[] = [
     paymentMethod: 'bank_transfer',
     createdAt: '2024-01-15',
     notes: 'Full payment received',
+    isPrinted: true,
   },
   {
     id: 'r2',
@@ -382,6 +384,7 @@ export const receipts: Receipt[] = [
     paymentMethod: 'check',
     createdAt: '2024-01-12',
     notes: 'Partial payment - 50%',
+    isPrinted: false,
   },
 ];
 
