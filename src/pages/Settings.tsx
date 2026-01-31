@@ -1,5 +1,6 @@
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTheme } from '@/hooks/useTheme';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { 
@@ -14,6 +15,7 @@ import {
 
 const Settings = () => {
   const { user } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
 
   const settingSections = [
     {
@@ -33,25 +35,29 @@ const Settings = () => {
       title: 'Email Notifications', 
       description: 'Receive email updates about farm activities',
       icon: Bell,
-      enabled: true 
+      enabled: true,
+      onChange: () => {}
     },
     { 
       title: 'Two-Factor Authentication', 
       description: 'Add an extra layer of security to your account',
       icon: Shield,
-      enabled: false 
+      enabled: false,
+      onChange: () => {}
     },
     { 
       title: 'Dark Mode', 
       description: 'Switch between light and dark themes',
       icon: Palette,
-      enabled: false 
+      enabled: isDark,
+      onChange: toggleTheme
     },
     { 
       title: 'Language', 
       description: 'Select your preferred language',
       icon: Globe,
-      enabled: true 
+      enabled: true,
+      onChange: () => {}
     },
   ];
 
@@ -120,7 +126,7 @@ const Settings = () => {
                       <p className="text-sm text-muted-foreground">{setting.description}</p>
                     </div>
                   </div>
-                  <Switch defaultChecked={setting.enabled} />
+                  <Switch checked={setting.enabled} onCheckedChange={setting.onChange} />
                 </div>
               );
             })}
