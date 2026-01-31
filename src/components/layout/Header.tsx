@@ -1,6 +1,7 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { branches } from '@/data/dummyData';
-import { Bell, Search, ChevronDown } from 'lucide-react';
+import { Bell, Search, ChevronDown, Moon, Sun, LogOut } from 'lucide-react';
+import { useTheme } from '@/hooks/useTheme';
 import { useNavigate } from 'react-router-dom';
 import {
   DropdownMenu,
@@ -20,6 +21,7 @@ interface HeaderProps {
 export const Header = ({ sidebarCollapsed = false }: HeaderProps) => {
   const { user, branch, switchBranch, logout } = useAuth();
   const navigate = useNavigate();
+  const { isDark, toggleTheme } = useTheme();
   const isSuperAdmin = user?.role === 'super_admin';
 
   const getInitials = (name: string) => {
@@ -82,6 +84,15 @@ export const Header = ({ sidebarCollapsed = false }: HeaderProps) => {
           </DropdownMenu>
         )}
 
+        {/* Dark Mode Toggle */}
+        <button 
+          onClick={toggleTheme}
+          className="rounded-lg p-2 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+          title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+        >
+          {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+        </button>
+
         {/* Notifications */}
         <button className="relative rounded-lg p-2 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
           <Bell className="h-5 w-5" />
@@ -111,7 +122,13 @@ export const Header = ({ sidebarCollapsed = false }: HeaderProps) => {
             <DropdownMenuItem onClick={() => navigate('/profile')}>Profile</DropdownMenuItem>
             <DropdownMenuItem onClick={() => navigate('/settings')}>Settings</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-destructive" onClick={handleLogout}>Logout</DropdownMenuItem>
+            <DropdownMenuItem 
+              onClick={handleLogout}
+              className="text-muted-foreground text-xs flex items-center gap-2"
+            >
+              <LogOut className="h-3 w-3" />
+              Logout
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
