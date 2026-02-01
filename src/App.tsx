@@ -4,6 +4,11 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { LicenseProvider } from "@/contexts/LicenseContext";
+import { ProtectedRoute } from "@/components/layout/ProtectedRoute";
+import Auth from "./pages/Auth";
+import LicenseExpired from "./pages/LicenseExpired";
+import Purchase from "./pages/Purchase";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Branches from "./pages/Branches";
@@ -23,31 +28,36 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <HashRouter>
-          <Routes>
-            <Route path="/" element={<Navigate to="/login" replace />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/branches" element={<Branches />} />
-            <Route path="/users" element={<Users />} />
-            <Route path="/inventory" element={<Inventory />} />
-            <Route path="/finance" element={<Finance />} />
-            <Route path="/attendance" element={<Attendance />} />
-            <Route path="/suppliers" element={<Suppliers />} />
-            <Route path="/customers" element={<Customers />} />
-            <Route path="/assets" element={<Assets />} />
-            <Route path="/reports" element={<Reports />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </HashRouter>
-      </TooltipProvider>
-    </AuthProvider>
+    <LicenseProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <HashRouter>
+            <Routes>
+              <Route path="/" element={<Navigate to="/auth" replace />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/login" element={<Navigate to="/auth" replace />} />
+              <Route path="/license-expired" element={<LicenseExpired />} />
+              <Route path="/purchase" element={<Purchase />} />
+              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/branches" element={<ProtectedRoute><Branches /></ProtectedRoute>} />
+              <Route path="/users" element={<ProtectedRoute><Users /></ProtectedRoute>} />
+              <Route path="/inventory" element={<ProtectedRoute><Inventory /></ProtectedRoute>} />
+              <Route path="/finance" element={<ProtectedRoute><Finance /></ProtectedRoute>} />
+              <Route path="/attendance" element={<ProtectedRoute><Attendance /></ProtectedRoute>} />
+              <Route path="/suppliers" element={<ProtectedRoute><Suppliers /></ProtectedRoute>} />
+              <Route path="/customers" element={<ProtectedRoute><Customers /></ProtectedRoute>} />
+              <Route path="/assets" element={<ProtectedRoute><Assets /></ProtectedRoute>} />
+              <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
+              <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+              <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </HashRouter>
+        </TooltipProvider>
+      </AuthProvider>
+    </LicenseProvider>
   </QueryClientProvider>
 );
 
