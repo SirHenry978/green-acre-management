@@ -78,9 +78,11 @@ const Purchase = () => {
     if (success) {
       toast({
         title: 'Purchase successful!',
-        description: `Your ${plan.name} license is now active for ${plan.duration} days.`,
+        description: `Your ${plan.name} license is now active for ${plan.duration} days. Redirecting...`,
       });
-      navigate('/dashboard');
+      // Small delay to allow license state to propagate before navigation
+      await new Promise(resolve => setTimeout(resolve, 500));
+      navigate('/dashboard', { replace: true });
     } else {
       toast({
         title: 'Purchase failed',
