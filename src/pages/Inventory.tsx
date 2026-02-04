@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import { inventory, branches } from '@/data/dummyData';
+import { inventory as initialInventory, branches, InventoryItem } from '@/data/dummyData';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { 
@@ -25,9 +25,12 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
+import { InventoryItemForm } from '@/components/inventory/InventoryItemForm';
+import { DeleteConfirmDialog } from '@/components/inventory/DeleteConfirmDialog';
+import { AdjustStockDialog } from '@/components/inventory/AdjustStockDialog';
 
 const categoryColors: Record<string, string> = {
   seeds: 'bg-success/10 text-success',
@@ -40,13 +43,21 @@ const categoryColors: Record<string, string> = {
 };
 
 const Inventory = () => {
+  const { toast } = useToast();
+  const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>(initialInventory);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterCategory, setFilterCategory] = useState<string>('all');
+  
+  // Dialog states
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isAdjustDialogOpen, setIsAdjustDialogOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
 
-  const categories = ['all', ...new Set(inventory.map(i => i.category))];
+  const categories = ['all', ...new Set(inventoryItems.map(i => i.category))];
 
-  const filteredInventory = inventory.filter(item => {
+  const filteredInventory = inventoryItems.filter(item => {
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = filterCategory === 'all' || item.category === filterCategory;
     return matchesSearch && matchesCategory;
@@ -56,8 +67,86 @@ const Inventory = () => {
     return branches.find(b => b.id === branchId)?.name || 'Unknown';
   };
 
-  const lowStockCount = inventory.filter(i => i.quantity <= i.minStock).length;
-  const totalValue = inventory.reduce((sum, i) => sum + i.value, 0);
+  const lowStockCount = inventoryItems.filter(i => i.quantity <= i.minStock).length;
+  const totalValue = inventoryItems.reduce((sum, i) => sum + i.value, 0);
+
+  // CRUD Operations
+  const handleAddItem = (data: Omit<InventoryItem, 'id' | 'lastUpdated'>) => {
+    const newItem: InventoryItem = {
+      ...data,
+      id: `i${Date.now()}`,
+      lastUpdated: new Date().toISOString().split('T')[0],
+    };
+    setInventoryItems([...inventoryItems, newItem]);
+    setIsAddDialogOpen(false);
+    toast({
+      title: 'Item Added',
+      description: `${data.name} has been added to inventory.`,
+    });
+  };
+
+  const handleEditItem = (data: Omit<InventoryItem, 'id' | 'lastUpdated'>) => {
+    if (!selectedItem) return;
+    const updatedItems = inventoryItems.map(item =>
+      item.id === selectedItem.id
+        ? { ...item, ...data, lastUpdated: new Date().toISOString().split('T')[0] }
+        : item
+    );
+    setInventoryItems(updatedItems);
+    setIsEditDialogOpen(false);
+    setSelectedItem(null);
+    toast({
+      title: 'Item Updated',
+      description: `${data.name} has been updated.`,
+    });
+  };
+
+  const handleDeleteItem = () => {
+    if (!selectedItem) return;
+    setInventoryItems(inventoryItems.filter(item => item.id !== selectedItem.id));
+    setIsDeleteDialogOpen(false);
+    toast({
+      title: 'Item Deleted',
+      description: `${selectedItem.name} has been removed from inventory.`,
+    });
+    setSelectedItem(null);
+  };
+
+  const handleAdjustStock = (itemId: string, adjustment: number, type: 'add' | 'remove') => {
+    const updatedItems = inventoryItems.map(item => {
+      if (item.id === itemId) {
+        const newQuantity = type === 'add' 
+          ? item.quantity + adjustment 
+          : Math.max(0, item.quantity - adjustment);
+        return { 
+          ...item, 
+          quantity: newQuantity,
+          lastUpdated: new Date().toISOString().split('T')[0],
+        };
+      }
+      return item;
+    });
+    setInventoryItems(updatedItems);
+    toast({
+      title: 'Stock Adjusted',
+      description: `Stock has been ${type === 'add' ? 'increased' : 'decreased'} by ${adjustment}.`,
+    });
+  };
+
+  const openEditDialog = (item: InventoryItem) => {
+    setSelectedItem(item);
+    setIsEditDialogOpen(true);
+  };
+
+  const openDeleteDialog = (item: InventoryItem) => {
+    setSelectedItem(item);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const openAdjustDialog = (item: InventoryItem) => {
+    setSelectedItem(item);
+    setIsAdjustDialogOpen(true);
+  };
 
   return (
     <DashboardLayout>
@@ -70,73 +159,10 @@ const Inventory = () => {
               Manage seeds, fertilizers, feed, chemicals, and equipment
             </p>
           </div>
-          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className="gap-2">
-                <Plus className="h-4 w-4" />
-                Add Item
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-lg">
-              <DialogHeader>
-                <DialogTitle>Add Inventory Item</DialogTitle>
-              </DialogHeader>
-              <form className="space-y-4 mt-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2">Item Name</label>
-                  <input type="text" className="input-farm" placeholder="Enter item name" />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Category</label>
-                    <select className="input-farm">
-                      <option value="seeds">Seeds</option>
-                      <option value="fertilizers">Fertilizers</option>
-                      <option value="chemicals">Chemicals</option>
-                      <option value="feed">Feed</option>
-                      <option value="machinery">Machinery</option>
-                      <option value="tools">Tools</option>
-                      <option value="livestock">Livestock</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Branch</label>
-                    <select className="input-farm">
-                      {branches.map(b => (
-                        <option key={b.id} value={b.id}>{b.name}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-                <div className="grid grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Quantity</label>
-                    <input type="number" className="input-farm" placeholder="0" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Unit</label>
-                    <input type="text" className="input-farm" placeholder="kg, liters, etc." />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Min Stock</label>
-                    <input type="number" className="input-farm" placeholder="0" />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">Value ($)</label>
-                  <input type="number" className="input-farm" placeholder="0.00" />
-                </div>
-                <div className="flex gap-3 pt-4">
-                  <Button type="button" variant="outline" className="flex-1" onClick={() => setIsAddDialogOpen(false)}>
-                    Cancel
-                  </Button>
-                  <Button type="submit" className="flex-1">
-                    Add Item
-                  </Button>
-                </div>
-              </form>
-            </DialogContent>
-          </Dialog>
+          <Button className="gap-2" onClick={() => setIsAddDialogOpen(true)}>
+            <Plus className="h-4 w-4" />
+            Add Item
+          </Button>
         </div>
 
         {/* Stats Cards */}
@@ -148,7 +174,7 @@ const Inventory = () => {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Total Items</p>
-                <p className="text-2xl font-bold font-display">{inventory.length}</p>
+                <p className="text-2xl font-bold font-display">{inventoryItems.length}</p>
               </div>
             </div>
           </div>
@@ -263,13 +289,13 @@ const Inventory = () => {
                             </button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem className="gap-2">
+                            <DropdownMenuItem className="gap-2" onClick={() => openEditDialog(item)}>
                               <Edit className="h-4 w-4" /> Edit
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="gap-2">
+                            <DropdownMenuItem className="gap-2" onClick={() => openAdjustDialog(item)}>
                               <ArrowUpDown className="h-4 w-4" /> Adjust Stock
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="gap-2 text-destructive">
+                            <DropdownMenuItem className="gap-2 text-destructive" onClick={() => openDeleteDialog(item)}>
                               <Trash2 className="h-4 w-4" /> Delete
                             </DropdownMenuItem>
                           </DropdownMenuContent>
@@ -278,11 +304,61 @@ const Inventory = () => {
                     </tr>
                   );
                 })}
+                {filteredInventory.length === 0 && (
+                  <tr>
+                    <td colSpan={8} className="text-center py-8 text-muted-foreground">
+                      No inventory items found.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
         </div>
       </div>
+
+      {/* Add Item Dialog */}
+      <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Add Inventory Item</DialogTitle>
+          </DialogHeader>
+          <InventoryItemForm
+            onSubmit={handleAddItem}
+            onCancel={() => setIsAddDialogOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Item Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Edit Inventory Item</DialogTitle>
+          </DialogHeader>
+          <InventoryItemForm
+            item={selectedItem}
+            onSubmit={handleEditItem}
+            onCancel={() => setIsEditDialogOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <DeleteConfirmDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        itemName={selectedItem?.name || ''}
+        onConfirm={handleDeleteItem}
+      />
+
+      {/* Adjust Stock Dialog */}
+      <AdjustStockDialog
+        open={isAdjustDialogOpen}
+        onOpenChange={setIsAdjustDialogOpen}
+        item={selectedItem}
+        onConfirm={handleAdjustStock}
+      />
     </DashboardLayout>
   );
 };
