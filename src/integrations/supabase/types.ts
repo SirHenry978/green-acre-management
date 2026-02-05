@@ -14,48 +14,13 @@ export type Database = {
   }
   public: {
     Tables: {
-      licenses: {
-        Row: {
-          created_at: string
-          expires_at: string
-          id: string
-          is_active: boolean
-          license_key: string | null
-          plan_type: string
-          purchased_at: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          expires_at: string
-          id?: string
-          is_active?: boolean
-          license_key?: string | null
-          plan_type?: string
-          purchased_at?: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          expires_at?: string
-          id?: string
-          is_active?: boolean
-          license_key?: string | null
-          plan_type?: string
-          purchased_at?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      has_valid_license: { Args: { _user_id: string }; Returns: boolean }
+      [_ in never]: never
     }
     Enums: {
       [_ in never]: never

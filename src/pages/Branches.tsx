@@ -26,11 +26,10 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
-import { BranchForm } from '@/components/branches/BranchForm';
-import { DeleteBranchDialog } from '@/components/branches/DeleteBranchDialog';
 
 const Branches = () => {
   const { user } = useAuth();
@@ -38,13 +37,7 @@ const Branches = () => {
   const [branches, setBranches] = useState<Branch[]>(initialBranches);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'inactive'>('all');
-  
-  // Dialog states
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
-  const [selectedBranch, setSelectedBranch] = useState<Branch | null>(null);
 
   const filteredBranches = branches.filter(branch => {
     const matchesSearch = branch.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -66,54 +59,6 @@ const Branches = () => {
     toast.success('Branch status updated successfully');
   };
 
-  const handleAddBranch = (branchData: Omit<Branch, 'id' | 'totalStaff' | 'monthlyRevenue' | 'monthlyExpenses'>) => {
-    const newBranch: Branch = {
-      ...branchData,
-      id: `b${Date.now()}`,
-      totalStaff: 0,
-      monthlyRevenue: 0,
-      monthlyExpenses: 0,
-    };
-    setBranches(prev => [...prev, newBranch]);
-    setIsAddDialogOpen(false);
-    toast.success('Branch created successfully');
-  };
-
-  const handleEditBranch = (branchData: Omit<Branch, 'id' | 'totalStaff' | 'monthlyRevenue' | 'monthlyExpenses'>) => {
-    if (!selectedBranch) return;
-    setBranches(prev => prev.map(b => 
-      b.id === selectedBranch.id 
-        ? { ...b, ...branchData }
-        : b
-    ));
-    setIsEditDialogOpen(false);
-    setSelectedBranch(null);
-    toast.success('Branch updated successfully');
-  };
-
-  const handleDeleteBranch = () => {
-    if (!selectedBranch) return;
-    setBranches(prev => prev.filter(b => b.id !== selectedBranch.id));
-    setIsDeleteDialogOpen(false);
-    setSelectedBranch(null);
-    toast.success('Branch deleted successfully');
-  };
-
-  const openEditDialog = (branch: Branch) => {
-    setSelectedBranch(branch);
-    setIsEditDialogOpen(true);
-  };
-
-  const openDeleteDialog = (branch: Branch) => {
-    setSelectedBranch(branch);
-    setIsDeleteDialogOpen(true);
-  };
-
-  const openViewDialog = (branch: Branch) => {
-    setSelectedBranch(branch);
-    setIsViewDialogOpen(true);
-  };
-
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -125,10 +70,60 @@ const Branches = () => {
               Manage all your farm branches and locations
             </p>
           </div>
-          <Button className="gap-2" onClick={() => setIsAddDialogOpen(true)}>
-            <Plus className="h-4 w-4" />
-            Add Branch
-          </Button>
+          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+            <DialogTrigger asChild>
+              <Button className="gap-2">
+                <Plus className="h-4 w-4" />
+                Add Branch
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-lg">
+              <DialogHeader>
+                <DialogTitle>Add New Branch</DialogTitle>
+              </DialogHeader>
+              <form className="space-y-4 mt-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Branch Name</label>
+                  <input type="text" className="input-farm" placeholder="Enter branch name" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Location</label>
+                  <input type="text" className="input-farm" placeholder="City, State/Country" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Farm Type</label>
+                  <select className="input-farm">
+                    <option value="crops">Crops</option>
+                    <option value="livestock">Livestock</option>
+                    <option value="dairy">Dairy</option>
+                    <option value="poultry">Poultry</option>
+                    <option value="aquaculture">Aquaculture</option>
+                    <option value="mixed">Mixed Farming</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Size</label>
+                  <input type="text" className="input-farm" placeholder="e.g., 500 acres" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Assign Manager</label>
+                  <select className="input-farm">
+                    {users.filter(u => u.role === 'branch_manager').map(manager => (
+                      <option key={manager.id} value={manager.id}>{manager.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex gap-3 pt-4">
+                  <Button type="button" variant="outline" className="flex-1" onClick={() => setIsAddDialogOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button type="submit" className="flex-1">
+                    Create Branch
+                  </Button>
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
         </div>
 
         {/* Filters */}
@@ -228,13 +223,13 @@ const Branches = () => {
                           </button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem className="gap-2" onClick={() => openViewDialog(branch)}>
+                          <DropdownMenuItem className="gap-2">
                             <Eye className="h-4 w-4" /> View Details
                           </DropdownMenuItem>
-                          <DropdownMenuItem className="gap-2" onClick={() => openEditDialog(branch)}>
+                          <DropdownMenuItem className="gap-2">
                             <Edit className="h-4 w-4" /> Edit
                           </DropdownMenuItem>
-                          <DropdownMenuItem className="gap-2 text-destructive" onClick={() => openDeleteDialog(branch)}>
+                          <DropdownMenuItem className="gap-2 text-destructive">
                             <Trash2 className="h-4 w-4" /> Delete
                           </DropdownMenuItem>
                         </DropdownMenuContent>
@@ -246,131 +241,6 @@ const Branches = () => {
             </table>
           </div>
         </div>
-
-        {/* Add Branch Dialog */}
-        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-          <DialogContent className="max-w-lg">
-            <DialogHeader>
-              <DialogTitle>Add New Branch</DialogTitle>
-            </DialogHeader>
-            <BranchForm 
-              onSubmit={handleAddBranch}
-              onCancel={() => setIsAddDialogOpen(false)}
-            />
-          </DialogContent>
-        </Dialog>
-
-        {/* Edit Branch Dialog */}
-        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-          <DialogContent className="max-w-lg">
-            <DialogHeader>
-              <DialogTitle>Edit Branch</DialogTitle>
-            </DialogHeader>
-            <BranchForm 
-              branch={selectedBranch}
-              onSubmit={handleEditBranch}
-              onCancel={() => {
-                setIsEditDialogOpen(false);
-                setSelectedBranch(null);
-              }}
-              isEdit
-            />
-          </DialogContent>
-        </Dialog>
-
-        {/* Delete Confirmation Dialog */}
-        <DeleteBranchDialog
-          branch={selectedBranch}
-          isOpen={isDeleteDialogOpen}
-          onClose={() => {
-            setIsDeleteDialogOpen(false);
-            setSelectedBranch(null);
-          }}
-          onConfirm={handleDeleteBranch}
-        />
-
-        {/* View Branch Details Dialog */}
-        <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
-          <DialogContent className="max-w-lg">
-            <DialogHeader>
-              <DialogTitle>Branch Details</DialogTitle>
-            </DialogHeader>
-            {selectedBranch && (
-              <div className="space-y-4 mt-4">
-                <div className="flex items-center gap-4">
-                  <span className="text-4xl">{getFarmTypeIcon(selectedBranch.farmType)}</span>
-                  <div>
-                    <h3 className="text-xl font-semibold">{selectedBranch.name}</h3>
-                    <p className="text-muted-foreground flex items-center gap-1">
-                      <MapPin className="h-4 w-4" />
-                      {selectedBranch.location}
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4 pt-4 border-t">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Farm Type</p>
-                    <p className="font-medium capitalize">{selectedBranch.farmType}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Size</p>
-                    <p className="font-medium">{selectedBranch.size}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Manager</p>
-                    <p className="font-medium">{getManagerName(selectedBranch.managerId)}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Total Staff</p>
-                    <p className="font-medium">{selectedBranch.totalStaff}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Monthly Revenue</p>
-                    <p className="font-medium text-success">${selectedBranch.monthlyRevenue.toLocaleString()}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Monthly Expenses</p>
-                    <p className="font-medium text-destructive">${selectedBranch.monthlyExpenses.toLocaleString()}</p>
-                  </div>
-                </div>
-
-                <div className="pt-4 border-t">
-                  <p className="text-sm text-muted-foreground">Status</p>
-                  <Badge
-                    className={cn(
-                      "mt-1",
-                      selectedBranch.status === 'active'
-                        ? 'bg-success/10 text-success'
-                        : 'bg-muted text-muted-foreground'
-                    )}
-                  >
-                    {selectedBranch.status}
-                  </Badge>
-                </div>
-
-                <div className="flex gap-3 pt-4">
-                  <Button 
-                    variant="outline" 
-                    className="flex-1" 
-                    onClick={() => setIsViewDialogOpen(false)}
-                  >
-                    Close
-                  </Button>
-                  <Button 
-                    className="flex-1"
-                    onClick={() => {
-                      setIsViewDialogOpen(false);
-                      openEditDialog(selectedBranch);
-                    }}
-                  >
-                    Edit Branch
-                  </Button>
-                </div>
-              </div>
-            )}
-          </DialogContent>
-        </Dialog>
       </div>
     </DashboardLayout>
   );

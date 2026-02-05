@@ -1,7 +1,6 @@
 import { useAuth } from '@/contexts/AuthContext';
-import { useLicense } from '@/contexts/LicenseContext';
 import { branches } from '@/data/dummyData';
-import { Bell, Search, ChevronDown, Moon, Sun, LogOut, Clock, AlertTriangle } from 'lucide-react';
+import { Bell, Search, ChevronDown, Moon, Sun, LogOut } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -14,11 +13,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 
 interface HeaderProps {
   sidebarCollapsed?: boolean;
@@ -26,7 +20,6 @@ interface HeaderProps {
 
 export const Header = ({ sidebarCollapsed = false }: HeaderProps) => {
   const { user, branch, switchBranch, logout } = useAuth();
-  const { license, daysRemaining, isLicenseValid } = useLicense();
   const navigate = useNavigate();
   const { isDark, toggleTheme } = useTheme();
   const isSuperAdmin = user?.role === 'super_admin';
@@ -64,39 +57,6 @@ export const Header = ({ sidebarCollapsed = false }: HeaderProps) => {
 
       {/* Right side */}
       <div className="flex items-center gap-4">
-        {/* License Status Indicator */}
-        {license && isLicenseValid && daysRemaining !== null && (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div 
-                className={`flex items-center gap-2 rounded-lg border px-3 py-1.5 text-sm cursor-default transition-colors ${
-                  daysRemaining <= 7 
-                    ? 'border-destructive/50 bg-destructive/10 text-destructive' 
-                    : daysRemaining <= 30 
-                      ? 'border-yellow-500/50 bg-yellow-500/10 text-yellow-600 dark:text-yellow-400'
-                      : 'border-primary/30 bg-primary/5 text-primary'
-                }`}
-              >
-                {daysRemaining <= 7 ? (
-                  <AlertTriangle className="h-4 w-4" />
-                ) : (
-                  <Clock className="h-4 w-4" />
-                )}
-                <span className="font-medium">
-                  {daysRemaining} {daysRemaining === 1 ? 'day' : 'days'}
-                </span>
-              </div>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>
-                {daysRemaining <= 7 
-                  ? 'License expiring soon! Renew now.' 
-                  : `License valid for ${daysRemaining} days`}
-              </p>
-            </TooltipContent>
-          </Tooltip>
-        )}
-
         {/* Branch Selector (for super admin) */}
         {isSuperAdmin && (
           <DropdownMenu>
