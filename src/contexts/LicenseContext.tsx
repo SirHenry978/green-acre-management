@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { User, Session } from '@supabase/supabase-js';
 
@@ -34,7 +34,7 @@ export const LicenseProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [license, setLicense] = useState<License | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchLicense = async (userId: string) => {
+  const fetchLicense = useCallback(async (userId: string) => {
     const { data, error } = await supabase
       .from('licenses')
       .select('*')
@@ -46,19 +46,27 @@ export const LicenseProvider: React.FC<{ children: ReactNode }> = ({ children })
       return null;
     }
     return data;
-  };
+  }, []);
 
   useEffect(() => {
+    let isMounted = true;
+    
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, currentSession) => {
+        if (!isMounted) return;
+        
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
         
         // Defer license fetch with setTimeout
         if (currentSession?.user) {
           setTimeout(() => {
-            fetchLicense(currentSession.user.id).then(setLicense);
+            if (isMounted) {
+              fetchLicense(currentSession.user.id).then((lic) => {
+                if (isMounted) setLicense(lic);
+              });
+            }
           }, 0);
         } else {
           setLicense(null);
@@ -68,21 +76,30 @@ export const LicenseProvider: React.FC<{ children: ReactNode }> = ({ children })
 
     // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+      if (!isMounted) return;
+      
       setSession(currentSession);
       setUser(currentSession?.user ?? null);
       
       if (currentSession?.user) {
         fetchLicense(currentSession.user.id).then((lic) => {
-          setLicense(lic);
-          setIsLoading(false);
+          if (isMounted) {
+            setLicense(lic);
+            setIsLoading(false);
+          }
         });
       } else {
         setIsLoading(false);
       }
+    }).catch(() => {
+      if (isMounted) setIsLoading(false);
     });
 
-    return () => subscription.unsubscribe();
-  }, []);
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
+  }, [fetchLicense]);
 
   const isLicenseValid = license 
     ? license.is_active && new Date(license.expires_at) > new Date()
