@@ -141,7 +141,7 @@ const Settings = () => {
             </div>
             <div>
               <h2 className="font-display font-semibold text-lg">Need Help?</h2>
-              <p className="text-sm text-muted-foreground">Get support or learn more about FarmHub</p>
+              <p className="text-sm text-muted-foreground">Get support or learn more about FarmIQ</p>
             </div>
           </div>
           <div className="grid gap-3 sm:grid-cols-3">

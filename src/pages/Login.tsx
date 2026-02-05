@@ -50,22 +50,14 @@ const Login = () => {
       <div className="flex-1 flex flex-col justify-center px-8 py-12 lg:px-12">
         <div className="mx-auto w-full max-w-sm">
           {/* Logo */}
-          <div className="flex items-center gap-3 mb-8">
+          <div className="flex flex-col items-center gap-3 mb-8 text-center">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary">
               <Sprout className="h-7 w-7 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-2xl font-display font-bold text-foreground">FarmHub</h1>
+              <h1 className="text-2xl font-display font-bold text-foreground">FarmIQ</h1>
               <p className="text-sm text-muted-foreground">Farm Management System</p>
             </div>
-          </div>
-
-          {/* Welcome text */}
-          <div className="mb-8">
-            <h2 className="text-3xl font-display font-bold mb-2">Welcome back</h2>
-            <p className="text-muted-foreground">
-              Enter your credentials to access your dashboard
-            </p>
           </div>
 
           {/* Login Form */}

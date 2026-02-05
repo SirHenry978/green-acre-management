@@ -262,7 +262,7 @@ export const ReceiptsList = () => {
         </head>
         <body>
           <div class="header">
-            <div class="company-name">🌾 FarmHub</div>
+            <div class="company-name">🌾 FarmIQ</div>
             <div class="doc-title">PAYMENT RECEIPT</div>
             <div class="receipt-number">${receipt.receiptNumber}</div>
           </div>
@@ -302,7 +302,7 @@ export const ReceiptsList = () => {
           
           <div class="footer">
             <p>Thank you for your payment!</p>
-            <p>FarmHub - Modern Farm Management</p>
+            <p>FarmIQ - Modern Farm Management</p>
             <p>${getBranchName(receipt.branchId)}</p>
           </div>
         </body>

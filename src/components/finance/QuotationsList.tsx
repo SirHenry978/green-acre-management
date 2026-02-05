@@ -256,7 +256,7 @@ export const QuotationsList = ({ onConvertToInvoice }: QuotationsListProps) => {
         </head>
         <body>
           <div class="header">
-            <div class="company-name">🌾 FarmHub</div>
+            <div class="company-name">🌾 FarmIQ</div>
             <div class="doc-title">QUOTATION</div>
           </div>
           <div class="info-row">
@@ -315,7 +315,7 @@ export const QuotationsList = ({ onConvertToInvoice }: QuotationsListProps) => {
           </div>
           <div class="footer">
             <p>Thank you for your business!</p>
-            <p>FarmHub - Modern Farm Management</p>
+            <p>FarmIQ - Modern Farm Management</p>
           </div>
         </body>
       </html>

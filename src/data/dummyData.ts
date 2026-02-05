@@ -156,14 +156,14 @@ export interface Receipt {
 
 // Dummy Users
 export const users: User[] = [
-  { id: 'u1', name: 'John Greenfield', email: 'john@farmhub.com', role: 'super_admin', avatar: '', phone: '+1-555-0100' },
-  { id: 'u2', name: 'Sarah Harvest', email: 'sarah@farmhub.com', role: 'branch_manager', branchId: 'b1', phone: '+1-555-0101' },
-  { id: 'u3', name: 'Mike Fields', email: 'mike@farmhub.com', role: 'branch_manager', branchId: 'b2', phone: '+1-555-0102' },
-  { id: 'u4', name: 'Emily Crops', email: 'emily@farmhub.com', role: 'field_staff', branchId: 'b1', phone: '+1-555-0103' },
-  { id: 'u5', name: 'David Ranch', email: 'david@farmhub.com', role: 'field_staff', branchId: 'b2', phone: '+1-555-0104' },
-  { id: 'u6', name: 'Lisa Accounts', email: 'lisa@farmhub.com', role: 'accountant', branchId: 'b1', phone: '+1-555-0105' },
-  { id: 'u7', name: 'Tom Stock', email: 'tom@farmhub.com', role: 'inventory_staff', branchId: 'b1', phone: '+1-555-0106' },
-  { id: 'u8', name: 'Anna Dairy', email: 'anna@farmhub.com', role: 'field_staff', branchId: 'b3', phone: '+1-555-0107' },
+  { id: 'u1', name: 'John Greenfield', email: 'john@farmiq.com', role: 'super_admin', avatar: '', phone: '+1-555-0100' },
+  { id: 'u2', name: 'Sarah Harvest', email: 'sarah@farmiq.com', role: 'branch_manager', branchId: 'b1', phone: '+1-555-0101' },
+  { id: 'u3', name: 'Mike Fields', email: 'mike@farmiq.com', role: 'branch_manager', branchId: 'b2', phone: '+1-555-0102' },
+  { id: 'u4', name: 'Emily Crops', email: 'emily@farmiq.com', role: 'field_staff', branchId: 'b1', phone: '+1-555-0103' },
+  { id: 'u5', name: 'David Ranch', email: 'david@farmiq.com', role: 'field_staff', branchId: 'b2', phone: '+1-555-0104' },
+  { id: 'u6', name: 'Lisa Accounts', email: 'lisa@farmiq.com', role: 'accountant', branchId: 'b1', phone: '+1-555-0105' },
+  { id: 'u7', name: 'Tom Stock', email: 'tom@farmiq.com', role: 'inventory_staff', branchId: 'b1', phone: '+1-555-0106' },
+  { id: 'u8', name: 'Anna Dairy', email: 'anna@farmiq.com', role: 'field_staff', branchId: 'b3', phone: '+1-555-0107' },
 ];
 
 // Dummy Branches
