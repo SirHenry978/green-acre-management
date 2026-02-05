@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useLicense } from '@/contexts/LicenseContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -15,6 +16,7 @@ const passwordSchema = z.string().min(6, 'Password must be at least 6 characters
 
 const Auth = () => {
   const { user, isLoading, signIn, signUp } = useLicense();
+  const { login } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   
@@ -69,6 +71,8 @@ const Auth = () => {
         variant: 'destructive',
       });
     } else {
+      // Also login to AuthContext for role-based permissions
+      login(email, password);
       navigate('/dashboard');
     }
   };
