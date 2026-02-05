@@ -64,7 +64,7 @@ export const Sidebar = () => {
             </div>
             {!collapsed && (
               <span className="font-display text-lg font-bold text-sidebar-foreground">
-                FarmHub
+                FarmIQ
               </span>
             )}
           </Link>
