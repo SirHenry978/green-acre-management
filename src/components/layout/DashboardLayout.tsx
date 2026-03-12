@@ -10,7 +10,8 @@ interface DashboardLayoutProps {
 
 export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const { isAuthenticated } = useAuth();
-  const [sidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
@@ -18,14 +19,19 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Sidebar />
-      <Header sidebarCollapsed={sidebarCollapsed} />
+      <Sidebar
+        collapsed={sidebarCollapsed}
+        setCollapsed={setSidebarCollapsed}
+        mobileOpen={mobileOpen}
+        setMobileOpen={setMobileOpen}
+      />
+      <Header sidebarCollapsed={sidebarCollapsed} onMenuToggle={() => setMobileOpen(!mobileOpen)} />
       <main
         className={`transition-all duration-300 pt-16 ${
-          sidebarCollapsed ? 'ml-16' : 'ml-64'
+          sidebarCollapsed ? 'md:ml-16' : 'md:ml-64'
         }`}
       >
-        <div className="p-6">
+        <div className="p-4 md:p-6">
           {children}
         </div>
       </main>

@@ -17,8 +17,8 @@ import {
   Sprout,
   ChevronLeft,
   ChevronRight,
+  X,
 } from 'lucide-react';
-import { useState } from 'react';
 
 interface NavItem {
   name: string;
@@ -41,86 +41,115 @@ const navItems: NavItem[] = [
   { name: 'Settings', path: '/settings', icon: Settings, permission: 'settings' },
 ];
 
-export const Sidebar = () => {
+interface SidebarProps {
+  collapsed: boolean;
+  setCollapsed: (collapsed: boolean) => void;
+  mobileOpen: boolean;
+  setMobileOpen: (open: boolean) => void;
+}
+
+export const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }: SidebarProps) => {
   const { user, logout, hasPermission } = useAuth();
   const location = useLocation();
-  const [collapsed, setCollapsed] = useState(false);
 
   const filteredNavItems = navItems.filter(item => hasPermission(item.permission));
 
   return (
-    <aside
-      className={cn(
-        "fixed left-0 top-0 z-40 h-screen bg-sidebar transition-all duration-300 ease-in-out",
-        collapsed ? "w-16" : "w-64"
+    <>
+      {/* Mobile overlay */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50 md:hidden"
+          onClick={() => setMobileOpen(false)}
+        />
       )}
-    >
-      <div className="flex h-full flex-col">
-        {/* Logo */}
-        <div className="flex h-16 items-center justify-between border-b border-sidebar-border px-4">
-          <Link to="/dashboard" className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sidebar-primary">
-              <Sprout className="h-5 w-5 text-sidebar-primary-foreground" />
-            </div>
-            {!collapsed && (
-              <span className="font-display text-lg font-bold text-sidebar-foreground">
-                FarmIQ
-              </span>
+
+      <aside
+        className={cn(
+          "fixed left-0 top-0 z-50 h-screen bg-sidebar transition-all duration-300 ease-in-out",
+          // Desktop
+          "hidden md:block",
+          collapsed ? "md:w-16" : "md:w-64",
+          // Mobile
+          mobileOpen && "!block w-64"
+        )}
+      >
+        <div className="flex h-full flex-col">
+          {/* Logo */}
+          <div className="flex h-16 items-center justify-between border-b border-sidebar-border px-4">
+            <Link to="/dashboard" className="flex items-center gap-2" onClick={() => setMobileOpen(false)}>
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sidebar-primary">
+                <Sprout className="h-5 w-5 text-sidebar-primary-foreground" />
+              </div>
+              {(!collapsed || mobileOpen) && (
+                <span className="font-display text-lg font-bold text-sidebar-foreground">
+                  FarmIQ
+                </span>
+              )}
+            </Link>
+            {/* Close button on mobile */}
+            <button
+              onClick={() => setMobileOpen(false)}
+              className="rounded-lg p-1.5 text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground md:hidden"
+            >
+              <X className="h-4 w-4" />
+            </button>
+            {/* Collapse toggle on desktop */}
+            <button
+              onClick={() => setCollapsed(!collapsed)}
+              className="hidden md:block rounded-lg p-1.5 text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+            >
+              {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+            </button>
+          </div>
+
+          {/* Navigation */}
+          <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
+            {filteredNavItems.map((item) => {
+              const isActive = location.pathname === item.path || location.pathname.startsWith(item.path + '/');
+              const Icon = item.icon;
+              
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  onClick={() => setMobileOpen(false)}
+                  className={cn(
+                    "sidebar-item",
+                    isActive && "sidebar-item-active"
+                  )}
+                  title={collapsed && !mobileOpen ? item.name : undefined}
+                >
+                  <Icon className="h-5 w-5 shrink-0" />
+                  {(!collapsed || mobileOpen) && <span className="truncate">{item.name}</span>}
+                </Link>
+              );
+            })}
+          </nav>
+
+          {/* User section */}
+          <div className="border-t border-sidebar-border p-3">
+            {(!collapsed || mobileOpen) && user && (
+              <div className="mb-3 rounded-lg bg-sidebar-accent p-3">
+                <p className="text-sm font-medium text-sidebar-accent-foreground truncate">
+                  {user.name}
+                </p>
+                <p className="text-xs text-sidebar-foreground/60 truncate">
+                  {user.role.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                </p>
+              </div>
             )}
-          </Link>
-          <button
-            onClick={() => setCollapsed(!collapsed)}
-            className="rounded-lg p-1.5 text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-          >
-            {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-          </button>
+            <button
+              onClick={logout}
+              className="sidebar-item w-full justify-center text-destructive/80 hover:bg-destructive/10 hover:text-destructive"
+              title={collapsed && !mobileOpen ? "Logout" : undefined}
+            >
+              <LogOut className="h-5 w-5" />
+              {(!collapsed || mobileOpen) && <span>Logout</span>}
+            </button>
+          </div>
         </div>
-
-        {/* Navigation */}
-        <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
-          {filteredNavItems.map((item) => {
-            const isActive = location.pathname === item.path || location.pathname.startsWith(item.path + '/');
-            const Icon = item.icon;
-            
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={cn(
-                  "sidebar-item",
-                  isActive && "sidebar-item-active"
-                )}
-                title={collapsed ? item.name : undefined}
-              >
-                <Icon className="h-5 w-5 shrink-0" />
-                {!collapsed && <span className="truncate">{item.name}</span>}
-              </Link>
-            );
-          })}
-        </nav>
-
-        {/* User section */}
-        <div className="border-t border-sidebar-border p-3">
-          {!collapsed && user && (
-            <div className="mb-3 rounded-lg bg-sidebar-accent p-3">
-              <p className="text-sm font-medium text-sidebar-accent-foreground truncate">
-                {user.name}
-              </p>
-              <p className="text-xs text-sidebar-foreground/60 truncate">
-                {user.role.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
-              </p>
-            </div>
-          )}
-          <button
-            onClick={logout}
-            className="sidebar-item w-full justify-center text-destructive/80 hover:bg-destructive/10 hover:text-destructive"
-            title={collapsed ? "Logout" : undefined}
-          >
-            <LogOut className="h-5 w-5" />
-            {!collapsed && <span>Logout</span>}
-          </button>
-        </div>
-      </div>
-    </aside>
+      </aside>
+    </>
   );
 };
