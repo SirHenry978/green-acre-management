@@ -1,6 +1,6 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { branches } from '@/data/dummyData';
-import { Bell, Search, ChevronDown, Moon, Sun, LogOut } from 'lucide-react';
+import { Bell, Search, ChevronDown, Moon, Sun, LogOut, Menu } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -16,9 +16,10 @@ import { Badge } from '@/components/ui/badge';
 
 interface HeaderProps {
   sidebarCollapsed?: boolean;
+  onMenuToggle?: () => void;
 }
 
-export const Header = ({ sidebarCollapsed = false }: HeaderProps) => {
+export const Header = ({ sidebarCollapsed = false, onMenuToggle }: HeaderProps) => {
   const { user, branch, switchBranch, logout } = useAuth();
   const navigate = useNavigate();
   const { isDark, toggleTheme } = useTheme();
@@ -39,31 +40,40 @@ export const Header = ({ sidebarCollapsed = false }: HeaderProps) => {
 
   return (
     <header
-      className={`fixed right-0 top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-background/95 backdrop-blur transition-all duration-300 ${
-        sidebarCollapsed ? 'left-16' : 'left-64'
-      } px-6`}
+      className={`fixed right-0 top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-background/95 backdrop-blur transition-all duration-300 left-0 ${
+        sidebarCollapsed ? 'md:left-16' : 'md:left-64'
+      } px-4 md:px-6`}
     >
-      {/* Search */}
-      <div className="flex items-center gap-4">
-        <div className="relative">
+      {/* Left side */}
+      <div className="flex items-center gap-3">
+        {/* Mobile menu toggle */}
+        <button
+          onClick={onMenuToggle}
+          className="rounded-lg p-2 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors md:hidden"
+        >
+          <Menu className="h-5 w-5" />
+        </button>
+
+        {/* Search - hidden on very small screens */}
+        <div className="relative hidden sm:block">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <input
             type="text"
             placeholder="Search..."
-            className="input-farm pl-10 w-64"
+            className="input-farm pl-10 w-40 md:w-64"
           />
         </div>
       </div>
 
       {/* Right side */}
-      <div className="flex items-center gap-4">
-        {/* Branch Selector (for super admin) */}
+      <div className="flex items-center gap-2 md:gap-4">
+        {/* Branch Selector (for super admin) - compact on mobile */}
         {isSuperAdmin && (
           <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium hover:bg-muted transition-colors">
-              <span className="text-muted-foreground">Branch:</span>
-              <span>{branch?.name || 'All Branches'}</span>
-              <ChevronDown className="h-4 w-4 text-muted-foreground" />
+            <DropdownMenuTrigger className="flex items-center gap-1 md:gap-2 rounded-lg border border-border bg-card px-2 md:px-3 py-2 text-sm font-medium hover:bg-muted transition-colors">
+              <span className="hidden sm:inline text-muted-foreground">Branch:</span>
+              <span className="truncate max-w-[80px] md:max-w-none">{branch?.name || 'All'}</span>
+              <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel>Select Branch</DropdownMenuLabel>
@@ -103,13 +113,13 @@ export const Header = ({ sidebarCollapsed = false }: HeaderProps) => {
 
         {/* User menu */}
         <DropdownMenu>
-          <DropdownMenuTrigger className="flex items-center gap-3 rounded-lg p-2 hover:bg-muted transition-colors">
+          <DropdownMenuTrigger className="flex items-center gap-2 md:gap-3 rounded-lg p-2 hover:bg-muted transition-colors">
             <Avatar className="h-8 w-8">
               <AvatarFallback className="bg-primary text-primary-foreground text-sm">
                 {user ? getInitials(user.name) : 'U'}
               </AvatarFallback>
             </Avatar>
-            <div className="hidden text-left md:block">
+            <div className="hidden md:block text-left">
               <p className="text-sm font-medium">{user?.name}</p>
               <p className="text-xs text-muted-foreground">
                 {user?.role.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
