@@ -156,10 +156,10 @@ export interface Receipt {
 
 // Dummy Users
 export const users: User[] = [
-  { id: 'u1', name: 'John Greenfield', email: 'john@farmiq.com', role: 'super_admin', avatar: '', phone: '+1-555-0100' },
-  { id: 'u2', name: 'Sarah Harvest', email: 'sarah@farmiq.com', role: 'branch_manager', branchId: 'b1', phone: '+1-555-0101' },
-  { id: 'u3', name: 'Mike Fields', email: 'mike@farmiq.com', role: 'branch_manager', branchId: 'b2', phone: '+1-555-0102' },
-  { id: 'u4', name: 'Emily Crops', email: 'emily@farmiq.com', role: 'field_staff', branchId: 'b1', phone: '+1-555-0103' },
+  { id: 'u1', name: 'Tariro Gwen', email: 'tariro.gwen@farmiq.com', role: 'super_admin', avatar: '', phone: '+1-555-0100' },
+  { id: 'u2', name: 'Henry Nyasha', email: 'henry.nyasha@farmiq.com', role: 'branch_manager', branchId: 'b1', phone: '+1-555-0101' },
+  { id: 'u3', name: 'Manager Henry', email: 'manager.henry@farmiq.com', role: 'branch_manager', branchId: 'b2', phone: '+1-555-0102' },
+  { id: 'u4', name: 'Tariro Amanda', email: 'tariro.amanda@farmiq.com', role: 'field_staff', branchId: 'b1', phone: '+1-555-0103' },
   { id: 'u5', name: 'David Ranch', email: 'david@farmiq.com', role: 'field_staff', branchId: 'b2', phone: '+1-555-0104' },
   { id: 'u6', name: 'Lisa Accounts', email: 'lisa@farmiq.com', role: 'accountant', branchId: 'b1', phone: '+1-555-0105' },
   { id: 'u7', name: 'Tom Stock', email: 'tom@farmiq.com', role: 'inventory_staff', branchId: 'b1', phone: '+1-555-0106' },
