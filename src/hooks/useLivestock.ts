@@ -262,7 +262,7 @@ export const useDeleteLivestock = () => {
 export const useAddShelter = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (data: Record<string, unknown>) => {
+    mutationFn: async (data: any) => {
       const { data: result, error } = await supabase.from('livestock_shelters').insert([data]).select().single();
       if (error) throw error;
       return result;
