@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { customers, branches } from '@/data/dummyData';
+import { useBranchFilter } from '@/hooks/useBranchFilter';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { 
@@ -40,8 +41,9 @@ const typeColors: Record<string, string> = {
 const Customers = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const branchFilteredCustomers = useBranchFilter(customers);
 
-  const filteredCustomers = customers.filter(customer =>
+  const filteredCustomers = branchFilteredCustomers.filter(customer =>
     customer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     customer.type.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -50,8 +52,8 @@ const Customers = () => {
     return branches.find(b => b.id === branchId)?.name || 'All Branches';
   };
 
-  const totalPurchases = customers.reduce((sum, c) => sum + c.totalPurchases, 0);
-  const totalOutstanding = customers.reduce((sum, c) => sum + c.outstandingBalance, 0);
+  const totalPurchases = branchFilteredCustomers.reduce((sum, c) => sum + c.totalPurchases, 0);
+  const totalOutstanding = branchFilteredCustomers.reduce((sum, c) => sum + c.outstandingBalance, 0);
 
   return (
     <DashboardLayout>

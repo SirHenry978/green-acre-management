@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { attendance, users, branches } from '@/data/dummyData';
+import { useBranchFilter } from '@/hooks/useBranchFilter';
+import { useAuth } from '@/contexts/AuthContext';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { 
@@ -38,8 +40,10 @@ const statusIcons: Record<string, React.ElementType> = {
 const Attendance = () => {
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const { user, branch } = useAuth();
+  const branchFilteredAttendance = useBranchFilter(attendance);
 
-  const filteredAttendance = attendance.filter(record => {
+  const filteredAttendance = branchFilteredAttendance.filter(record => {
     const matchesStatus = filterStatus === 'all' || record.status === filterStatus;
     return matchesStatus;
   });
@@ -49,11 +53,11 @@ const Attendance = () => {
   };
 
   // Calculate stats
-  const todayRecords = attendance.filter(a => a.date === '2024-01-12');
+  const todayRecords = branchFilteredAttendance.filter(a => a.date === '2024-01-12');
   const presentCount = todayRecords.filter(a => a.status === 'present').length;
   const absentCount = todayRecords.filter(a => a.status === 'absent').length;
   const lateCount = todayRecords.filter(a => a.status === 'late').length;
-  const totalStaff = users.filter(u => u.role !== 'super_admin' && u.role !== 'branch_manager').length;
+  const totalStaff = todayRecords.length || 1;
   const attendanceRate = totalStaff > 0 ? ((presentCount + lateCount) / totalStaff * 100).toFixed(1) : 0;
 
   return (

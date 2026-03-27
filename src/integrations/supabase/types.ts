@@ -14,6 +14,65 @@ export type Database = {
   }
   public: {
     Tables: {
+      inventory_transfers: {
+        Row: {
+          branch_id: string
+          category: string
+          created_at: string
+          from_location: string
+          id: string
+          inventory_item_name: string
+          livestock_id: string | null
+          purpose: string | null
+          quantity: number
+          status: string
+          to_location: string
+          transfer_date: string
+          transferred_by: string | null
+          unit: string
+        }
+        Insert: {
+          branch_id: string
+          category: string
+          created_at?: string
+          from_location: string
+          id?: string
+          inventory_item_name: string
+          livestock_id?: string | null
+          purpose?: string | null
+          quantity: number
+          status?: string
+          to_location: string
+          transfer_date?: string
+          transferred_by?: string | null
+          unit: string
+        }
+        Update: {
+          branch_id?: string
+          category?: string
+          created_at?: string
+          from_location?: string
+          id?: string
+          inventory_item_name?: string
+          livestock_id?: string | null
+          purpose?: string | null
+          quantity?: number
+          status?: string
+          to_location?: string
+          transfer_date?: string
+          transferred_by?: string | null
+          unit?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_transfers_livestock_id_fkey"
+            columns: ["livestock_id"]
+            isOneToOne: false
+            referencedRelation: "livestock"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       licenses: {
         Row: {
           created_at: string
@@ -49,6 +108,262 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      livestock: {
+        Row: {
+          acquired_date: string | null
+          acquired_from: string | null
+          age_on_capture: string | null
+          branch_id: string
+          breed: string
+          category_id: string
+          color: string | null
+          created_at: string
+          date_of_birth: string | null
+          gender: string
+          health_status: string
+          id: string
+          name: string | null
+          notes: string | null
+          purchase_price: number | null
+          shelter_id: string | null
+          status: string
+          tag_number: string
+          updated_at: string
+          weight: number | null
+        }
+        Insert: {
+          acquired_date?: string | null
+          acquired_from?: string | null
+          age_on_capture?: string | null
+          branch_id: string
+          breed: string
+          category_id: string
+          color?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          gender: string
+          health_status?: string
+          id?: string
+          name?: string | null
+          notes?: string | null
+          purchase_price?: number | null
+          shelter_id?: string | null
+          status?: string
+          tag_number: string
+          updated_at?: string
+          weight?: number | null
+        }
+        Update: {
+          acquired_date?: string | null
+          acquired_from?: string | null
+          age_on_capture?: string | null
+          branch_id?: string
+          breed?: string
+          category_id?: string
+          color?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          gender?: string
+          health_status?: string
+          id?: string
+          name?: string | null
+          notes?: string | null
+          purchase_price?: number | null
+          shelter_id?: string | null
+          status?: string
+          tag_number?: string
+          updated_at?: string
+          weight?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "livestock_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "livestock_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "livestock_shelter_id_fkey"
+            columns: ["shelter_id"]
+            isOneToOne: false
+            referencedRelation: "livestock_shelters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      livestock_categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      livestock_health_records: {
+        Row: {
+          branch_id: string
+          cost: number | null
+          created_at: string
+          description: string
+          diagnosis: string | null
+          id: string
+          livestock_id: string
+          medication: string | null
+          next_due_date: string | null
+          record_date: string
+          record_type: string
+          treatment: string | null
+          vet_name: string | null
+        }
+        Insert: {
+          branch_id: string
+          cost?: number | null
+          created_at?: string
+          description: string
+          diagnosis?: string | null
+          id?: string
+          livestock_id: string
+          medication?: string | null
+          next_due_date?: string | null
+          record_date?: string
+          record_type: string
+          treatment?: string | null
+          vet_name?: string | null
+        }
+        Update: {
+          branch_id?: string
+          cost?: number | null
+          created_at?: string
+          description?: string
+          diagnosis?: string | null
+          id?: string
+          livestock_id?: string
+          medication?: string | null
+          next_due_date?: string | null
+          record_date?: string
+          record_type?: string
+          treatment?: string | null
+          vet_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "livestock_health_records_livestock_id_fkey"
+            columns: ["livestock_id"]
+            isOneToOne: false
+            referencedRelation: "livestock"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      livestock_shelters: {
+        Row: {
+          branch_id: string
+          capacity: number
+          created_at: string
+          id: string
+          location_description: string | null
+          name: string
+          shelter_type: string
+          status: string
+        }
+        Insert: {
+          branch_id: string
+          capacity?: number
+          created_at?: string
+          id?: string
+          location_description?: string | null
+          name: string
+          shelter_type: string
+          status?: string
+        }
+        Update: {
+          branch_id?: string
+          capacity?: number
+          created_at?: string
+          id?: string
+          location_description?: string | null
+          name?: string
+          shelter_type?: string
+          status?: string
+        }
+        Relationships: []
+      }
+      livestock_transfers: {
+        Row: {
+          created_at: string
+          customer_id: string | null
+          from_branch_id: string | null
+          id: string
+          livestock_id: string | null
+          notes: string | null
+          quantity: number
+          reason: string | null
+          reference_number: string
+          status: string
+          to_branch_id: string | null
+          total_value: number | null
+          transfer_date: string
+          transfer_type: string
+          unit_price: number | null
+        }
+        Insert: {
+          created_at?: string
+          customer_id?: string | null
+          from_branch_id?: string | null
+          id?: string
+          livestock_id?: string | null
+          notes?: string | null
+          quantity?: number
+          reason?: string | null
+          reference_number: string
+          status?: string
+          to_branch_id?: string | null
+          total_value?: number | null
+          transfer_date?: string
+          transfer_type: string
+          unit_price?: number | null
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string | null
+          from_branch_id?: string | null
+          id?: string
+          livestock_id?: string | null
+          notes?: string | null
+          quantity?: number
+          reason?: string | null
+          reference_number?: string
+          status?: string
+          to_branch_id?: string | null
+          total_value?: number | null
+          transfer_date?: string
+          transfer_type?: string
+          unit_price?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "livestock_transfers_livestock_id_fkey"
+            columns: ["livestock_id"]
+            isOneToOne: false
+            referencedRelation: "livestock"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

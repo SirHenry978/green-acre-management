@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { inventory, branches } from '@/data/dummyData';
+import { useBranchFilter } from '@/hooks/useBranchFilter';
+import { useAuth } from '@/contexts/AuthContext';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { 
@@ -40,13 +42,15 @@ const categoryColors: Record<string, string> = {
 };
 
 const Inventory = () => {
+  const { user } = useAuth();
+  const branchFilteredInventory = useBranchFilter(inventory);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterCategory, setFilterCategory] = useState<string>('all');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
-  const categories = ['all', ...new Set(inventory.map(i => i.category))];
+  const categories = ['all', ...new Set(branchFilteredInventory.map(i => i.category))];
 
-  const filteredInventory = inventory.filter(item => {
+  const filteredInventory = branchFilteredInventory.filter(item => {
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = filterCategory === 'all' || item.category === filterCategory;
     return matchesSearch && matchesCategory;
@@ -56,8 +60,8 @@ const Inventory = () => {
     return branches.find(b => b.id === branchId)?.name || 'Unknown';
   };
 
-  const lowStockCount = inventory.filter(i => i.quantity <= i.minStock).length;
-  const totalValue = inventory.reduce((sum, i) => sum + i.value, 0);
+  const lowStockCount = branchFilteredInventory.filter(i => i.quantity <= i.minStock).length;
+  const totalValue = branchFilteredInventory.reduce((sum, i) => sum + i.value, 0);
 
   return (
     <DashboardLayout>

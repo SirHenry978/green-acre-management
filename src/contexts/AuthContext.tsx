@@ -14,11 +14,11 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const rolePermissions: Record<UserRole, string[]> = {
-  super_admin: ['dashboard', 'branches', 'users', 'inventory', 'finance', 'attendance', 'suppliers', 'customers', 'assets', 'reports', 'settings'],
-  branch_manager: ['dashboard', 'users', 'inventory', 'finance', 'attendance', 'suppliers', 'customers', 'assets', 'reports'],
-  field_staff: ['dashboard', 'attendance', 'activities'],
+  super_admin: ['dashboard', 'branches', 'users', 'inventory', 'livestock', 'finance', 'attendance', 'suppliers', 'customers', 'assets', 'reports', 'settings'],
+  branch_manager: ['dashboard', 'users', 'inventory', 'livestock', 'finance', 'attendance', 'suppliers', 'customers', 'assets', 'reports'],
+  field_staff: ['dashboard', 'attendance', 'livestock', 'activities'],
   accountant: ['dashboard', 'finance', 'reports', 'suppliers', 'customers'],
-  inventory_staff: ['dashboard', 'inventory', 'suppliers', 'assets'],
+  inventory_staff: ['dashboard', 'inventory', 'livestock', 'suppliers', 'assets'],
 };
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
