@@ -232,7 +232,7 @@ export const useAddLivestock = () => {
 export const useUpdateLivestock = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, ...data }: Record<string, unknown> & { id: string }) => {
+    mutationFn: async ({ id, ...data }: any) => {
       const { error } = await supabase.from('livestock').update(data).eq('id', id);
       if (error) throw error;
     },
