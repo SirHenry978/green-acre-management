@@ -34,8 +34,9 @@ import { cn } from '@/lib/utils';
 const Suppliers = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const branchFilteredSuppliers = useBranchFilter(suppliers);
 
-  const filteredSuppliers = suppliers.filter(supplier =>
+  const filteredSuppliers = branchFilteredSuppliers.filter(supplier =>
     supplier.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     supplier.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -44,8 +45,8 @@ const Suppliers = () => {
     return branches.find(b => b.id === branchId)?.name || 'All Branches';
   };
 
-  const totalValue = suppliers.reduce((sum, s) => sum + s.totalValue, 0);
-  const activeSuppliers = suppliers.filter(s => s.status === 'active').length;
+  const totalValue = branchFilteredSuppliers.reduce((sum, s) => sum + s.totalValue, 0);
+  const activeSuppliers = branchFilteredSuppliers.filter(s => s.status === 'active').length;
 
   return (
     <DashboardLayout>

@@ -54,10 +54,11 @@ const Assets = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState<string>('all');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const branchFilteredAssets = useBranchFilter(assets);
 
-  const assetTypes = ['all', ...new Set(assets.map(a => a.type))];
+  const assetTypes = ['all', ...new Set(branchFilteredAssets.map(a => a.type))];
 
-  const filteredAssets = assets.filter(asset => {
+  const filteredAssets = branchFilteredAssets.filter(asset => {
     const matchesSearch = asset.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesType = filterType === 'all' || asset.type === filterType;
     return matchesSearch && matchesType;
@@ -67,9 +68,9 @@ const Assets = () => {
     return branches.find(b => b.id === branchId)?.name || 'Unknown';
   };
 
-  const totalValue = assets.reduce((sum, a) => sum + a.value, 0);
-  const operationalCount = assets.filter(a => a.status === 'operational').length;
-  const maintenanceCount = assets.filter(a => a.status === 'maintenance').length;
+  const totalValue = branchFilteredAssets.reduce((sum, a) => sum + a.value, 0);
+  const operationalCount = branchFilteredAssets.filter(a => a.status === 'operational').length;
+  const maintenanceCount = branchFilteredAssets.filter(a => a.status === 'maintenance').length;
 
   return (
     <DashboardLayout>
