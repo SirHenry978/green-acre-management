@@ -42,13 +42,15 @@ const categoryColors: Record<string, string> = {
 };
 
 const Inventory = () => {
+  const { user } = useAuth();
+  const branchFilteredInventory = useBranchFilter(inventory);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterCategory, setFilterCategory] = useState<string>('all');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
-  const categories = ['all', ...new Set(inventory.map(i => i.category))];
+  const categories = ['all', ...new Set(branchFilteredInventory.map(i => i.category))];
 
-  const filteredInventory = inventory.filter(item => {
+  const filteredInventory = branchFilteredInventory.filter(item => {
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = filterCategory === 'all' || item.category === filterCategory;
     return matchesSearch && matchesCategory;
