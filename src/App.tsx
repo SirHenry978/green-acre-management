@@ -14,6 +14,7 @@ import Attendance from "./pages/Attendance";
 import Suppliers from "./pages/Suppliers";
 import Customers from "./pages/Customers";
 import Assets from "./pages/Assets";
+import LivestockPage from "./pages/Livestock";
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
 import Profile from "./pages/Profile";
