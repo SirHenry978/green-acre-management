@@ -60,8 +60,8 @@ const Inventory = () => {
     return branches.find(b => b.id === branchId)?.name || 'Unknown';
   };
 
-  const lowStockCount = inventory.filter(i => i.quantity <= i.minStock).length;
-  const totalValue = inventory.reduce((sum, i) => sum + i.value, 0);
+  const lowStockCount = branchFilteredInventory.filter(i => i.quantity <= i.minStock).length;
+  const totalValue = branchFilteredInventory.reduce((sum, i) => sum + i.value, 0);
 
   return (
     <DashboardLayout>
