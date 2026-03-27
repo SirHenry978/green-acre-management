@@ -18,6 +18,7 @@ import {
   ChevronLeft,
   ChevronRight,
   X,
+  Bug,
 } from 'lucide-react';
 
 interface NavItem {
