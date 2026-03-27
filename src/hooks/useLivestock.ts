@@ -278,7 +278,7 @@ export const useAddShelter = () => {
 export const useAddHealthRecord = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (data: Record<string, unknown>) => {
+    mutationFn: async (data: any) => {
       const { data: result, error } = await supabase.from('livestock_health_records').insert([data]).select().single();
       if (error) throw error;
       return result;
