@@ -311,7 +311,7 @@ export const useAddLivestockTransfer = () => {
 export const useAddInventoryTransfer = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (data: Record<string, unknown>) => {
+    mutationFn: async (data: any) => {
       const { data: result, error } = await supabase.from('inventory_transfers').insert([data]).select().single();
       if (error) throw error;
       return result;

@@ -33,6 +33,7 @@ const navItems: NavItem[] = [
   { name: 'Branches', path: '/branches', icon: Building2, permission: 'branches' },
   { name: 'Users', path: '/users', icon: Users, permission: 'users' },
   { name: 'Inventory', path: '/inventory', icon: Package, permission: 'inventory' },
+  { name: 'Livestock', path: '/livestock', icon: Bug, permission: 'livestock' },
   { name: 'Finance', path: '/finance', icon: DollarSign, permission: 'finance' },
   { name: 'Attendance', path: '/attendance', icon: Calendar, permission: 'attendance' },
   { name: 'Suppliers', path: '/suppliers', icon: Truck, permission: 'suppliers' },
