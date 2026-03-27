@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { attendance, users, branches } from '@/data/dummyData';
+import { useBranchFilter } from '@/hooks/useBranchFilter';
+import { useAuth } from '@/contexts/AuthContext';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { 
