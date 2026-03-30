@@ -20,6 +20,9 @@ import Settings from "./pages/Settings";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import LandingPage from "./pages/LandingPage";
+import Weather from "./pages/Weather";
+import AgriNews from "./pages/AgriNews";
+import FarmProjects from "./pages/FarmProjects";
 
 const queryClient = new QueryClient();
 
