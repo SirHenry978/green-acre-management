@@ -107,6 +107,18 @@ const Settings = () => {
                   <p className="text-sm text-muted-foreground">{section.description}</p>
                 </div>
               </div>
+              <div className="flex items-center gap-4 mb-6 pb-6 border-b border-border">
+                <AvatarUpload
+                  userId={user?.id || ''}
+                  avatarUrl={avatarUrl}
+                  initials={getInitials(user?.name || 'U')}
+                  onAvatarUpdated={setAvatarUrl}
+                />
+                <div>
+                  <p className="font-medium">{user?.name || 'User'}</p>
+                  <p className="text-sm text-muted-foreground">Click the camera icon to update your photo</p>
+                </div>
+              </div>
               <div className="space-y-4">
                 {section.fields.map((field) => (
                   <div key={field.label}>
