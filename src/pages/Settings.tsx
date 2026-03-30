@@ -19,6 +19,24 @@ import {
 const Settings = () => {
   const { user } = useAuth();
   const { isDark, toggleTheme } = useTheme();
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchAvatar = async () => {
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (!authUser) return;
+      const { data } = await supabase
+        .from('profiles')
+        .select('avatar_url')
+        .eq('user_id', authUser.id)
+        .single();
+      if (data) setAvatarUrl(data.avatar_url);
+    };
+    fetchAvatar();
+  }, []);
+
+  const getInitials = (name: string) =>
+    name.split(' ').map(n => n[0]).join('').toUpperCase();
 
   const settingSections = [
     {
