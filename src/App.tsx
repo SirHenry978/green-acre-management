@@ -20,6 +20,9 @@ import Settings from "./pages/Settings";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import LandingPage from "./pages/LandingPage";
+import Weather from "./pages/Weather";
+import AgriNews from "./pages/AgriNews";
+import FarmProjects from "./pages/FarmProjects";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +48,9 @@ const App = () => (
             <Route path="/livestock" element={<LivestockPage />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/weather" element={<Weather />} />
+            <Route path="/agri-news" element={<AgriNews />} />
+            <Route path="/farm-projects" element={<FarmProjects />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

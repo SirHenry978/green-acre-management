@@ -19,6 +19,9 @@ import {
   ChevronRight,
   X,
   Bug,
+  CloudSun,
+  Newspaper,
+  FolderKanban,
 } from 'lucide-react';
 
 interface NavItem {
@@ -39,6 +42,9 @@ const navItems: NavItem[] = [
   { name: 'Suppliers', path: '/suppliers', icon: Truck, permission: 'suppliers' },
   { name: 'Customers', path: '/customers', icon: ShoppingCart, permission: 'customers' },
   { name: 'Assets', path: '/assets', icon: Warehouse, permission: 'assets' },
+  { name: 'Farm Projects', path: '/farm-projects', icon: FolderKanban, permission: 'dashboard' },
+  { name: 'Weather', path: '/weather', icon: CloudSun, permission: 'dashboard' },
+  { name: 'Agri News', path: '/agri-news', icon: Newspaper, permission: 'dashboard' },
   { name: 'Reports', path: '/reports', icon: FileText, permission: 'reports' },
   { name: 'Settings', path: '/settings', icon: Settings, permission: 'settings' },
 ];
