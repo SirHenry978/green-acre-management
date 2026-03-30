@@ -1,8 +1,11 @@
+import { useState, useEffect } from 'react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/hooks/useTheme';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
+import { AvatarUpload } from '@/components/profile/AvatarUpload';
+import { supabase } from '@/integrations/supabase/client';
 import { 
   User,
   Bell,
