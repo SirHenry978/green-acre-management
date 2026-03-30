@@ -19,6 +19,9 @@ import {
   ChevronRight,
   X,
   Bug,
+  CloudSun,
+  Newspaper,
+  FolderKanban,
 } from 'lucide-react';
 
 interface NavItem {
