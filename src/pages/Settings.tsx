@@ -1,8 +1,11 @@
+import { useState, useEffect } from 'react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/hooks/useTheme';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
+import { AvatarUpload } from '@/components/profile/AvatarUpload';
+import { supabase } from '@/integrations/supabase/client';
 import { 
   User,
   Bell,
@@ -16,6 +19,24 @@ import {
 const Settings = () => {
   const { user } = useAuth();
   const { isDark, toggleTheme } = useTheme();
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchAvatar = async () => {
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (!authUser) return;
+      const { data } = await supabase
+        .from('profiles')
+        .select('avatar_url')
+        .eq('user_id', authUser.id)
+        .single();
+      if (data) setAvatarUrl(data.avatar_url);
+    };
+    fetchAvatar();
+  }, []);
+
+  const getInitials = (name: string) =>
+    name.split(' ').map(n => n[0]).join('').toUpperCase();
 
   const settingSections = [
     {
@@ -84,6 +105,18 @@ const Settings = () => {
                 <div>
                   <h2 className="font-display font-semibold text-lg">{section.title}</h2>
                   <p className="text-sm text-muted-foreground">{section.description}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-4 mb-6 pb-6 border-b border-border">
+                <AvatarUpload
+                  userId={user?.id || ''}
+                  avatarUrl={avatarUrl}
+                  initials={getInitials(user?.name || 'U')}
+                  onAvatarUpdated={setAvatarUrl}
+                />
+                <div>
+                  <p className="font-medium">{user?.name || 'User'}</p>
+                  <p className="text-sm text-muted-foreground">Click the camera icon to update your photo</p>
                 </div>
               </div>
               <div className="space-y-4">
