@@ -65,6 +65,9 @@ export const QuotationsList = ({ onConvertToInvoice }: QuotationsListProps) => {
   const [formItems, setFormItems] = useState<DocumentItem[]>([
     { id: 'new-1', description: '', quantity: 1, unitPrice: 0, total: 0 }
   ]);
+  const [formGLAccountId, setFormGLAccountId] = useState('');
+  const [formGLSubAccountId, setFormGLSubAccountId] = useState('');
+  const { createEntry, getAccountById } = useGLAccounts();
 
   const filteredQuotations = useBranchFilter(quotations);
 
