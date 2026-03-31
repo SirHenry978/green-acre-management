@@ -34,6 +34,8 @@ import {
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { QRCodeSVG } from 'qrcode.react';
+import { GLAccountSelect } from './GLAccountSelect';
+import { useGLAccounts } from '@/hooks/useGLAccounts';
 
 const statusColors: Record<string, string> = {
   draft: 'bg-muted text-muted-foreground',
