@@ -167,6 +167,143 @@ export type Database = {
           },
         ]
       }
+      gl_accounts: {
+        Row: {
+          account_code: string
+          account_name: string
+          account_type: Database["public"]["Enums"]["gl_account_type"]
+          branch_id: string | null
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          updated_at: string
+        }
+        Insert: {
+          account_code: string
+          account_name: string
+          account_type: Database["public"]["Enums"]["gl_account_type"]
+          branch_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          updated_at?: string
+        }
+        Update: {
+          account_code?: string
+          account_name?: string
+          account_type?: Database["public"]["Enums"]["gl_account_type"]
+          branch_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      gl_entries: {
+        Row: {
+          branch_id: string | null
+          created_at: string
+          credit: number
+          debit: number
+          description: string
+          entry_date: string
+          gl_account_id: string
+          gl_sub_account_id: string | null
+          id: string
+          reference_id: string | null
+          reference_number: string | null
+          reference_type: string | null
+        }
+        Insert: {
+          branch_id?: string | null
+          created_at?: string
+          credit?: number
+          debit?: number
+          description: string
+          entry_date?: string
+          gl_account_id: string
+          gl_sub_account_id?: string | null
+          id?: string
+          reference_id?: string | null
+          reference_number?: string | null
+          reference_type?: string | null
+        }
+        Update: {
+          branch_id?: string | null
+          created_at?: string
+          credit?: number
+          debit?: number
+          description?: string
+          entry_date?: string
+          gl_account_id?: string
+          gl_sub_account_id?: string | null
+          id?: string
+          reference_id?: string | null
+          reference_number?: string | null
+          reference_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gl_entries_gl_account_id_fkey"
+            columns: ["gl_account_id"]
+            isOneToOne: false
+            referencedRelation: "gl_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "gl_entries_gl_sub_account_id_fkey"
+            columns: ["gl_sub_account_id"]
+            isOneToOne: false
+            referencedRelation: "gl_sub_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gl_sub_accounts: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          parent_account_id: string
+          sub_account_code: string
+          sub_account_name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          parent_account_id: string
+          sub_account_code: string
+          sub_account_name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          parent_account_id?: string
+          sub_account_code?: string
+          sub_account_name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gl_sub_accounts_parent_account_id_fkey"
+            columns: ["parent_account_id"]
+            isOneToOne: false
+            referencedRelation: "gl_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       inventory_transfers: {
         Row: {
           branch_id: string
@@ -562,7 +699,7 @@ export type Database = {
       has_valid_license: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
-      [_ in never]: never
+      gl_account_type: "asset" | "liability" | "equity" | "revenue" | "expense"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -689,6 +826,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      gl_account_type: ["asset", "liability", "equity", "revenue", "expense"],
+    },
   },
 } as const
