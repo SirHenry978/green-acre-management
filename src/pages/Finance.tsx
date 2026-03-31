@@ -132,7 +132,7 @@ const Finance = () => {
 
         {/* Tabs for different document types */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-          <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:inline-grid">
+          <TabsList className="grid w-full grid-cols-6 lg:w-auto lg:inline-grid">
             <TabsTrigger value="transactions" className="gap-2">
               <DollarSign className="h-4 w-4" />
               <span className="hidden sm:inline">Transactions</span>
@@ -148,6 +148,14 @@ const Finance = () => {
             <TabsTrigger value="receipts" className="gap-2">
               <Receipt className="h-4 w-4" />
               <span className="hidden sm:inline">Receipts</span>
+            </TabsTrigger>
+            <TabsTrigger value="gl-accounts" className="gap-2">
+              <BookOpen className="h-4 w-4" />
+              <span className="hidden sm:inline">GL Accounts</span>
+            </TabsTrigger>
+            <TabsTrigger value="gl-report" className="gap-2">
+              <BarChart3 className="h-4 w-4" />
+              <span className="hidden sm:inline">GL Report</span>
             </TabsTrigger>
           </TabsList>
 
