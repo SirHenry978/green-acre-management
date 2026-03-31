@@ -369,6 +369,13 @@ export const ReceiptsList = () => {
           )}
         </div>
 
+        <GLAccountSelect
+          selectedAccountId={formGLAccountId}
+          selectedSubAccountId={formGLSubAccountId}
+          onAccountChange={setFormGLAccountId}
+          onSubAccountChange={setFormGLSubAccountId}
+        />
+
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium mb-2">Amount</label>
