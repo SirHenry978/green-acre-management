@@ -366,6 +366,12 @@ export const QuotationsList = ({ onConvertToInvoice }: QuotationsListProps) => {
             />
           </div>
         </div>
+        <GLAccountSelect
+          selectedAccountId={formGLAccountId}
+          selectedSubAccountId={formGLSubAccountId}
+          onAccountChange={setFormGLAccountId}
+          onSubAccountChange={setFormGLSubAccountId}
+        />
         <div>
           <label className="block text-sm font-medium mb-2">Items</label>
           <div className="border border-border rounded-lg p-4 space-y-3">
