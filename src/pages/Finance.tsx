@@ -242,6 +242,14 @@ const Finance = () => {
           <TabsContent value="receipts">
             <ReceiptsList />
           </TabsContent>
+
+          <TabsContent value="gl-accounts">
+            <GLAccountsManager />
+          </TabsContent>
+
+          <TabsContent value="gl-report">
+            <GLReport />
+          </TabsContent>
         </Tabs>
       </div>
     </DashboardLayout>
