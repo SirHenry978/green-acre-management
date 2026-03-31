@@ -8,6 +8,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { QuotationsList } from '@/components/finance/QuotationsList';
 import { InvoicesList } from '@/components/finance/InvoicesList';
 import { ReceiptsList } from '@/components/finance/ReceiptsList';
+import { GLAccountsManager } from '@/components/finance/GLAccountsManager';
+import { GLReport } from '@/components/finance/GLReport';
 import { 
   Download,
   TrendingUp,
@@ -18,7 +20,9 @@ import {
   Filter,
   FileText,
   Receipt,
-  ClipboardList
+  ClipboardList,
+  BookOpen,
+  BarChart3
 } from 'lucide-react';
 import {
   DropdownMenu,
