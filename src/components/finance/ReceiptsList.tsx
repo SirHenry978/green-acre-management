@@ -36,6 +36,8 @@ import {
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { QRCodeSVG } from 'qrcode.react';
+import { GLAccountSelect } from './GLAccountSelect';
+import { useGLAccounts } from '@/hooks/useGLAccounts';
 
 const paymentMethodIcons: Record<string, React.ElementType> = {
   cash: Banknote,
