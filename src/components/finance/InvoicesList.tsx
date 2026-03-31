@@ -111,6 +111,8 @@ export const InvoicesList = ({ onGenerateReceipt }: InvoicesListProps) => {
     setFormNotes('');
     setFormItems([{ id: 'new-1', description: '', quantity: 1, unitPrice: 0, total: 0 }]);
     setSendEmail(true);
+    setFormGLAccountId('');
+    setFormGLSubAccountId('');
   };
 
   const handleAddItem = () => {
