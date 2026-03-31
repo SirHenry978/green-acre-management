@@ -154,6 +154,8 @@ export const ReceiptsList = () => {
     setFormNotes('');
     setSendEmail(true);
     setCustomerInvoices([]);
+    setFormGLAccountId('');
+    setFormGLSubAccountId('');
   };
 
   const handleCreateReceipt = (e: React.FormEvent) => {
