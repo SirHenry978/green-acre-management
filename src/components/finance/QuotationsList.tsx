@@ -33,6 +33,8 @@ import {
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { QRCodeSVG } from 'qrcode.react';
+import { GLAccountSelect } from './GLAccountSelect';
+import { useGLAccounts } from '@/hooks/useGLAccounts';
 
 const statusColors: Record<string, string> = {
   draft: 'bg-muted text-muted-foreground',
@@ -63,6 +65,9 @@ export const QuotationsList = ({ onConvertToInvoice }: QuotationsListProps) => {
   const [formItems, setFormItems] = useState<DocumentItem[]>([
     { id: 'new-1', description: '', quantity: 1, unitPrice: 0, total: 0 }
   ]);
+  const [formGLAccountId, setFormGLAccountId] = useState('');
+  const [formGLSubAccountId, setFormGLSubAccountId] = useState('');
+  const { createEntry, getAccountById } = useGLAccounts();
 
   const filteredQuotations = useBranchFilter(quotations);
 
@@ -103,6 +108,8 @@ export const QuotationsList = ({ onConvertToInvoice }: QuotationsListProps) => {
     setFormNotes('');
     setFormItems([{ id: 'new-1', description: '', quantity: 1, unitPrice: 0, total: 0 }]);
     setSendEmail(true);
+    setFormGLAccountId('');
+    setFormGLSubAccountId('');
   };
 
   const handleAddItem = () => {
@@ -359,6 +366,12 @@ export const QuotationsList = ({ onConvertToInvoice }: QuotationsListProps) => {
             />
           </div>
         </div>
+        <GLAccountSelect
+          selectedAccountId={formGLAccountId}
+          selectedSubAccountId={formGLSubAccountId}
+          onAccountChange={setFormGLAccountId}
+          onSubAccountChange={setFormGLSubAccountId}
+        />
         <div>
           <label className="block text-sm font-medium mb-2">Items</label>
           <div className="border border-border rounded-lg p-4 space-y-3">

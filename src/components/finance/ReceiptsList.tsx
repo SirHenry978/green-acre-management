@@ -36,6 +36,8 @@ import {
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { QRCodeSVG } from 'qrcode.react';
+import { GLAccountSelect } from './GLAccountSelect';
+import { useGLAccounts } from '@/hooks/useGLAccounts';
 
 const paymentMethodIcons: Record<string, React.ElementType> = {
   cash: Banknote,
@@ -67,6 +69,9 @@ export const ReceiptsList = () => {
   const [formAmount, setFormAmount] = useState<number>(0);
   const [formPaymentMethod, setFormPaymentMethod] = useState<Receipt['paymentMethod']>('cash');
   const [formNotes, setFormNotes] = useState('');
+  const [formGLAccountId, setFormGLAccountId] = useState('');
+  const [formGLSubAccountId, setFormGLSubAccountId] = useState('');
+  const { createEntry } = useGLAccounts();
 
   const filteredReceipts = useBranchFilter(receipts);
 
@@ -149,6 +154,8 @@ export const ReceiptsList = () => {
     setFormNotes('');
     setSendEmail(true);
     setCustomerInvoices([]);
+    setFormGLAccountId('');
+    setFormGLSubAccountId('');
   };
 
   const handleCreateReceipt = (e: React.FormEvent) => {
@@ -361,6 +368,13 @@ export const ReceiptsList = () => {
             </select>
           )}
         </div>
+
+        <GLAccountSelect
+          selectedAccountId={formGLAccountId}
+          selectedSubAccountId={formGLSubAccountId}
+          onAccountChange={setFormGLAccountId}
+          onSubAccountChange={setFormGLSubAccountId}
+        />
 
         <div className="grid grid-cols-2 gap-4">
           <div>
