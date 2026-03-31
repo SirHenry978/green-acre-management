@@ -69,6 +69,9 @@ export const ReceiptsList = () => {
   const [formAmount, setFormAmount] = useState<number>(0);
   const [formPaymentMethod, setFormPaymentMethod] = useState<Receipt['paymentMethod']>('cash');
   const [formNotes, setFormNotes] = useState('');
+  const [formGLAccountId, setFormGLAccountId] = useState('');
+  const [formGLSubAccountId, setFormGLSubAccountId] = useState('');
+  const { createEntry } = useGLAccounts();
 
   const filteredReceipts = useBranchFilter(receipts);
 
