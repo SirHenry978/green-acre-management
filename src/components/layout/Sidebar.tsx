@@ -22,6 +22,7 @@ import {
   CloudSun,
   Newspaper,
   FolderKanban,
+  UserCog,
 } from 'lucide-react';
 
 interface NavItem {
@@ -45,6 +46,7 @@ const navItems: NavItem[] = [
   { name: 'Farm Projects', path: '/farm-projects', icon: FolderKanban, permission: 'dashboard' },
   { name: 'Weather', path: '/weather', icon: CloudSun, permission: 'dashboard' },
   { name: 'Agri News', path: '/agri-news', icon: Newspaper, permission: 'dashboard' },
+  { name: 'HR & Payroll', path: '/hr', icon: UserCog, permission: 'hr' },
   { name: 'Reports', path: '/reports', icon: FileText, permission: 'reports' },
   { name: 'Settings', path: '/settings', icon: Settings, permission: 'settings' },
 ];
