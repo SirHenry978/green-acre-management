@@ -221,22 +221,30 @@ export const GLAccountsManager = () => {
                         </Badge>
                       </td>
                       <td className="text-right">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm"><MoreVertical className="h-4 w-4" /></Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => openAddSub(account.id)}>
-                              <FolderPlus className="h-4 w-4 mr-2" /> Add Sub-Account
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleEditAccount(account)}>
-                              <Edit className="h-4 w-4 mr-2" /> Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuItem className="text-destructive" onClick={() => deleteAccount(account.id)}>
-                              <Trash2 className="h-4 w-4 mr-2" /> Delete
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+                        <div className="flex items-center justify-end gap-1">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="gap-1 text-xs"
+                            onClick={() => openAddSub(account.id)}
+                          >
+                            <FolderPlus className="h-3.5 w-3.5" />
+                            Sub-Account
+                          </Button>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="sm"><MoreVertical className="h-4 w-4" /></Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem onClick={() => handleEditAccount(account)}>
+                                <Edit className="h-4 w-4 mr-2" /> Edit
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="text-destructive" onClick={() => deleteAccount(account.id)}>
+                                <Trash2 className="h-4 w-4 mr-2" /> Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
                       </td>
                     </tr>
                     {isExpanded && subs.map(sub => (
