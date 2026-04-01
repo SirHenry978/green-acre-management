@@ -23,6 +23,7 @@ import LandingPage from "./pages/LandingPage";
 import Weather from "./pages/Weather";
 import AgriNews from "./pages/AgriNews";
 import FarmProjects from "./pages/FarmProjects";
+import HumanResources from "./pages/HumanResources";
 
 const queryClient = new QueryClient();
 
