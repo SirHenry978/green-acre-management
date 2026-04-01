@@ -53,6 +53,84 @@ export type Database = {
         }
         Relationships: []
       }
+      employees: {
+        Row: {
+          bank_account: string | null
+          bank_name: string | null
+          basic_salary: number
+          branch_id: string | null
+          created_at: string
+          department: string | null
+          email: string | null
+          employment_date: string | null
+          first_name: string
+          housing_allowance: number
+          id: string
+          id_number: string | null
+          last_name: string
+          medical_aid_deduction: number
+          pension_deduction_rate: number
+          phone: string | null
+          position: string | null
+          status: string
+          tax_deduction_rate: number
+          tax_number: string | null
+          transport_allowance: number
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          bank_account?: string | null
+          bank_name?: string | null
+          basic_salary?: number
+          branch_id?: string | null
+          created_at?: string
+          department?: string | null
+          email?: string | null
+          employment_date?: string | null
+          first_name: string
+          housing_allowance?: number
+          id?: string
+          id_number?: string | null
+          last_name: string
+          medical_aid_deduction?: number
+          pension_deduction_rate?: number
+          phone?: string | null
+          position?: string | null
+          status?: string
+          tax_deduction_rate?: number
+          tax_number?: string | null
+          transport_allowance?: number
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          bank_account?: string | null
+          bank_name?: string | null
+          basic_salary?: number
+          branch_id?: string | null
+          created_at?: string
+          department?: string | null
+          email?: string | null
+          employment_date?: string | null
+          first_name?: string
+          housing_allowance?: number
+          id?: string
+          id_number?: string | null
+          last_name?: string
+          medical_aid_deduction?: number
+          pension_deduction_rate?: number
+          phone?: string | null
+          position?: string | null
+          status?: string
+          tax_deduction_rate?: number
+          tax_number?: string | null
+          transport_allowance?: number
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       farm_projects: {
         Row: {
           branch_id: string
@@ -651,6 +729,138 @@ export type Database = {
             columns: ["livestock_id"]
             isOneToOne: false
             referencedRelation: "livestock"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payroll_items: {
+        Row: {
+          basic_salary: number
+          created_at: string
+          employee_id: string
+          gross_pay: number
+          housing_allowance: number
+          id: string
+          medical_aid_deduction: number
+          net_pay: number
+          payroll_run_id: string
+          pension_deduction: number
+          tax_deduction: number
+          total_deductions: number
+          transport_allowance: number
+        }
+        Insert: {
+          basic_salary?: number
+          created_at?: string
+          employee_id: string
+          gross_pay?: number
+          housing_allowance?: number
+          id?: string
+          medical_aid_deduction?: number
+          net_pay?: number
+          payroll_run_id: string
+          pension_deduction?: number
+          tax_deduction?: number
+          total_deductions?: number
+          transport_allowance?: number
+        }
+        Update: {
+          basic_salary?: number
+          created_at?: string
+          employee_id?: string
+          gross_pay?: number
+          housing_allowance?: number
+          id?: string
+          medical_aid_deduction?: number
+          net_pay?: number
+          payroll_run_id?: string
+          pension_deduction?: number
+          tax_deduction?: number
+          total_deductions?: number
+          transport_allowance?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payroll_items_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payroll_items_payroll_run_id_fkey"
+            columns: ["payroll_run_id"]
+            isOneToOne: false
+            referencedRelation: "payroll_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payroll_runs: {
+        Row: {
+          branch_id: string | null
+          created_at: string
+          gl_account_id: string | null
+          gl_sub_account_id: string | null
+          id: string
+          notes: string | null
+          period_end: string
+          period_start: string
+          processed_by: string | null
+          run_date: string
+          status: string
+          total_deductions: number
+          total_gross: number
+          total_net: number
+          updated_at: string
+        }
+        Insert: {
+          branch_id?: string | null
+          created_at?: string
+          gl_account_id?: string | null
+          gl_sub_account_id?: string | null
+          id?: string
+          notes?: string | null
+          period_end: string
+          period_start: string
+          processed_by?: string | null
+          run_date?: string
+          status?: string
+          total_deductions?: number
+          total_gross?: number
+          total_net?: number
+          updated_at?: string
+        }
+        Update: {
+          branch_id?: string | null
+          created_at?: string
+          gl_account_id?: string | null
+          gl_sub_account_id?: string | null
+          id?: string
+          notes?: string | null
+          period_end?: string
+          period_start?: string
+          processed_by?: string | null
+          run_date?: string
+          status?: string
+          total_deductions?: number
+          total_gross?: number
+          total_net?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payroll_runs_gl_account_id_fkey"
+            columns: ["gl_account_id"]
+            isOneToOne: false
+            referencedRelation: "gl_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payroll_runs_gl_sub_account_id_fkey"
+            columns: ["gl_sub_account_id"]
+            isOneToOne: false
+            referencedRelation: "gl_sub_accounts"
             referencedColumns: ["id"]
           },
         ]
