@@ -22,6 +22,7 @@ import {
   CloudSun,
   Newspaper,
   FolderKanban,
+  UserCog,
 } from 'lucide-react';
 
 interface NavItem {
