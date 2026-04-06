@@ -19,6 +19,7 @@ interface PayrollProcessorProps {
   getPayrollItemsForRun: (runId: string) => any[];
   getEmployeeById: (id: string) => Employee | undefined;
   glCreateEntry: (entry: any) => Promise<boolean>;
+  getUnpaidLeaveDays?: (employeeId: string, periodStart: string, periodEnd: string) => number;
 }
 
 const statusColors: Record<string, string> = {
