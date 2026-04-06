@@ -31,6 +31,7 @@ const statusColors: Record<string, string> = {
 export const PayrollProcessor = ({
   employees, payrollRuns, createPayrollRun, createPayrollItems,
   updatePayrollRun, getPayrollItemsForRun, getEmployeeById, glCreateEntry,
+  getUnpaidLeaveDays,
 }: PayrollProcessorProps) => {
   const [showCreate, setShowCreate] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
