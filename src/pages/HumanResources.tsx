@@ -77,6 +77,10 @@ const HumanResources = () => {
               rejectRequest={rejectRequest}
               allocateAllEmployees={allocateAllEmployees}
               getBalanceForEmployee={getBalanceForEmployee}
+              leaveTypes={leaveTypes}
+              createLeaveType={createLeaveType}
+              updateLeaveType={updateLeaveType}
+              deleteLeaveType={deleteLeaveType}
             />
           </TabsContent>
 
