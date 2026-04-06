@@ -1,11 +1,14 @@
 import { useState } from 'react';
 import { Employee } from '@/hooks/useEmployees';
 import { LeaveBalance, LeaveRequest } from '@/hooks/useLeave';
+import { LeaveType } from '@/hooks/useLeaveTypes';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, CheckCircle, XCircle, RefreshCw } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
+import { Plus, CheckCircle, XCircle, RefreshCw, Settings2, Pencil, Trash2 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -19,6 +22,10 @@ interface LeaveManagementProps {
   rejectRequest: (id: string) => Promise<boolean>;
   allocateAllEmployees: (employeeIds: string[], year: number) => Promise<void>;
   getBalanceForEmployee: (employeeId: string, year: number) => LeaveBalance | undefined;
+  leaveTypes: LeaveType[];
+  createLeaveType: (lt: Omit<LeaveType, 'id' | 'created_at' | 'updated_at'>) => Promise<boolean>;
+  updateLeaveType: (id: string, updates: Partial<LeaveType>) => Promise<boolean>;
+  deleteLeaveType: (id: string) => Promise<boolean>;
 }
 
 const statusColors: Record<string, string> = {
@@ -27,28 +34,33 @@ const statusColors: Record<string, string> = {
   rejected: 'bg-destructive/10 text-destructive',
 };
 
-const leaveTypeLabels: Record<string, string> = {
-  annual: 'Annual Leave',
-  sick: 'Sick Leave',
-  family: 'Family Leave',
-  unpaid: 'Unpaid Leave',
-};
-
 export const LeaveManagement = ({
   employees, balances, requests, loading,
   createRequest, approveRequest, rejectRequest,
   allocateAllEmployees, getBalanceForEmployee,
+  leaveTypes, createLeaveType, updateLeaveType, deleteLeaveType,
 }: LeaveManagementProps) => {
   const [showApply, setShowApply] = useState(false);
   const [employeeId, setEmployeeId] = useState('');
-  const [leaveType, setLeaveType] = useState('annual');
+  const [leaveType, setLeaveType] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [reason, setReason] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [filterStatus, setFilterStatus] = useState<string>('all');
 
+  // Leave type CRUD state
+  const [showTypeDialog, setShowTypeDialog] = useState(false);
+  const [editingType, setEditingType] = useState<LeaveType | null>(null);
+  const [typeName, setTypeName] = useState('');
+  const [typeDefaultDays, setTypeDefaultDays] = useState(0);
+  const [typeIsPaid, setTypeIsPaid] = useState(true);
+  const [typeDescription, setTypeDescription] = useState('');
+  const [typeIsActive, setTypeIsActive] = useState(true);
+  const [savingType, setSavingType] = useState(false);
+
   const currentYear = new Date().getFullYear();
+  const activeLeaveTypes = leaveTypes.filter(lt => lt.is_active);
 
   const calcDays = (start: string, end: string) => {
     if (!start || !end) return 0;
@@ -64,24 +76,30 @@ export const LeaveManagement = ({
     return count;
   };
 
+  const getLeaveTypeObj = (name: string) => leaveTypes.find(lt => lt.name === name);
+
   const handleSubmit = async (ev: React.FormEvent) => {
     ev.preventDefault();
     const days = calcDays(startDate, endDate);
     if (days <= 0) return;
     setSubmitting(true);
 
-    const balance = getBalanceForEmployee(employeeId, new Date(startDate).getFullYear());
-    let isPaid = true;
-    if (leaveType === 'unpaid') {
-      isPaid = false;
-    } else if (balance) {
-      const used = leaveType === 'annual' ? balance.annual_leave_used
-        : leaveType === 'sick' ? balance.sick_leave_used
-        : balance.family_leave_used;
-      const total = leaveType === 'annual' ? balance.annual_leave_total
-        : leaveType === 'sick' ? balance.sick_leave_total
-        : balance.family_leave_total;
-      if (used + days > total) isPaid = false;
+    const ltObj = getLeaveTypeObj(leaveType);
+    let isPaid = ltObj?.is_paid ?? true;
+
+    // Check balance if it's a paid leave type
+    if (isPaid) {
+      const balance = getBalanceForEmployee(employeeId, new Date(startDate).getFullYear());
+      if (balance) {
+        const key = leaveType.toLowerCase().replace(/\s+/g, '_');
+        const used = key === 'annual_leave' ? balance.annual_leave_used
+          : key === 'sick_leave' ? balance.sick_leave_used
+          : key === 'family_leave' ? balance.family_leave_used : 0;
+        const total = key === 'annual_leave' ? balance.annual_leave_total
+          : key === 'sick_leave' ? balance.sick_leave_total
+          : key === 'family_leave' ? balance.family_leave_total : 0;
+        if (used + days > total) isPaid = false;
+      }
     }
 
     await createRequest({
@@ -96,7 +114,43 @@ export const LeaveManagement = ({
     });
     setSubmitting(false);
     setShowApply(false);
-    setEmployeeId(''); setLeaveType('annual'); setStartDate(''); setEndDate(''); setReason('');
+    setEmployeeId(''); setLeaveType(''); setStartDate(''); setEndDate(''); setReason('');
+  };
+
+  const openCreateType = () => {
+    setEditingType(null);
+    setTypeName(''); setTypeDefaultDays(0); setTypeIsPaid(true); setTypeDescription(''); setTypeIsActive(true);
+    setShowTypeDialog(true);
+  };
+
+  const openEditType = (lt: LeaveType) => {
+    setEditingType(lt);
+    setTypeName(lt.name);
+    setTypeDefaultDays(lt.default_days);
+    setTypeIsPaid(lt.is_paid);
+    setTypeDescription(lt.description || '');
+    setTypeIsActive(lt.is_active);
+    setShowTypeDialog(true);
+  };
+
+  const handleSaveType = async (ev: React.FormEvent) => {
+    ev.preventDefault();
+    if (!typeName.trim()) return;
+    setSavingType(true);
+    const payload = {
+      name: typeName.trim(),
+      default_days: typeDefaultDays,
+      is_paid: typeIsPaid,
+      description: typeDescription || null,
+      is_active: typeIsActive,
+    };
+    if (editingType) {
+      await updateLeaveType(editingType.id, payload);
+    } else {
+      await createLeaveType(payload);
+    }
+    setSavingType(false);
+    setShowTypeDialog(false);
   };
 
   const filteredRequests = filterStatus === 'all'
@@ -117,6 +171,7 @@ export const LeaveManagement = ({
           <TabsList>
             <TabsTrigger value="requests">Leave Requests</TabsTrigger>
             <TabsTrigger value="balances">Leave Balances</TabsTrigger>
+            <TabsTrigger value="types">Leave Types</TabsTrigger>
           </TabsList>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={() => allocateAllEmployees(activeEmployeeIds, currentYear)}>
@@ -152,7 +207,7 @@ export const LeaveManagement = ({
                 {filteredRequests.map(req => (
                   <tr key={req.id} className="hover:bg-muted/30">
                     <td className="px-4 py-3 font-medium">{getEmployeeName(req.employee_id)}</td>
-                    <td className="px-4 py-3">{leaveTypeLabels[req.leave_type] || req.leave_type}</td>
+                    <td className="px-4 py-3">{req.leave_type}</td>
                     <td className="px-4 py-3">{req.start_date} → {req.end_date}</td>
                     <td className="px-4 py-3 text-center">{req.days_count}</td>
                     <td className="px-4 py-3 text-center">
@@ -215,7 +270,7 @@ export const LeaveManagement = ({
                           </span>
                         </div>
                         <div className="w-full bg-muted rounded-full h-2">
-                          <div className="bg-orange-500 h-2 rounded-full transition-all" style={{ width: `${Math.min((bal.sick_leave_used / bal.sick_leave_total) * 100, 100)}%` }} />
+                          <div className="bg-accent h-2 rounded-full transition-all" style={{ width: `${Math.min((bal.sick_leave_used / bal.sick_leave_total) * 100, 100)}%` }} />
                         </div>
                         <div className="flex justify-between text-sm">
                           <span>Family Leave</span>
@@ -224,7 +279,7 @@ export const LeaveManagement = ({
                           </span>
                         </div>
                         <div className="w-full bg-muted rounded-full h-2">
-                          <div className="bg-violet-500 h-2 rounded-full transition-all" style={{ width: `${Math.min((bal.family_leave_used / bal.family_leave_total) * 100, 100)}%` }} />
+                          <div className="bg-secondary h-2 rounded-full transition-all" style={{ width: `${Math.min((bal.family_leave_used / bal.family_leave_total) * 100, 100)}%` }} />
                         </div>
                       </>
                     ) : (
@@ -234,6 +289,59 @@ export const LeaveManagement = ({
                 </Card>
               );
             })}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="types" className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-semibold">Leave Types</h3>
+            <Button size="sm" onClick={openCreateType}>
+              <Plus className="h-4 w-4 mr-2" />Add Leave Type
+            </Button>
+          </div>
+          <div className="overflow-x-auto rounded-xl border border-border">
+            <table className="w-full text-sm">
+              <thead className="bg-muted/50"><tr>
+                <th className="px-4 py-3 text-left font-medium">Name</th>
+                <th className="px-4 py-3 text-center font-medium">Default Days</th>
+                <th className="px-4 py-3 text-center font-medium">Paid</th>
+                <th className="px-4 py-3 text-left font-medium">Description</th>
+                <th className="px-4 py-3 text-center font-medium">Active</th>
+                <th className="px-4 py-3 text-center font-medium">Actions</th>
+              </tr></thead>
+              <tbody className="divide-y divide-border">
+                {leaveTypes.map(lt => (
+                  <tr key={lt.id} className="hover:bg-muted/30">
+                    <td className="px-4 py-3 font-medium">{lt.name}</td>
+                    <td className="px-4 py-3 text-center">{lt.default_days}</td>
+                    <td className="px-4 py-3 text-center">
+                      <Badge variant={lt.is_paid ? 'default' : 'secondary'} className="text-xs">
+                        {lt.is_paid ? 'Yes' : 'No'}
+                      </Badge>
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground">{lt.description || '—'}</td>
+                    <td className="px-4 py-3 text-center">
+                      <Badge variant={lt.is_active ? 'default' : 'outline'} className="text-xs">
+                        {lt.is_active ? 'Active' : 'Inactive'}
+                      </Badge>
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      <div className="flex gap-1 justify-center">
+                        <Button variant="ghost" size="sm" onClick={() => openEditType(lt)}>
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="sm" onClick={() => deleteLeaveType(lt.id)}>
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+                {leaveTypes.length === 0 && (
+                  <tr><td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">No leave types configured</td></tr>
+                )}
+              </tbody>
+            </table>
           </div>
         </TabsContent>
       </Tabs>
@@ -257,12 +365,11 @@ export const LeaveManagement = ({
             <div>
               <label className="block text-sm font-medium mb-1">Leave Type *</label>
               <Select value={leaveType} onValueChange={setLeaveType}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger><SelectValue placeholder="Select leave type" /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="annual">Annual Leave</SelectItem>
-                  <SelectItem value="sick">Sick Leave</SelectItem>
-                  <SelectItem value="family">Family Leave</SelectItem>
-                  <SelectItem value="unpaid">Unpaid Leave</SelectItem>
+                  {activeLeaveTypes.map(lt => (
+                    <SelectItem key={lt.id} value={lt.name}>{lt.name} ({lt.default_days} days)</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -279,11 +386,14 @@ export const LeaveManagement = ({
             {startDate && endDate && (
               <div className="rounded-lg bg-muted/50 p-3 text-sm">
                 <p><strong>{calcDays(startDate, endDate)}</strong> working day(s)</p>
-                {employeeId && leaveType !== 'unpaid' && (() => {
+                {employeeId && leaveType && (() => {
+                  const ltObj = getLeaveTypeObj(leaveType);
+                  if (!ltObj?.is_paid) return <p className="text-muted-foreground">This leave type is unpaid — days will be deducted from salary.</p>;
                   const bal = getBalanceForEmployee(employeeId, new Date(startDate).getFullYear());
                   if (!bal) return <p className="text-muted-foreground">No leave balance allocated yet</p>;
-                  const used = leaveType === 'annual' ? bal.annual_leave_used : leaveType === 'sick' ? bal.sick_leave_used : bal.family_leave_used;
-                  const total = leaveType === 'annual' ? bal.annual_leave_total : leaveType === 'sick' ? bal.sick_leave_total : bal.family_leave_total;
+                  const key = leaveType.toLowerCase().replace(/\s+/g, '_');
+                  const used = key === 'annual_leave' ? bal.annual_leave_used : key === 'sick_leave' ? bal.sick_leave_used : key === 'family_leave' ? bal.family_leave_used : 0;
+                  const total = key === 'annual_leave' ? bal.annual_leave_total : key === 'sick_leave' ? bal.sick_leave_total : key === 'family_leave' ? bal.family_leave_total : 0;
                   const remaining = total - used;
                   const days = calcDays(startDate, endDate);
                   const willExceed = days > remaining;
@@ -306,7 +416,42 @@ export const LeaveManagement = ({
             </div>
             <div className="flex justify-end gap-2">
               <Button type="button" variant="outline" onClick={() => setShowApply(false)}>Cancel</Button>
-              <Button type="submit" disabled={submitting || !employeeId}>{submitting ? 'Submitting...' : 'Submit'}</Button>
+              <Button type="submit" disabled={submitting || !employeeId || !leaveType}>{submitting ? 'Submitting...' : 'Submit'}</Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Create/Edit Leave Type Dialog */}
+      <Dialog open={showTypeDialog} onOpenChange={setShowTypeDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>{editingType ? 'Edit Leave Type' : 'Create Leave Type'}</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleSaveType} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Name *</label>
+              <Input value={typeName} onChange={e => setTypeName(e.target.value)} placeholder="e.g. Maternity Leave" required />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Default Days Per Year *</label>
+              <Input type="number" min={0} value={typeDefaultDays} onChange={e => setTypeDefaultDays(Number(e.target.value))} required />
+            </div>
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium">Paid Leave</label>
+              <Switch checked={typeIsPaid} onCheckedChange={setTypeIsPaid} />
+            </div>
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium">Active</label>
+              <Switch checked={typeIsActive} onCheckedChange={setTypeIsActive} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Description</label>
+              <textarea className="input-farm min-h-[60px]" value={typeDescription} onChange={e => setTypeDescription(e.target.value)} placeholder="Optional description..." />
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button type="button" variant="outline" onClick={() => setShowTypeDialog(false)}>Cancel</Button>
+              <Button type="submit" disabled={savingType}>{savingType ? 'Saving...' : editingType ? 'Update' : 'Create'}</Button>
             </div>
           </form>
         </DialogContent>
