@@ -441,6 +441,112 @@ export type Database = {
           },
         ]
       }
+      leave_balances: {
+        Row: {
+          annual_leave_total: number
+          annual_leave_used: number
+          created_at: string
+          employee_id: string
+          family_leave_total: number
+          family_leave_used: number
+          id: string
+          sick_leave_total: number
+          sick_leave_used: number
+          updated_at: string
+          year: number
+        }
+        Insert: {
+          annual_leave_total?: number
+          annual_leave_used?: number
+          created_at?: string
+          employee_id: string
+          family_leave_total?: number
+          family_leave_used?: number
+          id?: string
+          sick_leave_total?: number
+          sick_leave_used?: number
+          updated_at?: string
+          year: number
+        }
+        Update: {
+          annual_leave_total?: number
+          annual_leave_used?: number
+          created_at?: string
+          employee_id?: string
+          family_leave_total?: number
+          family_leave_used?: number
+          id?: string
+          sick_leave_total?: number
+          sick_leave_used?: number
+          updated_at?: string
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leave_balances_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leave_requests: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          created_at: string
+          days_count: number
+          employee_id: string
+          end_date: string
+          id: string
+          is_paid: boolean
+          leave_type: string
+          reason: string | null
+          start_date: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string
+          days_count?: number
+          employee_id: string
+          end_date: string
+          id?: string
+          is_paid?: boolean
+          leave_type?: string
+          reason?: string | null
+          start_date: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string
+          days_count?: number
+          employee_id?: string
+          end_date?: string
+          id?: string
+          is_paid?: boolean
+          leave_type?: string
+          reason?: string | null
+          start_date?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leave_requests_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       licenses: {
         Row: {
           created_at: string
