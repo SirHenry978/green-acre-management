@@ -4,6 +4,7 @@ import { Users, DollarSign, FileText, BarChart3, CalendarDays } from 'lucide-rea
 import { useEmployees } from '@/hooks/useEmployees';
 import { useGLAccounts } from '@/hooks/useGLAccounts';
 import { useLeave } from '@/hooks/useLeave';
+import { useLeaveTypes } from '@/hooks/useLeaveTypes';
 import { EmployeesList } from '@/components/hr/EmployeesList';
 import { PayrollProcessor } from '@/components/hr/PayrollProcessor';
 import { PayslipViewer } from '@/components/hr/PayslipViewer';
@@ -25,6 +26,8 @@ const HumanResources = () => {
     createRequest, approveRequest, rejectRequest,
     allocateAllEmployees, getBalanceForEmployee, getUnpaidLeaveDays,
   } = useLeave();
+
+  const { leaveTypes, createLeaveType, updateLeaveType, deleteLeaveType } = useLeaveTypes();
 
   return (
     <DashboardLayout>
@@ -74,6 +77,10 @@ const HumanResources = () => {
               rejectRequest={rejectRequest}
               allocateAllEmployees={allocateAllEmployees}
               getBalanceForEmployee={getBalanceForEmployee}
+              leaveTypes={leaveTypes}
+              createLeaveType={createLeaveType}
+              updateLeaveType={updateLeaveType}
+              deleteLeaveType={deleteLeaveType}
             />
           </TabsContent>
 
