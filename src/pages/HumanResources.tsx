@@ -27,6 +27,8 @@ const HumanResources = () => {
     allocateAllEmployees, getBalanceForEmployee, getUnpaidLeaveDays,
   } = useLeave();
 
+  const { leaveTypes, createLeaveType, updateLeaveType, deleteLeaveType } = useLeaveTypes();
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
