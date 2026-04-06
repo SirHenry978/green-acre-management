@@ -54,14 +54,20 @@ export const PayrollProcessor = ({
 
     // Calculate totals
     const items = activeEmployees.map(emp => {
-      const gross = emp.basic_salary + emp.housing_allowance + emp.transport_allowance;
+      // Calculate unpaid leave deduction
+      const unpaidDays = getUnpaidLeaveDays ? getUnpaidLeaveDays(emp.id, periodStart, periodEnd) : 0;
+      const dailyRate = emp.basic_salary / 22; // ~22 working days per month
+      const leaveDeduction = Math.round(unpaidDays * dailyRate * 100) / 100;
+
+      const adjustedBasic = Math.max(emp.basic_salary - leaveDeduction, 0);
+      const gross = adjustedBasic + emp.housing_allowance + emp.transport_allowance;
       const tax = gross * (emp.tax_deduction_rate / 100);
       const pension = gross * (emp.pension_deduction_rate / 100);
       const medical = emp.medical_aid_deduction;
       const totalDed = tax + pension + medical;
       return {
         employee_id: emp.id,
-        basic_salary: emp.basic_salary,
+        basic_salary: adjustedBasic,
         housing_allowance: emp.housing_allowance,
         transport_allowance: emp.transport_allowance,
         gross_pay: gross,
