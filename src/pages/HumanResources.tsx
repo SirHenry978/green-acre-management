@@ -4,6 +4,7 @@ import { Users, DollarSign, FileText, BarChart3, CalendarDays } from 'lucide-rea
 import { useEmployees } from '@/hooks/useEmployees';
 import { useGLAccounts } from '@/hooks/useGLAccounts';
 import { useLeave } from '@/hooks/useLeave';
+import { useLeaveTypes } from '@/hooks/useLeaveTypes';
 import { EmployeesList } from '@/components/hr/EmployeesList';
 import { PayrollProcessor } from '@/components/hr/PayrollProcessor';
 import { PayslipViewer } from '@/components/hr/PayslipViewer';
