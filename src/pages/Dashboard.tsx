@@ -123,6 +123,9 @@ const Dashboard = () => {
           </div>
         </div>
 
+        {/* Leave Summary */}
+        <LeaveWidget />
+
         {/* Branches and Activity */}
         <div className="grid gap-6 lg:grid-cols-3">
           {(isSuperAdmin || isBranchManager) && (
