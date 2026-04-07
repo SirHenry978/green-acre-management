@@ -24,6 +24,7 @@ import Weather from "./pages/Weather";
 import AgriNews from "./pages/AgriNews";
 import FarmProjects from "./pages/FarmProjects";
 import HumanResources from "./pages/HumanResources";
+import LeaveApplication from "./pages/LeaveApplication";
 
 const queryClient = new QueryClient();
 
@@ -53,6 +54,7 @@ const App = () => (
             <Route path="/agri-news" element={<AgriNews />} />
             <Route path="/farm-projects" element={<FarmProjects />} />
             <Route path="/hr" element={<HumanResources />} />
+            <Route path="/leave" element={<LeaveApplication />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
