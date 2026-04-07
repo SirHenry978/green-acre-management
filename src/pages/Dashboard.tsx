@@ -5,6 +5,7 @@ import { BranchCard } from '@/components/dashboard/BranchCard';
 import { ActivityFeed } from '@/components/dashboard/ActivityFeed';
 import { RevenueChart } from '@/components/dashboard/RevenueChart';
 import { FarmTypeChart } from '@/components/dashboard/FarmTypeChart';
+import { LeaveWidget } from '@/components/dashboard/LeaveWidget';
 import { 
   branches, 
   users, 
@@ -121,6 +122,9 @@ const Dashboard = () => {
             <FarmTypeChart />
           </div>
         </div>
+
+        {/* Leave Summary */}
+        <LeaveWidget />
 
         {/* Branches and Activity */}
         <div className="grid gap-6 lg:grid-cols-3">
