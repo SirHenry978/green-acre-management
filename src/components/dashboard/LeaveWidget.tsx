@@ -108,7 +108,7 @@ export const LeaveWidget = () => {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => navigate('/hr')}
+              onClick={() => navigate('/leave')}
               className="gap-1"
             >
               Apply Leave <ArrowRight className="h-3 w-3" />
