@@ -53,6 +53,118 @@ export type Database = {
         }
         Relationships: []
       }
+      credit_notes: {
+        Row: {
+          branch_id: string
+          created_at: string
+          id: string
+          issued_by: string | null
+          items: Json
+          note_number: string
+          notes: string | null
+          reason: string
+          return_date: string
+          status: string
+          total_quantity: number
+          updated_at: string
+          warehouse_id: string | null
+        }
+        Insert: {
+          branch_id: string
+          created_at?: string
+          id?: string
+          issued_by?: string | null
+          items?: Json
+          note_number: string
+          notes?: string | null
+          reason: string
+          return_date?: string
+          status?: string
+          total_quantity?: number
+          updated_at?: string
+          warehouse_id?: string | null
+        }
+        Update: {
+          branch_id?: string
+          created_at?: string
+          id?: string
+          issued_by?: string | null
+          items?: Json
+          note_number?: string
+          notes?: string | null
+          reason?: string
+          return_date?: string
+          status?: string
+          total_quantity?: number
+          updated_at?: string
+          warehouse_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "credit_notes_warehouse_id_fkey"
+            columns: ["warehouse_id"]
+            isOneToOne: false
+            referencedRelation: "warehouses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      delivery_notes: {
+        Row: {
+          branch_id: string
+          created_at: string
+          delivery_date: string
+          id: string
+          items: Json
+          note_number: string
+          notes: string | null
+          received_by: string | null
+          status: string
+          supplier: string
+          total_quantity: number
+          updated_at: string
+          warehouse_id: string | null
+        }
+        Insert: {
+          branch_id: string
+          created_at?: string
+          delivery_date?: string
+          id?: string
+          items?: Json
+          note_number: string
+          notes?: string | null
+          received_by?: string | null
+          status?: string
+          supplier: string
+          total_quantity?: number
+          updated_at?: string
+          warehouse_id?: string | null
+        }
+        Update: {
+          branch_id?: string
+          created_at?: string
+          delivery_date?: string
+          id?: string
+          items?: Json
+          note_number?: string
+          notes?: string | null
+          received_by?: string | null
+          status?: string
+          supplier?: string
+          total_quantity?: number
+          updated_at?: string
+          warehouse_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "delivery_notes_warehouse_id_fkey"
+            columns: ["warehouse_id"]
+            isOneToOne: false
+            referencedRelation: "warehouses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       employees: {
         Row: {
           bank_account: string | null
@@ -378,6 +490,155 @@ export type Database = {
             columns: ["parent_account_id"]
             isOneToOne: false
             referencedRelation: "gl_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inventory_issues: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          branch_id: string
+          category: string
+          created_at: string
+          from_warehouse_id: string | null
+          id: string
+          issue_date: string
+          issuer_name: string
+          item_name: string
+          notes: string | null
+          purpose: string | null
+          quantity: number
+          recipient_name: string
+          reference_number: string | null
+          status: string
+          to_warehouse_id: string | null
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          branch_id: string
+          category?: string
+          created_at?: string
+          from_warehouse_id?: string | null
+          id?: string
+          issue_date?: string
+          issuer_name: string
+          item_name: string
+          notes?: string | null
+          purpose?: string | null
+          quantity: number
+          recipient_name: string
+          reference_number?: string | null
+          status?: string
+          to_warehouse_id?: string | null
+          unit?: string
+          updated_at?: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          branch_id?: string
+          category?: string
+          created_at?: string
+          from_warehouse_id?: string | null
+          id?: string
+          issue_date?: string
+          issuer_name?: string
+          item_name?: string
+          notes?: string | null
+          purpose?: string | null
+          quantity?: number
+          recipient_name?: string
+          reference_number?: string | null
+          status?: string
+          to_warehouse_id?: string | null
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_issues_from_warehouse_id_fkey"
+            columns: ["from_warehouse_id"]
+            isOneToOne: false
+            referencedRelation: "warehouses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_issues_to_warehouse_id_fkey"
+            columns: ["to_warehouse_id"]
+            isOneToOne: false
+            referencedRelation: "warehouses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inventory_receipts: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          branch_id: string
+          category: string
+          created_at: string
+          id: string
+          item_name: string
+          notes: string | null
+          quantity: number
+          receipt_date: string
+          received_by: string
+          reference_number: string | null
+          status: string
+          supplier_source: string | null
+          unit: string
+          updated_at: string
+          warehouse_id: string | null
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          branch_id: string
+          category?: string
+          created_at?: string
+          id?: string
+          item_name: string
+          notes?: string | null
+          quantity: number
+          receipt_date?: string
+          received_by: string
+          reference_number?: string | null
+          status?: string
+          supplier_source?: string | null
+          unit?: string
+          updated_at?: string
+          warehouse_id?: string | null
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          branch_id?: string
+          category?: string
+          created_at?: string
+          id?: string
+          item_name?: string
+          notes?: string | null
+          quantity?: number
+          receipt_date?: string
+          received_by?: string
+          reference_number?: string | null
+          status?: string
+          supplier_source?: string | null
+          unit?: string
+          updated_at?: string
+          warehouse_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_receipts_warehouse_id_fkey"
+            columns: ["warehouse_id"]
+            isOneToOne: false
+            referencedRelation: "warehouses"
             referencedColumns: ["id"]
           },
         ]
@@ -1037,6 +1298,42 @@ export type Database = {
           phone?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      warehouses: {
+        Row: {
+          branch_id: string
+          capacity: number | null
+          created_at: string
+          id: string
+          location_description: string | null
+          name: string
+          status: string
+          updated_at: string
+          warehouse_type: string
+        }
+        Insert: {
+          branch_id: string
+          capacity?: number | null
+          created_at?: string
+          id?: string
+          location_description?: string | null
+          name: string
+          status?: string
+          updated_at?: string
+          warehouse_type?: string
+        }
+        Update: {
+          branch_id?: string
+          capacity?: number | null
+          created_at?: string
+          id?: string
+          location_description?: string | null
+          name?: string
+          status?: string
+          updated_at?: string
+          warehouse_type?: string
         }
         Relationships: []
       }
