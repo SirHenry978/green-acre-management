@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { AvatarUpload } from '@/components/profile/AvatarUpload';
 import { EditProfileDialog } from '@/components/profile/EditProfileDialog';
 import { ChangePasswordDialog } from '@/components/profile/ChangePasswordDialog';
+import { MyPayslips } from '@/components/profile/MyPayslips';
 import { supabase } from '@/integrations/supabase/client';
 import {
   User,
@@ -18,6 +19,7 @@ import {
   Lock,
   MapPin,
   CreditCard,
+  Receipt,
 } from 'lucide-react';
 
 const Profile = () => {
@@ -130,6 +132,14 @@ const Profile = () => {
               <p className="text-sm text-muted-foreground">Attendance Rate</p>
             </div>
           </div>
+        </div>
+
+        {/* My Payslips */}
+        <div className="card-farm p-6">
+          <h3 className="font-display font-semibold text-lg mb-4 flex items-center gap-2">
+            <Receipt className="h-5 w-5 text-primary" /> My Payslips
+          </h3>
+          <MyPayslips />
         </div>
 
         {/* Dialogs */}
