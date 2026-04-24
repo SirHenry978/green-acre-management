@@ -1,6 +1,6 @@
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Users, DollarSign, FileText, BarChart3, CalendarDays } from 'lucide-react';
+import { Users, DollarSign, FileText, BarChart3, CalendarDays, HandCoins } from 'lucide-react';
 import { useEmployees } from '@/hooks/useEmployees';
 import { useGLAccounts } from '@/hooks/useGLAccounts';
 import { useLeave } from '@/hooks/useLeave';
@@ -10,6 +10,7 @@ import { PayrollProcessor } from '@/components/hr/PayrollProcessor';
 import { PayslipViewer } from '@/components/hr/PayslipViewer';
 import { PayrollReports } from '@/components/hr/PayrollReports';
 import { LeaveManagement } from '@/components/hr/LeaveManagement';
+import { LoansAndBonuses } from '@/components/hr/LoansAndBonuses';
 
 const HumanResources = () => {
   const {
@@ -38,7 +39,7 @@ const HumanResources = () => {
         </div>
 
         <Tabs defaultValue="employees" className="space-y-4">
-          <TabsList className="grid grid-cols-5 w-full max-w-2xl">
+          <TabsList className="grid grid-cols-6 w-full max-w-3xl">
             <TabsTrigger value="employees" className="flex items-center gap-2">
               <Users className="h-4 w-4" /><span className="hidden sm:inline">Employees</span>
             </TabsTrigger>
@@ -47,6 +48,9 @@ const HumanResources = () => {
             </TabsTrigger>
             <TabsTrigger value="payroll" className="flex items-center gap-2">
               <DollarSign className="h-4 w-4" /><span className="hidden sm:inline">Payroll</span>
+            </TabsTrigger>
+            <TabsTrigger value="loans" className="flex items-center gap-2">
+              <HandCoins className="h-4 w-4" /><span className="hidden sm:inline">Loans & Bonuses</span>
             </TabsTrigger>
             <TabsTrigger value="payslips" className="flex items-center gap-2">
               <FileText className="h-4 w-4" /><span className="hidden sm:inline">Payslips</span>
@@ -96,6 +100,10 @@ const HumanResources = () => {
               glCreateEntry={createEntry}
               getUnpaidLeaveDays={getUnpaidLeaveDays}
             />
+          </TabsContent>
+
+          <TabsContent value="loans">
+            <LoansAndBonuses employees={employees} />
           </TabsContent>
 
           <TabsContent value="payslips">

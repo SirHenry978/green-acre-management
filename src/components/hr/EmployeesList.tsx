@@ -27,6 +27,8 @@ const emptyForm = {
   transport_allowance: 0, tax_deduction_rate: 0, pension_deduction_rate: 0,
   medical_aid_deduction: 0, bank_name: '', bank_account: '', branch_id: '', status: 'active',
   user_id: null as string | null,
+  pay_type: 'monthly', daily_rate: 0, hourly_rate: 0, piece_rate: 0,
+  piece_unit: 'kg', overtime_multiplier: 1.5,
 };
 
 export const EmployeesList = ({ employees, loading, createEmployee, updateEmployee, deleteEmployee }: EmployeesListProps) => {
@@ -54,6 +56,12 @@ export const EmployeesList = ({ employees, loading, createEmployee, updateEmploy
       medical_aid_deduction: e.medical_aid_deduction, bank_name: e.bank_name || '',
       bank_account: e.bank_account || '', branch_id: e.branch_id || '', status: e.status,
       user_id: e.user_id,
+      pay_type: e.pay_type || 'monthly',
+      daily_rate: e.daily_rate || 0,
+      hourly_rate: e.hourly_rate || 0,
+      piece_rate: e.piece_rate || 0,
+      piece_unit: e.piece_unit || 'kg',
+      overtime_multiplier: e.overtime_multiplier || 1.5,
     });
     setEditingId(e.id);
     setShowForm(true);
@@ -156,8 +164,29 @@ export const EmployeesList = ({ employees, loading, createEmployee, updateEmploy
                 </select></div>
             </div>
             <h4 className="font-semibold text-sm pt-2 border-t">Salary & Allowances</h4>
+            <div className="grid grid-cols-2 gap-4">
+              <div><label className="block text-sm font-medium mb-1">Pay Type *</label>
+                <select className="input-farm" value={form.pay_type} onChange={e => setForm({ ...form, pay_type: e.target.value })}>
+                  <option value="monthly">Monthly Salary</option>
+                  <option value="daily">Daily Wage</option>
+                  <option value="hourly">Hourly + Overtime</option>
+                  <option value="piece">Piece Rate</option>
+                </select></div>
+              <div><label className="block text-sm font-medium mb-1">Overtime Multiplier</label>
+                <input className="input-farm" type="number" step="0.1" value={form.overtime_multiplier} onChange={e => setForm({ ...form, overtime_multiplier: parseFloat(e.target.value) || 1.5 })} /></div>
+            </div>
+            <div className="grid grid-cols-4 gap-4">
+              <div><label className="block text-sm font-medium mb-1">Daily Rate</label>
+                <input className="input-farm" type="number" step="0.01" value={form.daily_rate} onChange={e => setForm({ ...form, daily_rate: parseFloat(e.target.value) || 0 })} /></div>
+              <div><label className="block text-sm font-medium mb-1">Hourly Rate</label>
+                <input className="input-farm" type="number" step="0.01" value={form.hourly_rate} onChange={e => setForm({ ...form, hourly_rate: parseFloat(e.target.value) || 0 })} /></div>
+              <div><label className="block text-sm font-medium mb-1">Piece Rate</label>
+                <input className="input-farm" type="number" step="0.01" value={form.piece_rate} onChange={e => setForm({ ...form, piece_rate: parseFloat(e.target.value) || 0 })} /></div>
+              <div><label className="block text-sm font-medium mb-1">Piece Unit</label>
+                <input className="input-farm" placeholder="kg, crate, bag" value={form.piece_unit} onChange={e => setForm({ ...form, piece_unit: e.target.value })} /></div>
+            </div>
             <div className="grid grid-cols-3 gap-4">
-              <div><label className="block text-sm font-medium mb-1">Basic Salary *</label>
+              <div><label className="block text-sm font-medium mb-1">Basic Salary (Monthly)</label>
                 <input className="input-farm" type="number" step="0.01" required value={form.basic_salary} onChange={e => setForm({ ...form, basic_salary: parseFloat(e.target.value) || 0 })} /></div>
               <div><label className="block text-sm font-medium mb-1">Housing Allowance</label>
                 <input className="input-farm" type="number" step="0.01" value={form.housing_allowance} onChange={e => setForm({ ...form, housing_allowance: parseFloat(e.target.value) || 0 })} /></div>
