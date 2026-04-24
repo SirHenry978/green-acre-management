@@ -3,6 +3,7 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmployees } from '@/hooks/useEmployees';
 import { useLeaveTypes, LeaveType } from '@/hooks/useLeaveTypes';
+import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import {
   CalendarDays,
@@ -67,6 +68,14 @@ interface LeaveRequest {
 const LeaveApplication = () => {
   const { employees } = useEmployees();
   const { leaveTypes } = useLeaveTypes();
+  const { branch, user } = useAuth();
+  // Super admin sees all; others limited to their branch
+  const branchEmployees = employees.filter(e => {
+    if (e.status !== 'active') return false;
+    if (user?.role === 'super_admin') return true;
+    if (!branch?.id) return true;
+    return e.branch_id === branch.id;
+  });
   const [balances, setBalances] = useState<LeaveBalance[]>([]);
   const [requests, setRequests] = useState<LeaveRequest[]>([]);
   const [loading, setLoading] = useState(true);
@@ -211,11 +220,22 @@ const LeaveApplication = () => {
                 <div>
                   <Label>Employee</Label>
                   <Select value={selectedEmployee} onValueChange={setSelectedEmployee}>
-                    <SelectTrigger><SelectValue placeholder="Select employee" /></SelectTrigger>
+                    <SelectTrigger>
+                      <SelectValue placeholder={branchEmployees.length ? "Select employee" : "No employees in this branch"} />
+                    </SelectTrigger>
                     <SelectContent>
-                      {employees.filter(e => e.status === 'active').map(e => (
-                        <SelectItem key={e.id} value={e.id}>{e.first_name} {e.last_name}</SelectItem>
-                      ))}
+                      {branchEmployees.length === 0 ? (
+                        <div className="px-2 py-3 text-xs text-muted-foreground text-center">
+                          No active employees{branch?.name ? ` in ${branch.name}` : ''}
+                        </div>
+                      ) : (
+                        branchEmployees.map(e => (
+                          <SelectItem key={e.id} value={e.id}>
+                            {e.first_name} {e.last_name}
+                            {e.position ? ` — ${e.position}` : ''}
+                          </SelectItem>
+                        ))
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
