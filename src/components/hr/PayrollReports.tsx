@@ -3,7 +3,8 @@ import { Employee, PayrollRun } from '@/hooks/useEmployees';
 import { GLAccount } from '@/hooks/useGLAccounts';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Download, Filter } from 'lucide-react';
+import { Download, Filter, FileSpreadsheet } from 'lucide-react';
+import { generatePayrollExcel } from '@/lib/payrollExports';
 
 interface PayrollReportsProps {
   employees: Employee[];
@@ -75,11 +76,43 @@ export const PayrollReports = ({ employees, payrollRuns, getPayrollItemsForRun, 
     a.click(); URL.revokeObjectURL(url);
   };
 
+  const exportExcel = () => {
+    if (filteredRuns.length === 0) return;
+    // Combine all filtered items into one workbook by exporting first run; for multi-run, build a flat sheet
+    const flatRows = detailedItems.map((i: any) => ({
+      Period: `${i.run.period_start} - ${i.run.period_end}`,
+      Employee: i.employee ? `${i.employee.first_name} ${i.employee.last_name}` : 'Unknown',
+      Department: i.employee?.department || '',
+      'Pay Type': i.pay_type || 'monthly',
+      Basic: i.basic_salary, Overtime: i.overtime_pay || 0,
+      Housing: i.housing_allowance, Transport: i.transport_allowance,
+      Bonus: i.harvest_bonus || 0, Gross: i.gross_pay,
+      Tax: i.tax_deduction, Pension: i.pension_deduction,
+      Medical: i.medical_aid_deduction, Loan: i.loan_deduction || 0,
+      'Total Deductions': i.total_deductions, Net: i.net_pay,
+      Status: i.run.status,
+    }));
+    import('xlsx').then(XLSX => {
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet([
+        { Metric: 'Total Runs', Value: summary.runs },
+        { Metric: 'Total Gross', Value: summary.totalGross },
+        { Metric: 'Total Deductions', Value: summary.totalDed },
+        { Metric: 'Total Net', Value: summary.totalNet },
+      ]), 'Summary');
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(flatRows), 'Detail');
+      XLSX.writeFile(wb, `payroll-report-${new Date().toISOString().split('T')[0]}.xlsx`);
+    });
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold flex items-center gap-2"><Filter className="h-5 w-5" />Payroll Reports</h3>
-        <Button variant="outline" onClick={exportCSV}><Download className="h-4 w-4 mr-2" />Export CSV</Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={exportCSV}><Download className="h-4 w-4 mr-2" />CSV</Button>
+          <Button variant="outline" onClick={exportExcel}><FileSpreadsheet className="h-4 w-4 mr-2" />Excel</Button>
+        </div>
       </div>
 
       {/* Filters */}
