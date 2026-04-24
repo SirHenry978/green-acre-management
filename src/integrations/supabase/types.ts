@@ -165,6 +165,84 @@ export type Database = {
           },
         ]
       }
+      employee_bonuses: {
+        Row: {
+          amount: number
+          applied_to_payroll_id: string | null
+          bonus_date: string
+          bonus_type: string
+          branch_id: string | null
+          created_at: string
+          description: string | null
+          employee_id: string
+          id: string
+        }
+        Insert: {
+          amount?: number
+          applied_to_payroll_id?: string | null
+          bonus_date?: string
+          bonus_type?: string
+          branch_id?: string | null
+          created_at?: string
+          description?: string | null
+          employee_id: string
+          id?: string
+        }
+        Update: {
+          amount?: number
+          applied_to_payroll_id?: string | null
+          bonus_date?: string
+          bonus_type?: string
+          branch_id?: string | null
+          created_at?: string
+          description?: string | null
+          employee_id?: string
+          id?: string
+        }
+        Relationships: []
+      }
+      employee_loans: {
+        Row: {
+          balance: number
+          branch_id: string | null
+          created_at: string
+          employee_id: string
+          id: string
+          loan_date: string
+          monthly_installment: number
+          principal_amount: number
+          reason: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          balance?: number
+          branch_id?: string | null
+          created_at?: string
+          employee_id: string
+          id?: string
+          loan_date?: string
+          monthly_installment?: number
+          principal_amount?: number
+          reason?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          balance?: number
+          branch_id?: string | null
+          created_at?: string
+          employee_id?: string
+          id?: string
+          loan_date?: string
+          monthly_installment?: number
+          principal_amount?: number
+          reason?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       employees: {
         Row: {
           bank_account: string | null
@@ -172,17 +250,23 @@ export type Database = {
           basic_salary: number
           branch_id: string | null
           created_at: string
+          daily_rate: number
           department: string | null
           email: string | null
           employment_date: string | null
           first_name: string
+          hourly_rate: number
           housing_allowance: number
           id: string
           id_number: string | null
           last_name: string
           medical_aid_deduction: number
+          overtime_multiplier: number
+          pay_type: string
           pension_deduction_rate: number
           phone: string | null
+          piece_rate: number
+          piece_unit: string | null
           position: string | null
           status: string
           tax_deduction_rate: number
@@ -197,17 +281,23 @@ export type Database = {
           basic_salary?: number
           branch_id?: string | null
           created_at?: string
+          daily_rate?: number
           department?: string | null
           email?: string | null
           employment_date?: string | null
           first_name: string
+          hourly_rate?: number
           housing_allowance?: number
           id?: string
           id_number?: string | null
           last_name: string
           medical_aid_deduction?: number
+          overtime_multiplier?: number
+          pay_type?: string
           pension_deduction_rate?: number
           phone?: string | null
+          piece_rate?: number
+          piece_unit?: string | null
           position?: string | null
           status?: string
           tax_deduction_rate?: number
@@ -222,17 +312,23 @@ export type Database = {
           basic_salary?: number
           branch_id?: string | null
           created_at?: string
+          daily_rate?: number
           department?: string | null
           email?: string | null
           employment_date?: string | null
           first_name?: string
+          hourly_rate?: number
           housing_allowance?: number
           id?: string
           id_number?: string | null
           last_name?: string
           medical_aid_deduction?: number
+          overtime_multiplier?: number
+          pay_type?: string
           pension_deduction_rate?: number
           phone?: string | null
+          piece_rate?: number
+          piece_unit?: string | null
           position?: string | null
           status?: string
           tax_deduction_rate?: number
@@ -1135,46 +1231,94 @@ export type Database = {
       }
       payroll_items: {
         Row: {
+          absence_penalty: number
           basic_salary: number
           created_at: string
+          days_worked: number
           employee_id: string
+          food_allowance: number
           gross_pay: number
+          harvest_bonus: number
+          hours_worked: number
           housing_allowance: number
           id: string
+          loan_deduction: number
           medical_aid_deduction: number
           net_pay: number
+          other_deductions: number
+          other_earnings: number
+          overtime_hours: number
+          overtime_pay: number
+          paid_at: string | null
+          pay_type: string
+          payment_method: string | null
+          payment_reference: string | null
           payroll_run_id: string
+          payslip_sent_at: string | null
           pension_deduction: number
+          quantity_produced: number
           tax_deduction: number
           total_deductions: number
           transport_allowance: number
         }
         Insert: {
+          absence_penalty?: number
           basic_salary?: number
           created_at?: string
+          days_worked?: number
           employee_id: string
+          food_allowance?: number
           gross_pay?: number
+          harvest_bonus?: number
+          hours_worked?: number
           housing_allowance?: number
           id?: string
+          loan_deduction?: number
           medical_aid_deduction?: number
           net_pay?: number
+          other_deductions?: number
+          other_earnings?: number
+          overtime_hours?: number
+          overtime_pay?: number
+          paid_at?: string | null
+          pay_type?: string
+          payment_method?: string | null
+          payment_reference?: string | null
           payroll_run_id: string
+          payslip_sent_at?: string | null
           pension_deduction?: number
+          quantity_produced?: number
           tax_deduction?: number
           total_deductions?: number
           transport_allowance?: number
         }
         Update: {
+          absence_penalty?: number
           basic_salary?: number
           created_at?: string
+          days_worked?: number
           employee_id?: string
+          food_allowance?: number
           gross_pay?: number
+          harvest_bonus?: number
+          hours_worked?: number
           housing_allowance?: number
           id?: string
+          loan_deduction?: number
           medical_aid_deduction?: number
           net_pay?: number
+          other_deductions?: number
+          other_earnings?: number
+          overtime_hours?: number
+          overtime_pay?: number
+          paid_at?: string | null
+          pay_type?: string
+          payment_method?: string | null
+          payment_reference?: string | null
           payroll_run_id?: string
+          payslip_sent_at?: string | null
           pension_deduction?: number
+          quantity_produced?: number
           tax_deduction?: number
           total_deductions?: number
           transport_allowance?: number
@@ -1200,6 +1344,7 @@ export type Database = {
         Row: {
           branch_id: string | null
           created_at: string
+          default_payment_method: string | null
           gl_account_id: string | null
           gl_sub_account_id: string | null
           id: string
@@ -1217,6 +1362,7 @@ export type Database = {
         Insert: {
           branch_id?: string | null
           created_at?: string
+          default_payment_method?: string | null
           gl_account_id?: string | null
           gl_sub_account_id?: string | null
           id?: string
@@ -1234,6 +1380,7 @@ export type Database = {
         Update: {
           branch_id?: string | null
           created_at?: string
+          default_payment_method?: string | null
           gl_account_id?: string | null
           gl_sub_account_id?: string | null
           id?: string
