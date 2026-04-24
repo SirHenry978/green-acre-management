@@ -26,6 +26,12 @@ export interface Employee {
   status: string;
   created_at: string;
   updated_at: string;
+  pay_type: string;
+  daily_rate: number;
+  hourly_rate: number;
+  piece_rate: number;
+  piece_unit: string | null;
+  overtime_multiplier: number;
 }
 
 export interface PayrollRun {
@@ -60,6 +66,22 @@ export interface PayrollItem {
   total_deductions: number;
   net_pay: number;
   created_at: string;
+  pay_type?: string;
+  days_worked?: number;
+  hours_worked?: number;
+  overtime_hours?: number;
+  quantity_produced?: number;
+  overtime_pay?: number;
+  harvest_bonus?: number;
+  food_allowance?: number;
+  other_earnings?: number;
+  loan_deduction?: number;
+  absence_penalty?: number;
+  other_deductions?: number;
+  payment_method?: string;
+  payment_reference?: string | null;
+  paid_at?: string | null;
+  payslip_sent_at?: string | null;
 }
 
 export const useEmployees = () => {
