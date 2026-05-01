@@ -14,6 +14,317 @@ export type Database = {
   }
   public: {
     Tables: {
+      accommodation_allocations: {
+        Row: {
+          application_id: string | null
+          branch_id: string | null
+          created_at: string
+          employee_id: string
+          end_date: string | null
+          id: string
+          monthly_charge: number
+          room_id: string
+          start_date: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          application_id?: string | null
+          branch_id?: string | null
+          created_at?: string
+          employee_id: string
+          end_date?: string | null
+          id?: string
+          monthly_charge?: number
+          room_id: string
+          start_date?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          application_id?: string | null
+          branch_id?: string | null
+          created_at?: string
+          employee_id?: string
+          end_date?: string | null
+          id?: string
+          monthly_charge?: number
+          room_id?: string
+          start_date?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accommodation_allocations_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "accommodation_applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "accommodation_allocations_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "accommodation_rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      accommodation_applications: {
+        Row: {
+          application_date: string
+          branch_id: string | null
+          created_at: string
+          desired_start_date: string | null
+          employee_id: string
+          id: string
+          reason: string | null
+          review_notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          room_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          application_date?: string
+          branch_id?: string | null
+          created_at?: string
+          desired_start_date?: string | null
+          employee_id: string
+          id?: string
+          reason?: string | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          room_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          application_date?: string
+          branch_id?: string | null
+          created_at?: string
+          desired_start_date?: string | null
+          employee_id?: string
+          id?: string
+          reason?: string | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          room_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accommodation_applications_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "accommodation_rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      accommodation_checkins: {
+        Row: {
+          allocation_id: string
+          branch_id: string | null
+          condition_status: string | null
+          created_at: string
+          damage_charge: number
+          damages_noted: string | null
+          employee_id: string
+          event_date: string
+          event_type: string
+          id: string
+          inspected_by: string | null
+          notes: string | null
+          room_id: string
+        }
+        Insert: {
+          allocation_id: string
+          branch_id?: string | null
+          condition_status?: string | null
+          created_at?: string
+          damage_charge?: number
+          damages_noted?: string | null
+          employee_id: string
+          event_date?: string
+          event_type: string
+          id?: string
+          inspected_by?: string | null
+          notes?: string | null
+          room_id: string
+        }
+        Update: {
+          allocation_id?: string
+          branch_id?: string | null
+          condition_status?: string | null
+          created_at?: string
+          damage_charge?: number
+          damages_noted?: string | null
+          employee_id?: string
+          event_date?: string
+          event_type?: string
+          id?: string
+          inspected_by?: string | null
+          notes?: string | null
+          room_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accommodation_checkins_allocation_id_fkey"
+            columns: ["allocation_id"]
+            isOneToOne: false
+            referencedRelation: "accommodation_allocations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      accommodation_houses: {
+        Row: {
+          branch_id: string
+          created_at: string
+          house_code: string
+          house_type: string
+          id: string
+          location: string | null
+          name: string
+          notes: string | null
+          status: string
+          total_rooms: number
+          updated_at: string
+        }
+        Insert: {
+          branch_id: string
+          created_at?: string
+          house_code: string
+          house_type?: string
+          id?: string
+          location?: string | null
+          name: string
+          notes?: string | null
+          status?: string
+          total_rooms?: number
+          updated_at?: string
+        }
+        Update: {
+          branch_id?: string
+          created_at?: string
+          house_code?: string
+          house_type?: string
+          id?: string
+          location?: string | null
+          name?: string
+          notes?: string | null
+          status?: string
+          total_rooms?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      accommodation_room_assets: {
+        Row: {
+          asset_name: string
+          asset_type: string
+          condition: string
+          created_at: string
+          id: string
+          inventory_item_ref: string | null
+          notes: string | null
+          quantity: number
+          room_id: string
+          updated_at: string
+        }
+        Insert: {
+          asset_name: string
+          asset_type?: string
+          condition?: string
+          created_at?: string
+          id?: string
+          inventory_item_ref?: string | null
+          notes?: string | null
+          quantity?: number
+          room_id: string
+          updated_at?: string
+        }
+        Update: {
+          asset_name?: string
+          asset_type?: string
+          condition?: string
+          created_at?: string
+          id?: string
+          inventory_item_ref?: string | null
+          notes?: string | null
+          quantity?: number
+          room_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accommodation_room_assets_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "accommodation_rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      accommodation_rooms: {
+        Row: {
+          branch_id: string
+          capacity: number
+          condition_status: string
+          created_at: string
+          house_id: string
+          id: string
+          monthly_charge: number
+          notes: string | null
+          room_number: string
+          room_type: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          branch_id: string
+          capacity?: number
+          condition_status?: string
+          created_at?: string
+          house_id: string
+          id?: string
+          monthly_charge?: number
+          notes?: string | null
+          room_number: string
+          room_type?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          branch_id?: string
+          capacity?: number
+          condition_status?: string
+          created_at?: string
+          house_id?: string
+          id?: string
+          monthly_charge?: number
+          notes?: string | null
+          room_number?: string
+          room_type?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accommodation_rooms_house_id_fkey"
+            columns: ["house_id"]
+            isOneToOne: false
+            referencedRelation: "accommodation_houses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       agri_articles: {
         Row: {
           branch_id: string | null
@@ -1232,6 +1543,7 @@ export type Database = {
       payroll_items: {
         Row: {
           absence_penalty: number
+          accommodation_deduction: number
           basic_salary: number
           created_at: string
           days_worked: number
@@ -1263,6 +1575,7 @@ export type Database = {
         }
         Insert: {
           absence_penalty?: number
+          accommodation_deduction?: number
           basic_salary?: number
           created_at?: string
           days_worked?: number
@@ -1294,6 +1607,7 @@ export type Database = {
         }
         Update: {
           absence_penalty?: number
+          accommodation_deduction?: number
           basic_salary?: number
           created_at?: string
           days_worked?: number

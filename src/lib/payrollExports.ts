@@ -50,6 +50,7 @@ export const generatePayslipPDF = (emp: Employee, item: any, run: PayrollRun) =>
   if (item.pension_deduction > 0) deductions.push(['Pension', fmt(item.pension_deduction)]);
   if (item.medical_aid_deduction > 0) deductions.push(['Medical Aid', fmt(item.medical_aid_deduction)]);
   if (item.loan_deduction > 0) deductions.push(['Loan Repayment', fmt(item.loan_deduction)]);
+  if (item.accommodation_deduction > 0) deductions.push(['Accommodation', fmt(item.accommodation_deduction)]);
   if (item.absence_penalty > 0) deductions.push(['Absence Penalty', fmt(item.absence_penalty)]);
   if (item.other_deductions > 0) deductions.push(['Other Deductions', fmt(item.other_deductions)]);
   deductions.push([{ content: 'Total Deductions', styles: { fontStyle: 'bold' } }, { content: fmt(item.total_deductions), styles: { fontStyle: 'bold' } }]);
@@ -101,6 +102,7 @@ export const generatePayrollExcel = (
       'Pension': it.pension_deduction,
       'Medical': it.medical_aid_deduction,
       'Loan': it.loan_deduction || 0,
+      'Accommodation': it.accommodation_deduction || 0,
       'Penalty': it.absence_penalty || 0,
       'Other Deductions': it.other_deductions || 0,
       'Total Deductions': it.total_deductions,
