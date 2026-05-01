@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Employee, PayrollRun } from '@/hooks/useEmployees';
 import { usePayrollExtras } from '@/hooks/usePayrollExtras';
+import { useAccommodation } from '@/hooks/useAccommodation';
 import { GLAccountSelect } from '@/components/finance/GLAccountSelect';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -39,6 +40,7 @@ interface WorkRow {
   other_earnings: number;
   other_deductions: number;
   absence_penalty: number;
+  accommodation_deduction: number;
 }
 
 export const PayrollProcessor = ({
@@ -47,6 +49,7 @@ export const PayrollProcessor = ({
   getUnpaidLeaveDays,
 }: PayrollProcessorProps) => {
   const { loans, bonuses, getActiveLoanForEmployee, getUnappliedBonusesForEmployee, refetch: refetchExtras } = usePayrollExtras();
+  const { getActiveAllocationForEmployee } = useAccommodation();
   const [showCreate, setShowCreate] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [selectedRun, setSelectedRun] = useState<PayrollRun | null>(null);
@@ -83,6 +86,7 @@ export const PayrollProcessor = ({
         other_earnings: 0,
         other_deductions: 0,
         absence_penalty: 0,
+        accommodation_deduction: getActiveAllocationForEmployee(emp.id)?.monthly_charge || 0,
       };
     });
     setWorkData(data);
@@ -122,7 +126,8 @@ export const PayrollProcessor = ({
     const loan = getActiveLoanForEmployee(emp.id);
     const loanDed = loan ? Math.min(loan.monthly_installment, loan.balance) : 0;
 
-    const totalDed = tax + pension + medical + loanDed + w.absence_penalty + w.other_deductions;
+    const accommodation = w.accommodation_deduction || 0;
+    const totalDed = tax + pension + medical + loanDed + accommodation + w.absence_penalty + w.other_deductions;
     const net = gross - totalDed;
 
     return {
@@ -138,6 +143,7 @@ export const PayrollProcessor = ({
       pension_deduction: Math.round(pension * 100) / 100,
       medical_aid_deduction: medical,
       loan_deduction: Math.round(loanDed * 100) / 100,
+      accommodation_deduction: Math.round(accommodation * 100) / 100,
       absence_penalty: w.absence_penalty,
       other_deductions: w.other_deductions,
       total_deductions: Math.round(totalDed * 100) / 100,
@@ -158,7 +164,7 @@ export const PayrollProcessor = ({
     setProcessing(true);
 
     const items = activeEmployees.map(emp => {
-      const w = workData[emp.id] || { employee_id: emp.id, days_worked: 0, hours_worked: 0, overtime_hours: 0, quantity_produced: 0, food_allowance: 0, other_earnings: 0, other_deductions: 0, absence_penalty: 0 };
+      const w = workData[emp.id] || { employee_id: emp.id, days_worked: 0, hours_worked: 0, overtime_hours: 0, quantity_produced: 0, food_allowance: 0, other_earnings: 0, other_deductions: 0, absence_penalty: 0, accommodation_deduction: 0 };
       return { employee_id: emp.id, ...calcItem(emp, w) };
     });
 
