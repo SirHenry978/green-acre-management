@@ -381,6 +381,7 @@ export const PayrollProcessor = ({
                   <th className="px-2 py-2 text-right">Other +</th>
                   <th className="px-2 py-2 text-right">Penalty</th>
                   <th className="px-2 py-2 text-right">Other -</th>
+                  <th className="px-2 py-2 text-right">Accom.</th>
                   <th className="px-2 py-2 text-right font-semibold">Net Preview</th>
                 </tr></thead>
                 <tbody className="divide-y divide-border">
@@ -400,6 +401,7 @@ export const PayrollProcessor = ({
                         <td className="px-2 py-1"><Input className="h-7 w-16 text-right" type="number" value={w.other_earnings} onChange={e => setW(emp.id, 'other_earnings', parseFloat(e.target.value) || 0)} /></td>
                         <td className="px-2 py-1"><Input className="h-7 w-16 text-right" type="number" value={w.absence_penalty} onChange={e => setW(emp.id, 'absence_penalty', parseFloat(e.target.value) || 0)} /></td>
                         <td className="px-2 py-1"><Input className="h-7 w-16 text-right" type="number" value={w.other_deductions} onChange={e => setW(emp.id, 'other_deductions', parseFloat(e.target.value) || 0)} /></td>
+                        <td className="px-2 py-1"><Input className="h-7 w-20 text-right" type="number" value={w.accommodation_deduction} onChange={e => setW(emp.id, 'accommodation_deduction', parseFloat(e.target.value) || 0)} /></td>
                         <td className="px-2 py-1.5 text-right font-semibold">{fmt(preview.net_pay)}</td>
                       </tr>
                     );
