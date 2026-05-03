@@ -2,11 +2,12 @@ import { useNavigate } from 'react-router-dom';
 import { Building, ClipboardList, Users, LogIn, LogOut } from 'lucide-react';
 import { useAccommodation } from '@/hooks/useAccommodation';
 import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
 
 export const AccommodationCard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { allocations, applications, rooms } = useAccommodation();
+  const { allocations, applications, rooms, checkIn, checkOut } = useAccommodation();
 
   const myAlloc = allocations.find(
     (a) => a.employee_id === user?.id && (a.status === 'reserved' || a.status === 'occupied'),
@@ -15,6 +16,18 @@ export const AccommodationCard = () => {
   const myRoom = myAlloc ? rooms.find((r) => r.id === myAlloc.room_id) : undefined;
 
   const go = (hash: string) => navigate(`/accommodation#${hash}`);
+
+  const handleCheckIn = async () => {
+    if (!myAlloc) return toast.error('No active allocation to check into');
+    if (myAlloc.status === 'occupied') return toast.info('You are already checked in');
+    await checkIn(myAlloc, user?.name ?? 'self', 'good', 'Self check-in from dashboard');
+  };
+
+  const handleCheckOut = async () => {
+    if (!myAlloc) return toast.error('No active allocation to check out from');
+    if (myAlloc.status !== 'occupied') return toast.info('You are not currently checked in');
+    await checkOut(myAlloc, user?.name ?? 'self', 'good', '', 0);
+  };
 
   return (
     <div className="card-farm p-6">
@@ -54,20 +67,26 @@ export const AccommodationCard = () => {
           <span className="text-xs text-muted-foreground">View room details</span>
         </button>
         <button
-          onClick={() => go('allocations')}
-          className="flex flex-col items-start gap-2 rounded-lg border border-border bg-muted/30 p-3 text-left hover:bg-muted/50 transition"
+          onClick={handleCheckIn}
+          disabled={!myAlloc || myAlloc.status === 'occupied'}
+          className="flex flex-col items-start gap-2 rounded-lg border border-border bg-muted/30 p-3 text-left hover:bg-muted/50 transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <LogIn className="h-4 w-4 text-success" />
           <span className="text-sm font-medium">Check-in</span>
-          <span className="text-xs text-muted-foreground">Move into room</span>
+          <span className="text-xs text-muted-foreground">
+            {myAlloc?.status === 'occupied' ? 'Already checked in' : 'Move into room'}
+          </span>
         </button>
         <button
-          onClick={() => go('allocations')}
-          className="flex flex-col items-start gap-2 rounded-lg border border-border bg-muted/30 p-3 text-left hover:bg-muted/50 transition"
+          onClick={handleCheckOut}
+          disabled={!myAlloc || myAlloc.status !== 'occupied'}
+          className="flex flex-col items-start gap-2 rounded-lg border border-border bg-muted/30 p-3 text-left hover:bg-muted/50 transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <LogOut className="h-4 w-4 text-destructive" />
           <span className="text-sm font-medium">Check-out</span>
-          <span className="text-xs text-muted-foreground">Vacate room</span>
+          <span className="text-xs text-muted-foreground">
+            {myAlloc?.status === 'occupied' ? 'Vacate room' : 'Not checked in'}
+          </span>
         </button>
       </div>
     </div>
