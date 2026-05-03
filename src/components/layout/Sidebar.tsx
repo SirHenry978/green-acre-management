@@ -33,6 +33,8 @@ import {
   ClipboardList,
   Users as UsersIcon,
   BarChart3,
+  MessageSquareWarning,
+  UserCircle,
 } from 'lucide-react';
 
 interface NavItem {
@@ -65,11 +67,13 @@ const navItems: NavItem[] = [
     icon: Building,
     permission: 'dashboard',
     children: [
+      { name: 'My Housing', path: '/accommodation?tab=my-housing', icon: UserCircle },
       { name: 'Dashboard', path: '/accommodation?tab=dashboard', icon: DashIcon },
       { name: 'Houses', path: '/accommodation?tab=houses', icon: HomeIcon },
       { name: 'Rooms', path: '/accommodation?tab=rooms', icon: BedDouble },
       { name: 'Applications', path: '/accommodation?tab=applications', icon: ClipboardList },
       { name: 'Allocations', path: '/accommodation?tab=allocations', icon: UsersIcon },
+      { name: 'Requests', path: '/accommodation?tab=requests', icon: MessageSquareWarning },
       { name: 'Reports', path: '/accommodation?tab=reports', icon: BarChart3 },
     ],
   },
