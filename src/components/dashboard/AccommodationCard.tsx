@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Building, ClipboardList, Users, LogIn, LogOut } from 'lucide-react';
+import { Building, ClipboardList, LogIn, LogOut, MessageSquareWarning } from 'lucide-react';
 import { useAccommodation } from '@/hooks/useAccommodation';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
@@ -15,7 +15,7 @@ export const AccommodationCard = () => {
   const myApps = applications.filter((a) => a.employee_id === user?.id);
   const myRoom = myAlloc ? rooms.find((r) => r.id === myAlloc.room_id) : undefined;
 
-  const go = (hash: string) => navigate(`/accommodation#${hash}`);
+  const go = (tab: string) => navigate(`/accommodation?tab=${tab}`);
 
   const handleCheckIn = async () => {
     if (!myAlloc) return toast.error('No active allocation to check into');
@@ -51,7 +51,7 @@ export const AccommodationCard = () => {
 
       <div className="grid gap-3 grid-cols-2 sm:grid-cols-4">
         <button
-          onClick={() => go('applications')}
+          onClick={() => go('my-housing')}
           className="flex flex-col items-start gap-2 rounded-lg border border-border bg-muted/30 p-3 text-left hover:bg-muted/50 transition"
         >
           <ClipboardList className="h-4 w-4 text-primary" />
@@ -59,12 +59,12 @@ export const AccommodationCard = () => {
           <span className="text-xs text-muted-foreground">Submit a new request</span>
         </button>
         <button
-          onClick={() => go('allocations')}
+          onClick={() => go('my-housing')}
           className="flex flex-col items-start gap-2 rounded-lg border border-border bg-muted/30 p-3 text-left hover:bg-muted/50 transition"
         >
-          <Users className="h-4 w-4 text-primary" />
-          <span className="text-sm font-medium">My Allocation</span>
-          <span className="text-xs text-muted-foreground">View room details</span>
+          <MessageSquareWarning className="h-4 w-4 text-primary" />
+          <span className="text-sm font-medium">Report Issue</span>
+          <span className="text-xs text-muted-foreground">Complaints & maintenance</span>
         </button>
         <button
           onClick={handleCheckIn}

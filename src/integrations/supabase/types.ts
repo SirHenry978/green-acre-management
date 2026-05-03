@@ -225,6 +225,60 @@ export type Database = {
         }
         Relationships: []
       }
+      accommodation_requests: {
+        Row: {
+          admin_response: string | null
+          allocation_id: string | null
+          branch_id: string | null
+          created_at: string
+          description: string
+          employee_id: string
+          id: string
+          priority: string
+          request_type: string
+          resolved_at: string | null
+          resolved_by: string | null
+          room_id: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          admin_response?: string | null
+          allocation_id?: string | null
+          branch_id?: string | null
+          created_at?: string
+          description: string
+          employee_id: string
+          id?: string
+          priority?: string
+          request_type?: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          room_id?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          admin_response?: string | null
+          allocation_id?: string | null
+          branch_id?: string | null
+          created_at?: string
+          description?: string
+          employee_id?: string
+          id?: string
+          priority?: string
+          request_type?: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          room_id?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       accommodation_room_assets: {
         Row: {
           asset_name: string
