@@ -6,6 +6,7 @@ import { ActivityFeed } from '@/components/dashboard/ActivityFeed';
 import { RevenueChart } from '@/components/dashboard/RevenueChart';
 import { FarmTypeChart } from '@/components/dashboard/FarmTypeChart';
 import { LeaveWidget } from '@/components/dashboard/LeaveWidget';
+import { AccommodationCard } from '@/components/dashboard/AccommodationCard';
 import { 
   branches, 
   users, 
@@ -125,6 +126,9 @@ const Dashboard = () => {
 
         {/* Leave Summary */}
         <LeaveWidget />
+
+        {/* Accommodation Quick Actions */}
+        <AccommodationCard />
 
         {/* Branches and Activity */}
         <div className="grid gap-6 lg:grid-cols-3">

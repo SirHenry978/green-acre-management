@@ -1,4 +1,5 @@
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { useSearchParams } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LayoutDashboard, Home, BedDouble, ClipboardList, Users, BarChart3 } from 'lucide-react';
 import { useAccommodation } from '@/hooks/useAccommodation';
@@ -13,6 +14,8 @@ import { AccommodationReports } from '@/components/accommodation/AccommodationRe
 const Accommodation = () => {
   const acc = useAccommodation();
   const { employees } = useEmployees();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tab = searchParams.get('tab') ?? 'dashboard';
 
   return (
     <DashboardLayout>
@@ -22,7 +25,11 @@ const Accommodation = () => {
           <p className="text-muted-foreground">Manage houses, rooms, applications, allocations and payroll deductions</p>
         </div>
 
-        <Tabs defaultValue="dashboard" className="space-y-4">
+        <Tabs
+          value={tab}
+          onValueChange={(v) => setSearchParams({ tab: v })}
+          className="space-y-4"
+        >
           <TabsList className="grid grid-cols-6 w-full max-w-3xl">
             <TabsTrigger value="dashboard" className="flex items-center gap-2">
               <LayoutDashboard className="h-4 w-4" /><span className="hidden sm:inline">Dashboard</span>
