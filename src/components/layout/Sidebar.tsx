@@ -1,4 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
+import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
 import {
@@ -25,6 +26,13 @@ import {
   UserCog,
   CalendarDays,
   Building,
+  ChevronDown,
+  LayoutDashboard as DashIcon,
+  Home as HomeIcon,
+  BedDouble,
+  ClipboardList,
+  Users as UsersIcon,
+  BarChart3,
 } from 'lucide-react';
 
 interface NavItem {
@@ -32,6 +40,7 @@ interface NavItem {
   path: string;
   icon: React.ElementType;
   permission: string;
+  children?: { name: string; path: string; icon: React.ElementType }[];
 }
 
 const navItems: NavItem[] = [
@@ -50,7 +59,20 @@ const navItems: NavItem[] = [
   { name: 'Agri News', path: '/agri-news', icon: Newspaper, permission: 'dashboard' },
   { name: 'HR & Payroll', path: '/hr', icon: UserCog, permission: 'hr' },
   { name: 'Leave', path: '/leave', icon: CalendarDays, permission: 'dashboard' },
-  { name: 'Accommodation', path: '/accommodation', icon: Building, permission: 'dashboard' },
+  {
+    name: 'Accommodation',
+    path: '/accommodation',
+    icon: Building,
+    permission: 'dashboard',
+    children: [
+      { name: 'Dashboard', path: '/accommodation?tab=dashboard', icon: DashIcon },
+      { name: 'Houses', path: '/accommodation?tab=houses', icon: HomeIcon },
+      { name: 'Rooms', path: '/accommodation?tab=rooms', icon: BedDouble },
+      { name: 'Applications', path: '/accommodation?tab=applications', icon: ClipboardList },
+      { name: 'Allocations', path: '/accommodation?tab=allocations', icon: UsersIcon },
+      { name: 'Reports', path: '/accommodation?tab=reports', icon: BarChart3 },
+    ],
+  },
   { name: 'Reports', path: '/reports', icon: FileText, permission: 'reports' },
   { name: 'Settings', path: '/settings', icon: Settings, permission: 'settings' },
 ];
@@ -65,6 +87,9 @@ interface SidebarProps {
 export const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }: SidebarProps) => {
   const { user, logout, hasPermission } = useAuth();
   const location = useLocation();
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
+    Accommodation: location.pathname.startsWith('/accommodation'),
+  });
 
   const filteredNavItems = navItems.filter(item => hasPermission(item.permission));
 
@@ -122,7 +147,60 @@ export const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }: 
             {filteredNavItems.map((item) => {
               const isActive = location.pathname === item.path || location.pathname.startsWith(item.path + '/');
               const Icon = item.icon;
-              
+              const hasChildren = !!item.children?.length;
+              const showLabels = !collapsed || mobileOpen;
+              const isOpen = openGroups[item.name] ?? false;
+
+              if (hasChildren && showLabels) {
+                return (
+                  <div key={item.path}>
+                    <button
+                      onClick={() =>
+                        setOpenGroups((g) => ({ ...g, [item.name]: !isOpen }))
+                      }
+                      className={cn(
+                        'sidebar-item w-full justify-between',
+                        isActive && 'sidebar-item-active',
+                      )}
+                    >
+                      <span className="flex items-center gap-3 min-w-0">
+                        <Icon className="h-5 w-5 shrink-0" />
+                        <span className="truncate">{item.name}</span>
+                      </span>
+                      <ChevronDown
+                        className={cn(
+                          'h-4 w-4 transition-transform',
+                          isOpen && 'rotate-180',
+                        )}
+                      />
+                    </button>
+                    {isOpen && (
+                      <div className="mt-1 ml-4 space-y-1 border-l border-sidebar-border pl-2">
+                        {item.children!.map((child) => {
+                          const ChildIcon = child.icon;
+                          const childActive =
+                            location.pathname + location.search === child.path;
+                          return (
+                            <Link
+                              key={child.path}
+                              to={child.path}
+                              onClick={() => setMobileOpen(false)}
+                              className={cn(
+                                'sidebar-item text-sm',
+                                childActive && 'sidebar-item-active',
+                              )}
+                            >
+                              <ChildIcon className="h-4 w-4 shrink-0" />
+                              <span className="truncate">{child.name}</span>
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+
               return (
                 <Link
                   key={item.path}
