@@ -1,7 +1,7 @@
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useSearchParams } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { LayoutDashboard, Home, BedDouble, ClipboardList, Users, BarChart3 } from 'lucide-react';
+import { LayoutDashboard, Home, BedDouble, ClipboardList, Users, BarChart3, MessageSquareWarning, UserCircle } from 'lucide-react';
 import { useAccommodation } from '@/hooks/useAccommodation';
 import { useEmployees } from '@/hooks/useEmployees';
 import { AccommodationDashboard } from '@/components/accommodation/AccommodationDashboard';
@@ -10,6 +10,8 @@ import { RoomsManager } from '@/components/accommodation/RoomsManager';
 import { ApplicationsPanel } from '@/components/accommodation/ApplicationsPanel';
 import { AllocationsPanel } from '@/components/accommodation/AllocationsPanel';
 import { AccommodationReports } from '@/components/accommodation/AccommodationReports';
+import { RequestsPanel } from '@/components/accommodation/RequestsPanel';
+import { MyHousingPanel } from '@/components/accommodation/MyHousingPanel';
 
 const Accommodation = () => {
   const acc = useAccommodation();
@@ -30,7 +32,10 @@ const Accommodation = () => {
           onValueChange={(v) => setSearchParams({ tab: v })}
           className="space-y-4"
         >
-          <TabsList className="grid grid-cols-6 w-full max-w-3xl">
+          <TabsList className="grid grid-cols-4 md:grid-cols-8 w-full max-w-5xl">
+            <TabsTrigger value="my-housing" className="flex items-center gap-2">
+              <UserCircle className="h-4 w-4" /><span className="hidden sm:inline">My Housing</span>
+            </TabsTrigger>
             <TabsTrigger value="dashboard" className="flex items-center gap-2">
               <LayoutDashboard className="h-4 w-4" /><span className="hidden sm:inline">Dashboard</span>
             </TabsTrigger>
@@ -46,11 +51,17 @@ const Accommodation = () => {
             <TabsTrigger value="allocations" className="flex items-center gap-2">
               <Users className="h-4 w-4" /><span className="hidden sm:inline">Allocations</span>
             </TabsTrigger>
+            <TabsTrigger value="requests" className="flex items-center gap-2">
+              <MessageSquareWarning className="h-4 w-4" /><span className="hidden sm:inline">Requests</span>
+            </TabsTrigger>
             <TabsTrigger value="reports" className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" /><span className="hidden sm:inline">Reports</span>
             </TabsTrigger>
           </TabsList>
 
+          <TabsContent value="my-housing">
+            <MyHousingPanel acc={acc} employees={employees} />
+          </TabsContent>
           <TabsContent value="dashboard">
             <AccommodationDashboard
               houses={acc.houses} rooms={acc.rooms}
@@ -73,6 +84,13 @@ const Accommodation = () => {
           <TabsContent value="allocations">
             <AllocationsPanel
               allocations={acc.allocations} rooms={acc.rooms} houses={acc.houses}
+              employees={employees} acc={acc}
+            />
+          </TabsContent>
+          <TabsContent value="requests">
+            <RequestsPanel
+              requests={acc.requests} allocations={acc.allocations}
+              rooms={acc.rooms} houses={acc.houses}
               employees={employees} acc={acc}
             />
           </TabsContent>
