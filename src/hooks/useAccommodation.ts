@@ -90,6 +90,24 @@ export interface AccCheckin {
   created_at: string;
 }
 
+export interface AccRequest {
+  id: string;
+  employee_id: string;
+  room_id: string | null;
+  allocation_id: string | null;
+  request_type: string;
+  title: string;
+  description: string;
+  priority: string;
+  status: string;
+  admin_response: string | null;
+  resolved_by: string | null;
+  resolved_at: string | null;
+  branch_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export const useAccommodation = () => {
   const [houses, setHouses] = useState<AccHouse[]>([]);
   const [rooms, setRooms] = useState<AccRoom[]>([]);
@@ -97,16 +115,18 @@ export const useAccommodation = () => {
   const [applications, setApplications] = useState<AccApplication[]>([]);
   const [allocations, setAllocations] = useState<AccAllocation[]>([]);
   const [checkins, setCheckins] = useState<AccCheckin[]>([]);
+  const [requests, setRequests] = useState<AccRequest[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchAll = useCallback(async () => {
-    const [h, r, a, ap, al, ci] = await Promise.all([
+    const [h, r, a, ap, al, ci, rq] = await Promise.all([
       (supabase as any).from('accommodation_houses').select('*').order('created_at', { ascending: false }),
       (supabase as any).from('accommodation_rooms').select('*').order('room_number'),
       (supabase as any).from('accommodation_room_assets').select('*'),
       (supabase as any).from('accommodation_applications').select('*').order('application_date', { ascending: false }),
       (supabase as any).from('accommodation_allocations').select('*').order('start_date', { ascending: false }),
       (supabase as any).from('accommodation_checkins').select('*').order('event_date', { ascending: false }),
+      (supabase as any).from('accommodation_requests').select('*').order('created_at', { ascending: false }),
     ]);
     if (h.data) setHouses(h.data);
     if (r.data) setRooms(r.data);
@@ -114,6 +134,7 @@ export const useAccommodation = () => {
     if (ap.data) setApplications(ap.data);
     if (al.data) setAllocations(al.data);
     if (ci.data) setCheckins(ci.data);
+    if (rq.data) setRequests(rq.data);
   }, []);
 
   useEffect(() => { (async () => { setLoading(true); await fetchAll(); setLoading(false); })(); }, [fetchAll]);
@@ -242,13 +263,48 @@ export const useAccommodation = () => {
   const getAssetsForRoom = (roomId: string) => assets.filter(a => a.room_id === roomId);
   const getRoomsForHouse = (houseId: string) => rooms.filter(r => r.house_id === houseId);
 
+  // Requests / Complaints
+  const createRequest = async (
+    r: Omit<AccRequest, 'id' | 'created_at' | 'updated_at' | 'admin_response' | 'resolved_by' | 'resolved_at' | 'status'> & { status?: string }
+  ) => {
+    const { error } = await (supabase as any)
+      .from('accommodation_requests')
+      .insert({ ...r, status: r.status || 'open' });
+    if (error) { toast.error('Failed: ' + error.message); return false; }
+    toast.success('Request submitted'); await fetchAll(); return true;
+  };
+
+  const updateRequest = async (id: string, u: Partial<AccRequest>) => {
+    const { error } = await (supabase as any).from('accommodation_requests').update(u).eq('id', id);
+    if (error) { toast.error('Failed'); return false; }
+    await fetchAll(); return true;
+  };
+
+  const respondRequest = async (id: string, response: string, status: string, responder: string) => {
+    const updates: Partial<AccRequest> = {
+      admin_response: response,
+      status,
+      ...(status === 'resolved' || status === 'rejected'
+        ? { resolved_by: responder, resolved_at: new Date().toISOString() }
+        : {}),
+    };
+    return updateRequest(id, updates);
+  };
+
+  const deleteRequest = async (id: string) => {
+    const { error } = await (supabase as any).from('accommodation_requests').delete().eq('id', id);
+    if (error) { toast.error('Failed'); return false; }
+    toast.success('Request deleted'); await fetchAll(); return true;
+  };
+
   return {
-    houses, rooms, assets, applications, allocations, checkins, loading,
+    houses, rooms, assets, applications, allocations, checkins, requests, loading,
     createHouse, updateHouse, deleteHouse,
     createRoom, updateRoom, deleteRoom,
     createAsset, updateAsset, deleteAsset,
     createApplication, approveApplication, rejectApplication,
     checkIn, checkOut,
+    createRequest, updateRequest, respondRequest, deleteRequest,
     getActiveAllocationForEmployee, getAssetsForRoom, getRoomsForHouse,
     refetch: fetchAll,
   };
