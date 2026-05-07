@@ -72,12 +72,30 @@ export const MyHousingPanel = ({ acc, employees }: Props) => {
   const doCheckIn = async () => {
     if (!activeAlloc) return toast.error('No active allocation');
     if (activeAlloc.status === 'occupied') return toast.info('Already checked in');
-    await acc.checkIn(activeAlloc, user?.name || 'self', 'good', 'Self check-in');
+    const allocId = activeAlloc.id;
+    const roomId = activeAlloc.room_id;
+    const ok = await acc.checkIn(activeAlloc, user?.name || 'self', 'good', 'Self check-in');
+    if (ok) {
+      toast.success('Checked in', {
+        description: `${myHouse?.name ?? ''} room ${myRoom?.room_number ?? ''}`,
+        action: { label: 'Undo', onClick: () => acc.undoCheckIn(allocId, roomId) },
+        duration: 8000,
+      });
+    }
   };
   const doCheckOut = async () => {
     if (!activeAlloc) return toast.error('No active allocation');
     if (activeAlloc.status !== 'occupied') return toast.info('Not checked in');
-    await acc.checkOut(activeAlloc, user?.name || 'self', 'good', '', 0);
+    const allocId = activeAlloc.id;
+    const roomId = activeAlloc.room_id;
+    const ok = await acc.checkOut(activeAlloc, user?.name || 'self', 'good', '', 0);
+    if (ok) {
+      toast.success('Checked out', {
+        description: `Room ${myRoom?.room_number ?? ''} released`,
+        action: { label: 'Undo', onClick: () => acc.undoCheckOut(allocId, roomId) },
+        duration: 8000,
+      });
+    }
   };
 
   return (

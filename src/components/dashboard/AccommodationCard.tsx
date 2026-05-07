@@ -18,7 +18,7 @@ import {
 export const AccommodationCard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { allocations, applications, rooms, checkIn, checkOut } = useAccommodation();
+  const { allocations, applications, rooms, checkIn, checkOut, undoCheckIn, undoCheckOut } = useAccommodation();
   const [confirm, setConfirm] = useState<null | 'in' | 'out'>(null);
 
   const myAlloc = allocations.find(
@@ -32,13 +32,31 @@ export const AccommodationCard = () => {
   const handleCheckIn = async () => {
     if (!myAlloc) return toast.error('No active allocation to check into');
     if (myAlloc.status === 'occupied') return toast.info('You are already checked in');
-    await checkIn(myAlloc, user?.name ?? 'self', 'good', 'Self check-in from dashboard');
+    const allocId = myAlloc.id;
+    const roomId = myAlloc.room_id;
+    const ok = await checkIn(myAlloc, user?.name ?? 'self', 'good', 'Self check-in from dashboard');
+    if (ok) {
+      toast.success('Checked in', {
+        description: `Room ${myRoom?.room_number ?? ''}`,
+        action: { label: 'Undo', onClick: () => undoCheckIn(allocId, roomId) },
+        duration: 8000,
+      });
+    }
   };
 
   const handleCheckOut = async () => {
     if (!myAlloc) return toast.error('No active allocation to check out from');
     if (myAlloc.status !== 'occupied') return toast.info('You are not currently checked in');
-    await checkOut(myAlloc, user?.name ?? 'self', 'good', '', 0);
+    const allocId = myAlloc.id;
+    const roomId = myAlloc.room_id;
+    const ok = await checkOut(myAlloc, user?.name ?? 'self', 'good', '', 0);
+    if (ok) {
+      toast.success('Checked out', {
+        description: `Room ${myRoom?.room_number ?? ''} released`,
+        action: { label: 'Undo', onClick: () => undoCheckOut(allocId, roomId) },
+        duration: 8000,
+      });
+    }
   };
 
   return (

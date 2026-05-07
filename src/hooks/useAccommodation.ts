@@ -257,6 +257,42 @@ export const useAccommodation = () => {
     toast.success('Checked out'); await fetchAll(); return true;
   };
 
+  // Undo last check-in: revert allocation -> reserved, room -> reserved, delete latest check_in event
+  const undoCheckIn = async (allocId: string, roomId: string) => {
+    const { data: ev } = await (supabase as any)
+      .from('accommodation_checkins')
+      .select('id')
+      .eq('allocation_id', allocId)
+      .eq('event_type', 'check_in')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (ev?.id) {
+      await (supabase as any).from('accommodation_checkins').delete().eq('id', ev.id);
+    }
+    await (supabase as any).from('accommodation_allocations').update({ status: 'reserved' }).eq('id', allocId);
+    await (supabase as any).from('accommodation_rooms').update({ status: 'reserved' }).eq('id', roomId);
+    toast.success('Check-in reverted'); await fetchAll(); return true;
+  };
+
+  // Undo last check-out: restore allocation -> occupied, clear end_date, room -> occupied, delete latest check_out event
+  const undoCheckOut = async (allocId: string, roomId: string) => {
+    const { data: ev } = await (supabase as any)
+      .from('accommodation_checkins')
+      .select('id')
+      .eq('allocation_id', allocId)
+      .eq('event_type', 'check_out')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (ev?.id) {
+      await (supabase as any).from('accommodation_checkins').delete().eq('id', ev.id);
+    }
+    await (supabase as any).from('accommodation_allocations').update({ status: 'occupied', end_date: null }).eq('id', allocId);
+    await (supabase as any).from('accommodation_rooms').update({ status: 'occupied' }).eq('id', roomId);
+    toast.success('Check-out reverted'); await fetchAll(); return true;
+  };
+
   const getActiveAllocationForEmployee = (employeeId: string) =>
     allocations.find(a => a.employee_id === employeeId && (a.status === 'reserved' || a.status === 'occupied'));
 
@@ -304,6 +340,7 @@ export const useAccommodation = () => {
     createAsset, updateAsset, deleteAsset,
     createApplication, approveApplication, rejectApplication,
     checkIn, checkOut,
+    undoCheckIn, undoCheckOut,
     createRequest, updateRequest, respondRequest, deleteRequest,
     getActiveAllocationForEmployee, getAssetsForRoom, getRoomsForHouse,
     refetch: fetchAll,
