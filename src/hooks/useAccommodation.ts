@@ -228,7 +228,32 @@ export const useAccommodation = () => {
   };
 
   // Check-in / Check-out
+  // Fetch latest room + allocation state from DB (used to validate before mutating)
+  const verifyRoomState = async (roomId: string, allocId: string) => {
+    const [roomRes, allocRes] = await Promise.all([
+      (supabase as any).from('accommodation_rooms').select('status').eq('id', roomId).maybeSingle(),
+      (supabase as any).from('accommodation_allocations').select('status').eq('id', allocId).maybeSingle(),
+    ]);
+    return {
+      roomStatus: roomRes.data?.status as string | undefined,
+      allocStatus: allocRes.data?.status as string | undefined,
+    };
+  };
+
   const checkIn = async (alloc: AccAllocation, inspector: string, condition: string, notes: string) => {
+    const { roomStatus, allocStatus } = await verifyRoomState(alloc.room_id, alloc.id);
+    if (!allocStatus || allocStatus === 'vacated') {
+      toast.error('Allocation is no longer active', { description: 'Status changed — refreshing.' });
+      await fetchAll(); return false;
+    }
+    if (allocStatus === 'occupied') {
+      toast.info('Already checked in', { description: 'Someone updated this allocation.' });
+      await fetchAll(); return false;
+    }
+    if (roomStatus && roomStatus !== 'reserved' && roomStatus !== 'available') {
+      toast.error(`Room is now ${roomStatus}`, { description: 'Cannot check in — refreshing.' });
+      await fetchAll(); return false;
+    }
     const { error: e1 } = await (supabase as any).from('accommodation_checkins').insert({
       allocation_id: alloc.id, room_id: alloc.room_id, employee_id: alloc.employee_id,
       event_type: 'check_in', event_date: new Date().toISOString().split('T')[0],
@@ -241,6 +266,19 @@ export const useAccommodation = () => {
   };
 
   const checkOut = async (alloc: AccAllocation, inspector: string, condition: string, damages: string, damageCharge: number) => {
+    const { roomStatus, allocStatus } = await verifyRoomState(alloc.room_id, alloc.id);
+    if (!allocStatus || allocStatus === 'vacated') {
+      toast.error('Allocation already vacated', { description: 'Status changed — refreshing.' });
+      await fetchAll(); return false;
+    }
+    if (allocStatus !== 'occupied') {
+      toast.info('Not currently checked in', { description: 'Status changed — refreshing.' });
+      await fetchAll(); return false;
+    }
+    if (roomStatus && roomStatus !== 'occupied') {
+      toast.error(`Room is now ${roomStatus}`, { description: 'Cannot check out — refreshing.' });
+      await fetchAll(); return false;
+    }
     const { error: e1 } = await (supabase as any).from('accommodation_checkins').insert({
       allocation_id: alloc.id, room_id: alloc.room_id, employee_id: alloc.employee_id,
       event_type: 'check_out', event_date: new Date().toISOString().split('T')[0],
