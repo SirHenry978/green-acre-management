@@ -3,6 +3,16 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Building, ClipboardList, LogIn, LogOut, Plus } from 'lucide-react';
 import { Employee } from '@/hooks/useEmployees';
 import { useAccommodation } from '@/hooks/useAccommodation';
@@ -34,6 +44,7 @@ export const MyHousingPanel = ({ acc, employees }: Props) => {
   const availableRooms = acc.rooms.filter(r => r.status === 'available');
 
   const [showApply, setShowApply] = useState(false);
+  const [confirm, setConfirm] = useState<null | 'in' | 'out'>(null);
   const [form, setForm] = useState({
     room_id: '',
     desired_start_date: new Date().toISOString().split('T')[0],
@@ -92,10 +103,18 @@ export const MyHousingPanel = ({ acc, employees }: Props) => {
             <Button variant="outline" onClick={() => setShowApply(true)} disabled={availableRooms.length === 0 || !!activeAlloc}>
               <Plus className="h-4 w-4 mr-2" />Apply for Room
             </Button>
-            <Button variant="outline" onClick={doCheckIn} disabled={!activeAlloc || activeAlloc.status === 'occupied'}>
+            <Button variant="outline" onClick={() => {
+              if (!activeAlloc) return toast.error('No active allocation');
+              if (activeAlloc.status === 'occupied') return toast.info('Already checked in');
+              setConfirm('in');
+            }} disabled={!activeAlloc || activeAlloc.status === 'occupied'}>
               <LogIn className="h-4 w-4 mr-2" />Check In
             </Button>
-            <Button variant="outline" onClick={doCheckOut} disabled={!activeAlloc || activeAlloc.status !== 'occupied'}>
+            <Button variant="outline" onClick={() => {
+              if (!activeAlloc) return toast.error('No active allocation');
+              if (activeAlloc.status !== 'occupied') return toast.info('Not checked in');
+              setConfirm('out');
+            }} disabled={!activeAlloc || activeAlloc.status !== 'occupied'}>
               <LogOut className="h-4 w-4 mr-2" />Check Out
             </Button>
           </div>
@@ -201,6 +220,33 @@ export const MyHousingPanel = ({ acc, employees }: Props) => {
           </form>
         </DialogContent>
       </Dialog>
+
+      <AlertDialog open={confirm !== null} onOpenChange={(o) => !o && setConfirm(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {confirm === 'in' ? 'Confirm check-in' : 'Confirm check-out'}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {confirm === 'in'
+                ? `Mark ${myHouse?.name ?? ''} room ${myRoom?.room_number ?? ''} as occupied?`
+                : `Vacate ${myHouse?.name ?? ''} room ${myRoom?.room_number ?? ''}? This will release the room.`}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={async () => {
+                if (confirm === 'in') await doCheckIn();
+                else if (confirm === 'out') await doCheckOut();
+                setConfirm(null);
+              }}
+            >
+              {confirm === 'in' ? 'Check in' : 'Check out'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
