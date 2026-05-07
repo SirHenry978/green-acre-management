@@ -1,13 +1,25 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Building, ClipboardList, LogIn, LogOut, MessageSquareWarning } from 'lucide-react';
 import { useAccommodation } from '@/hooks/useAccommodation';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 export const AccommodationCard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { allocations, applications, rooms, checkIn, checkOut } = useAccommodation();
+  const [confirm, setConfirm] = useState<null | 'in' | 'out'>(null);
 
   const myAlloc = allocations.find(
     (a) => a.employee_id === user?.id && (a.status === 'reserved' || a.status === 'occupied'),
@@ -67,7 +79,11 @@ export const AccommodationCard = () => {
           <span className="text-xs text-muted-foreground">Complaints & maintenance</span>
         </button>
         <button
-          onClick={handleCheckIn}
+          onClick={() => {
+            if (!myAlloc) return toast.error('No active allocation to check into');
+            if (myAlloc.status === 'occupied') return toast.info('You are already checked in');
+            setConfirm('in');
+          }}
           disabled={!myAlloc || myAlloc.status === 'occupied'}
           className="flex flex-col items-start gap-2 rounded-lg border border-border bg-muted/30 p-3 text-left hover:bg-muted/50 transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
@@ -78,7 +94,11 @@ export const AccommodationCard = () => {
           </span>
         </button>
         <button
-          onClick={handleCheckOut}
+          onClick={() => {
+            if (!myAlloc) return toast.error('No active allocation to check out from');
+            if (myAlloc.status !== 'occupied') return toast.info('You are not currently checked in');
+            setConfirm('out');
+          }}
           disabled={!myAlloc || myAlloc.status !== 'occupied'}
           className="flex flex-col items-start gap-2 rounded-lg border border-border bg-muted/30 p-3 text-left hover:bg-muted/50 transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
@@ -89,6 +109,33 @@ export const AccommodationCard = () => {
           </span>
         </button>
       </div>
+
+      <AlertDialog open={confirm !== null} onOpenChange={(o) => !o && setConfirm(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {confirm === 'in' ? 'Confirm check-in' : 'Confirm check-out'}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {confirm === 'in'
+                ? `Mark room ${myRoom?.room_number ?? ''} as occupied? This updates your accommodation status.`
+                : `Vacate room ${myRoom?.room_number ?? ''}? This will release the room and end your active allocation.`}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={async () => {
+                if (confirm === 'in') await handleCheckIn();
+                else if (confirm === 'out') await handleCheckOut();
+                setConfirm(null);
+              }}
+            >
+              {confirm === 'in' ? 'Check in' : 'Check out'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
