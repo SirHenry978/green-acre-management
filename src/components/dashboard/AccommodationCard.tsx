@@ -20,6 +20,7 @@ export const AccommodationCard = () => {
   const { user } = useAuth();
   const { allocations, applications, rooms, checkIn, checkOut, undoCheckIn, undoCheckOut } = useAccommodation();
   const [confirm, setConfirm] = useState<null | 'in' | 'out'>(null);
+  const [busy, setBusy] = useState(false);
 
   const myAlloc = allocations.find(
     (a) => a.employee_id === user?.id && (a.status === 'reserved' || a.status === 'occupied'),
@@ -141,15 +142,23 @@ export const AccommodationCard = () => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={busy}>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              onClick={async () => {
-                if (confirm === 'in') await handleCheckIn();
-                else if (confirm === 'out') await handleCheckOut();
-                setConfirm(null);
+              disabled={busy}
+              onClick={async (e) => {
+                e.preventDefault();
+                if (busy) return;
+                setBusy(true);
+                try {
+                  if (confirm === 'in') await handleCheckIn();
+                  else if (confirm === 'out') await handleCheckOut();
+                } finally {
+                  setBusy(false);
+                  setConfirm(null);
+                }
               }}
             >
-              {confirm === 'in' ? 'Check in' : 'Check out'}
+              {busy ? 'Verifying…' : confirm === 'in' ? 'Check in' : 'Check out'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
