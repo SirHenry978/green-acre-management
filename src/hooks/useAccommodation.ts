@@ -228,6 +228,18 @@ export const useAccommodation = () => {
   };
 
   // Check-in / Check-out
+  // Fetch latest room + allocation state from DB (used to validate before mutating)
+  const verifyRoomState = async (roomId: string, allocId: string) => {
+    const [roomRes, allocRes] = await Promise.all([
+      (supabase as any).from('accommodation_rooms').select('status').eq('id', roomId).maybeSingle(),
+      (supabase as any).from('accommodation_allocations').select('status').eq('id', allocId).maybeSingle(),
+    ]);
+    return {
+      roomStatus: roomRes.data?.status as string | undefined,
+      allocStatus: allocRes.data?.status as string | undefined,
+    };
+  };
+
   const checkIn = async (alloc: AccAllocation, inspector: string, condition: string, notes: string) => {
     const { error: e1 } = await (supabase as any).from('accommodation_checkins').insert({
       allocation_id: alloc.id, room_id: alloc.room_id, employee_id: alloc.employee_id,
