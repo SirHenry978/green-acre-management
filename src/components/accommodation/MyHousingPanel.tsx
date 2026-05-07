@@ -45,6 +45,7 @@ export const MyHousingPanel = ({ acc, employees }: Props) => {
 
   const [showApply, setShowApply] = useState(false);
   const [confirm, setConfirm] = useState<null | 'in' | 'out'>(null);
+  const [busy, setBusy] = useState(false);
   const [form, setForm] = useState({
     room_id: '',
     desired_start_date: new Date().toISOString().split('T')[0],
@@ -252,15 +253,23 @@ export const MyHousingPanel = ({ acc, employees }: Props) => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={busy}>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              onClick={async () => {
-                if (confirm === 'in') await doCheckIn();
-                else if (confirm === 'out') await doCheckOut();
-                setConfirm(null);
+              disabled={busy}
+              onClick={async (e) => {
+                e.preventDefault();
+                if (busy) return;
+                setBusy(true);
+                try {
+                  if (confirm === 'in') await doCheckIn();
+                  else if (confirm === 'out') await doCheckOut();
+                } finally {
+                  setBusy(false);
+                  setConfirm(null);
+                }
               }}
             >
-              {confirm === 'in' ? 'Check in' : 'Check out'}
+              {busy ? 'Verifying…' : confirm === 'in' ? 'Check in' : 'Check out'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
