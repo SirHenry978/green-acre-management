@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useCurrentBranchId } from '@/hooks/useBranchFilter';
 
 export interface GLAccount {
   id: string;
@@ -45,18 +46,18 @@ export const useGLAccounts = () => {
   const [subAccounts, setSubAccounts] = useState<GLSubAccount[]>([]);
   const [entries, setEntries] = useState<GLEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const branchId = useCurrentBranchId();
 
   const fetchAccounts = useCallback(async () => {
-    const { data, error } = await supabase
-      .from('gl_accounts')
-      .select('*')
-      .order('account_code');
+    let q = supabase.from('gl_accounts').select('*').order('account_code');
+    if (branchId) q = q.eq('branch_id', branchId);
+    const { data, error } = await q;
     if (error) {
       toast.error('Failed to load GL accounts');
       return;
     }
     setAccounts((data as unknown as GLAccount[]) || []);
-  }, []);
+  }, [branchId]);
 
   const fetchSubAccounts = useCallback(async () => {
     const { data, error } = await supabase
@@ -71,16 +72,15 @@ export const useGLAccounts = () => {
   }, []);
 
   const fetchEntries = useCallback(async () => {
-    const { data, error } = await supabase
-      .from('gl_entries')
-      .select('*')
-      .order('entry_date', { ascending: false });
+    let q = supabase.from('gl_entries').select('*').order('entry_date', { ascending: false });
+    if (branchId) q = q.eq('branch_id', branchId);
+    const { data, error } = await q;
     if (error) {
       toast.error('Failed to load GL entries');
       return;
     }
     setEntries((data as unknown as GLEntry[]) || []);
-  }, []);
+  }, [branchId]);
 
   useEffect(() => {
     const load = async () => {
