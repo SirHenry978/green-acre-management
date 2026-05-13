@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { useCurrentBranchId } from '@/hooks/useBranchFilter';
 import {
   FolderKanban, Plus, Calendar, DollarSign, Users, CheckCircle2,
   Clock, AlertCircle, BarChart3, ListTodo, Loader2, Pencil, Trash2,
@@ -39,20 +40,25 @@ const FarmProjects = () => {
   const [newProject, setNewProject] = useState({ name: '', description: '', priority: 'medium', budget: '', start_date: '', end_date: '', manager_name: '' });
   const [newTask, setNewTask] = useState({ title: '', description: '', priority: 'medium', assigned_to: '', due_date: '' });
   const queryClient = useQueryClient();
+  const branchId = useCurrentBranchId();
 
   const { data: projects = [], isLoading: loadingProjects } = useQuery({
-    queryKey: ['farm-projects'],
+    queryKey: ['farm-projects', branchId],
     queryFn: async () => {
-      const { data, error } = await supabase.from('farm_projects').select('*').order('created_at', { ascending: false });
+      let q = supabase.from('farm_projects').select('*').order('created_at', { ascending: false });
+      if (branchId) q = q.eq('branch_id', branchId);
+      const { data, error } = await q;
       if (error) throw error;
       return data;
     },
   });
 
   const { data: tasks = [] } = useQuery({
-    queryKey: ['farm-tasks'],
+    queryKey: ['farm-tasks', branchId],
     queryFn: async () => {
-      const { data, error } = await supabase.from('farm_tasks').select('*').order('created_at', { ascending: false });
+      let q = supabase.from('farm_tasks').select('*').order('created_at', { ascending: false });
+      if (branchId) q = q.eq('branch_id', branchId);
+      const { data, error } = await q;
       if (error) throw error;
       return data;
     },
@@ -68,7 +74,7 @@ const FarmProjects = () => {
         start_date: p.start_date || null,
         end_date: p.end_date || null,
         manager_name: p.manager_name || null,
-        branch_id: 'default',
+        branch_id: branchId || 'default',
       });
       if (error) throw error;
     },
@@ -85,7 +91,7 @@ const FarmProjects = () => {
     mutationFn: async (t: typeof newTask & { project_id: string }) => {
       const { error } = await supabase.from('farm_tasks').insert({
         project_id: t.project_id,
-        branch_id: 'default',
+        branch_id: branchId || 'default',
         title: t.title,
         description: t.description || null,
         priority: t.priority,
