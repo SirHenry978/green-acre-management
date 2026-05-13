@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { useCurrentBranchId } from '@/hooks/useBranchFilter';
 import { Newspaper, BookOpen, Search, Plus, Sparkles, Clock, Tag, Loader2 } from 'lucide-react';
 
 const categories = ['All', 'Crop Science', 'Livestock', 'Market Trends', 'Technology', 'Sustainability', 'Pest Control'];
@@ -22,14 +23,14 @@ const AgriNews = () => {
   const [aiPrompt, setAiPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const queryClient = useQueryClient();
+  const branchId = useCurrentBranchId();
 
   const { data: articles = [], isLoading } = useQuery({
-    queryKey: ['agri-articles'],
+    queryKey: ['agri-articles', branchId],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('agri_articles')
-        .select('*')
-        .order('created_at', { ascending: false });
+      let q = supabase.from('agri_articles').select('*').order('created_at', { ascending: false });
+      if (branchId) q = q.or(`branch_id.eq.${branchId},branch_id.is.null`);
+      const { data, error } = await q;
       if (error) throw error;
       return data;
     },
@@ -43,6 +44,7 @@ const AgriNews = () => {
         category: article.category,
         tags: article.tags.split(',').map(t => t.trim()).filter(Boolean),
         is_ai_generated: false,
+        branch_id: branchId || null,
       });
       if (error) throw error;
     },

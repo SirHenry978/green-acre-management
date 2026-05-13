@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useCurrentBranchId } from '@/hooks/useBranchFilter';
 
 export interface EmployeeLoan {
   id: string;
@@ -32,18 +33,23 @@ export const usePayrollExtras = () => {
   const [loans, setLoans] = useState<EmployeeLoan[]>([]);
   const [bonuses, setBonuses] = useState<EmployeeBonus[]>([]);
   const [loading, setLoading] = useState(true);
+  const branchId = useCurrentBranchId();
 
   const fetchLoans = useCallback(async () => {
-    const { data, error } = await (supabase as any).from('employee_loans').select('*').order('loan_date', { ascending: false });
+    let q = (supabase as any).from('employee_loans').select('*').order('loan_date', { ascending: false });
+    if (branchId) q = q.eq('branch_id', branchId);
+    const { data, error } = await q;
     if (error) { toast.error('Failed to load loans'); return; }
     setLoans((data as EmployeeLoan[]) || []);
-  }, []);
+  }, [branchId]);
 
   const fetchBonuses = useCallback(async () => {
-    const { data, error } = await (supabase as any).from('employee_bonuses').select('*').order('bonus_date', { ascending: false });
+    let q = (supabase as any).from('employee_bonuses').select('*').order('bonus_date', { ascending: false });
+    if (branchId) q = q.eq('branch_id', branchId);
+    const { data, error } = await q;
     if (error) { toast.error('Failed to load bonuses'); return; }
     setBonuses((data as EmployeeBonus[]) || []);
-  }, []);
+  }, [branchId]);
 
   useEffect(() => {
     (async () => {
