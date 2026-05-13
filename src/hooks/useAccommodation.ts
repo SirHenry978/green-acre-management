@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useCurrentBranchId } from '@/hooks/useBranchFilter';
 
 export interface AccHouse {
   id: string;
@@ -117,17 +118,23 @@ export const useAccommodation = () => {
   const [checkins, setCheckins] = useState<AccCheckin[]>([]);
   const [requests, setRequests] = useState<AccRequest[]>([]);
   const [loading, setLoading] = useState(true);
+  const branchId = useCurrentBranchId();
 
   const fetchAll = useCallback(async () => {
-    const [h, r, a, ap, al, ci, rq] = await Promise.all([
-      (supabase as any).from('accommodation_houses').select('*').order('created_at', { ascending: false }),
-      (supabase as any).from('accommodation_rooms').select('*').order('room_number'),
-      (supabase as any).from('accommodation_room_assets').select('*'),
-      (supabase as any).from('accommodation_applications').select('*').order('application_date', { ascending: false }),
-      (supabase as any).from('accommodation_allocations').select('*').order('start_date', { ascending: false }),
-      (supabase as any).from('accommodation_checkins').select('*').order('event_date', { ascending: false }),
-      (supabase as any).from('accommodation_requests').select('*').order('created_at', { ascending: false }),
+    const withBranch = (q: any) => (branchId ? q.eq('branch_id', branchId) : q);
+    const [h, r, ap, al, ci, rq] = await Promise.all([
+      withBranch((supabase as any).from('accommodation_houses').select('*').order('created_at', { ascending: false })),
+      withBranch((supabase as any).from('accommodation_rooms').select('*').order('room_number')),
+      withBranch((supabase as any).from('accommodation_applications').select('*').order('application_date', { ascending: false })),
+      withBranch((supabase as any).from('accommodation_allocations').select('*').order('start_date', { ascending: false })),
+      withBranch((supabase as any).from('accommodation_checkins').select('*').order('event_date', { ascending: false })),
+      withBranch((supabase as any).from('accommodation_requests').select('*').order('created_at', { ascending: false })),
     ]);
+    // Room assets reference room_id; filter via current rooms list
+    const roomIds = (r.data || []).map((rm: any) => rm.id);
+    const a = roomIds.length
+      ? await (supabase as any).from('accommodation_room_assets').select('*').in('room_id', roomIds)
+      : { data: [] };
     if (h.data) setHouses(h.data);
     if (r.data) setRooms(r.data);
     if (a.data) setAssets(a.data);
@@ -135,7 +142,7 @@ export const useAccommodation = () => {
     if (al.data) setAllocations(al.data);
     if (ci.data) setCheckins(ci.data);
     if (rq.data) setRequests(rq.data);
-  }, []);
+  }, [branchId]);
 
   useEffect(() => { (async () => { setLoading(true); await fetchAll(); setLoading(false); })(); }, [fetchAll]);
 
