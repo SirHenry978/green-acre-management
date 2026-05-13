@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LayoutDashboard, Home, BedDouble, ClipboardList, Users, BarChart3, MessageSquareWarning, UserCircle } from 'lucide-react';
 import { useAccommodation } from '@/hooks/useAccommodation';
 import { useEmployees } from '@/hooks/useEmployees';
+import { useAuth } from '@/contexts/AuthContext';
 import { AccommodationDashboard } from '@/components/accommodation/AccommodationDashboard';
 import { HousesManager } from '@/components/accommodation/HousesManager';
 import { RoomsManager } from '@/components/accommodation/RoomsManager';
@@ -16,27 +17,33 @@ import { MyHousingPanel } from '@/components/accommodation/MyHousingPanel';
 const Accommodation = () => {
   const acc = useAccommodation();
   const { employees } = useEmployees();
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'super_admin' || user?.role === 'branch_manager';
   const [searchParams, setSearchParams] = useSearchParams();
-  const tab = searchParams.get('tab') ?? 'dashboard';
+  const tab = searchParams.get('tab') ?? (isAdmin ? 'dashboard' : 'my-housing');
 
   return (
     <DashboardLayout>
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Staff Accommodation</h1>
-          <p className="text-muted-foreground">Manage houses, rooms, applications, allocations and payroll deductions</p>
+          <p className="text-muted-foreground">
+            {isAdmin
+              ? 'Manage houses, rooms, applications, allocations and payroll deductions'
+              : 'Apply for available rooms and track your housing requests'}
+          </p>
         </div>
 
         <Tabs
-          value={tab}
+          value={isAdmin ? tab : 'my-housing'}
           onValueChange={(v) => setSearchParams({ tab: v })}
           className="space-y-4"
         >
-          <TabsList className="grid grid-cols-4 md:grid-cols-8 w-full max-w-5xl">
+          <TabsList className={`grid w-full max-w-5xl ${isAdmin ? 'grid-cols-4 md:grid-cols-8' : 'grid-cols-1'}`}>
             <TabsTrigger value="my-housing" className="flex items-center gap-2">
               <UserCircle className="h-4 w-4" /><span className="hidden sm:inline">My Housing</span>
             </TabsTrigger>
-            <TabsTrigger value="dashboard" className="flex items-center gap-2">
+            {isAdmin && <><TabsTrigger value="dashboard" className="flex items-center gap-2">
               <LayoutDashboard className="h-4 w-4" /><span className="hidden sm:inline">Dashboard</span>
             </TabsTrigger>
             <TabsTrigger value="houses" className="flex items-center gap-2">
@@ -56,12 +63,13 @@ const Accommodation = () => {
             </TabsTrigger>
             <TabsTrigger value="reports" className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" /><span className="hidden sm:inline">Reports</span>
-            </TabsTrigger>
+            </TabsTrigger></>}
           </TabsList>
 
           <TabsContent value="my-housing">
             <MyHousingPanel acc={acc} employees={employees} />
           </TabsContent>
+          {isAdmin && <>
           <TabsContent value="dashboard">
             <AccommodationDashboard
               houses={acc.houses} rooms={acc.rooms}
@@ -101,6 +109,7 @@ const Accommodation = () => {
               checkins={acc.checkins} employees={employees}
             />
           </TabsContent>
+          </>}
         </Tabs>
       </div>
     </DashboardLayout>
