@@ -955,6 +955,78 @@ export type Database = {
           },
         ]
       }
+      goods_received_notes: {
+        Row: {
+          branch_id: string | null
+          created_at: string
+          grn_number: string
+          id: string
+          notes: string | null
+          po_id: string
+          received_by: string | null
+          received_date: string
+          status: string
+          warehouse_id: string | null
+        }
+        Insert: {
+          branch_id?: string | null
+          created_at?: string
+          grn_number: string
+          id?: string
+          notes?: string | null
+          po_id: string
+          received_by?: string | null
+          received_date?: string
+          status?: string
+          warehouse_id?: string | null
+        }
+        Update: {
+          branch_id?: string | null
+          created_at?: string
+          grn_number?: string
+          id?: string
+          notes?: string | null
+          po_id?: string
+          received_by?: string | null
+          received_date?: string
+          status?: string
+          warehouse_id?: string | null
+        }
+        Relationships: []
+      }
+      grn_items: {
+        Row: {
+          condition: string | null
+          created_at: string
+          grn_id: string
+          id: string
+          item_name: string
+          notes: string | null
+          po_item_id: string
+          qty_received: number
+        }
+        Insert: {
+          condition?: string | null
+          created_at?: string
+          grn_id: string
+          id?: string
+          item_name: string
+          notes?: string | null
+          po_item_id: string
+          qty_received?: number
+        }
+        Update: {
+          condition?: string | null
+          created_at?: string
+          grn_id?: string
+          id?: string
+          item_name?: string
+          notes?: string | null
+          po_item_id?: string
+          qty_received?: number
+        }
+        Relationships: []
+      }
       inventory_issues: {
         Row: {
           approved_at: string | null
@@ -1813,6 +1885,522 @@ export type Database = {
           phone?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      purchase_order_items: {
+        Row: {
+          created_at: string
+          id: string
+          item_name: string
+          po_id: string
+          qty: number
+          qty_received: number
+          total: number
+          unit: string
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          item_name: string
+          po_id: string
+          qty?: number
+          qty_received?: number
+          total?: number
+          unit?: string
+          unit_price?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          item_name?: string
+          po_id?: string
+          qty?: number
+          qty_received?: number
+          total?: number
+          unit?: string
+          unit_price?: number
+        }
+        Relationships: []
+      }
+      purchase_orders: {
+        Row: {
+          branch_id: string | null
+          created_at: string
+          delivery_terms: string | null
+          expected_delivery: string | null
+          id: string
+          issued_at: string | null
+          issued_by: string | null
+          notes: string | null
+          payment_terms: string | null
+          po_number: string
+          requisition_id: string | null
+          status: string
+          subtotal: number
+          supplier_contact: string | null
+          supplier_name: string
+          tax: number
+          total: number
+          updated_at: string
+        }
+        Insert: {
+          branch_id?: string | null
+          created_at?: string
+          delivery_terms?: string | null
+          expected_delivery?: string | null
+          id?: string
+          issued_at?: string | null
+          issued_by?: string | null
+          notes?: string | null
+          payment_terms?: string | null
+          po_number: string
+          requisition_id?: string | null
+          status?: string
+          subtotal?: number
+          supplier_contact?: string | null
+          supplier_name: string
+          tax?: number
+          total?: number
+          updated_at?: string
+        }
+        Update: {
+          branch_id?: string | null
+          created_at?: string
+          delivery_terms?: string | null
+          expected_delivery?: string | null
+          id?: string
+          issued_at?: string | null
+          issued_by?: string | null
+          notes?: string | null
+          payment_terms?: string | null
+          po_number?: string
+          requisition_id?: string | null
+          status?: string
+          subtotal?: number
+          supplier_contact?: string | null
+          supplier_name?: string
+          tax?: number
+          total?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      req_approval_logs: {
+        Row: {
+          acted_at: string
+          action: string
+          approver_name: string | null
+          approver_role: string | null
+          comment: string | null
+          delegated_to: string | null
+          id: string
+          requisition_id: string
+          step_name: string | null
+          step_order: number
+        }
+        Insert: {
+          acted_at?: string
+          action: string
+          approver_name?: string | null
+          approver_role?: string | null
+          comment?: string | null
+          delegated_to?: string | null
+          id?: string
+          requisition_id: string
+          step_name?: string | null
+          step_order: number
+        }
+        Update: {
+          acted_at?: string
+          action?: string
+          approver_name?: string | null
+          approver_role?: string | null
+          comment?: string | null
+          delegated_to?: string | null
+          id?: string
+          requisition_id?: string
+          step_name?: string | null
+          step_order?: number
+        }
+        Relationships: []
+      }
+      req_approval_workflows: {
+        Row: {
+          branch_id: string | null
+          created_at: string
+          department: string | null
+          id: string
+          is_active: boolean
+          is_default: boolean
+          max_amount: number | null
+          min_amount: number | null
+          name: string
+        }
+        Insert: {
+          branch_id?: string | null
+          created_at?: string
+          department?: string | null
+          id?: string
+          is_active?: boolean
+          is_default?: boolean
+          max_amount?: number | null
+          min_amount?: number | null
+          name: string
+        }
+        Update: {
+          branch_id?: string | null
+          created_at?: string
+          department?: string | null
+          id?: string
+          is_active?: boolean
+          is_default?: boolean
+          max_amount?: number | null
+          min_amount?: number | null
+          name?: string
+        }
+        Relationships: []
+      }
+      req_attachments: {
+        Row: {
+          created_at: string
+          entity_id: string
+          entity_type: string
+          file_name: string
+          file_path: string
+          id: string
+          mime_type: string | null
+          uploaded_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          entity_id: string
+          entity_type: string
+          file_name: string
+          file_path: string
+          id?: string
+          mime_type?: string | null
+          uploaded_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          entity_id?: string
+          entity_type?: string
+          file_name?: string
+          file_path?: string
+          id?: string
+          mime_type?: string | null
+          uploaded_by?: string | null
+        }
+        Relationships: []
+      }
+      req_audit_logs: {
+        Row: {
+          action: string
+          actor_name: string | null
+          actor_role: string | null
+          branch_id: string | null
+          created_at: string
+          diff: Json | null
+          entity_id: string | null
+          entity_type: string
+          id: string
+        }
+        Insert: {
+          action: string
+          actor_name?: string | null
+          actor_role?: string | null
+          branch_id?: string | null
+          created_at?: string
+          diff?: Json | null
+          entity_id?: string | null
+          entity_type: string
+          id?: string
+        }
+        Update: {
+          action?: string
+          actor_name?: string | null
+          actor_role?: string | null
+          branch_id?: string | null
+          created_at?: string
+          diff?: Json | null
+          entity_id?: string | null
+          entity_type?: string
+          id?: string
+        }
+        Relationships: []
+      }
+      req_budgets: {
+        Row: {
+          allocated: number
+          branch_id: string | null
+          committed: number
+          created_at: string
+          department: string | null
+          fiscal_year: number
+          gl_account_id: string | null
+          id: string
+          notes: string | null
+          spent: number
+          updated_at: string
+        }
+        Insert: {
+          allocated?: number
+          branch_id?: string | null
+          committed?: number
+          created_at?: string
+          department?: string | null
+          fiscal_year: number
+          gl_account_id?: string | null
+          id?: string
+          notes?: string | null
+          spent?: number
+          updated_at?: string
+        }
+        Update: {
+          allocated?: number
+          branch_id?: string | null
+          committed?: number
+          created_at?: string
+          department?: string | null
+          fiscal_year?: number
+          gl_account_id?: string | null
+          id?: string
+          notes?: string | null
+          spent?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      req_notifications: {
+        Row: {
+          body: string | null
+          branch_id: string | null
+          created_at: string
+          id: string
+          is_read: boolean
+          kind: string
+          link: string | null
+          ref_id: string | null
+          title: string
+          user_name: string | null
+          user_role: string | null
+        }
+        Insert: {
+          body?: string | null
+          branch_id?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          kind: string
+          link?: string | null
+          ref_id?: string | null
+          title: string
+          user_name?: string | null
+          user_role?: string | null
+        }
+        Update: {
+          body?: string | null
+          branch_id?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          kind?: string
+          link?: string | null
+          ref_id?: string | null
+          title?: string
+          user_name?: string | null
+          user_role?: string | null
+        }
+        Relationships: []
+      }
+      req_quotations: {
+        Row: {
+          attachment_path: string | null
+          created_at: string
+          id: string
+          is_selected: boolean
+          lead_time_days: number | null
+          notes: string | null
+          quoted_total: number
+          requisition_id: string
+          supplier_contact: string | null
+          supplier_name: string
+          valid_until: string | null
+        }
+        Insert: {
+          attachment_path?: string | null
+          created_at?: string
+          id?: string
+          is_selected?: boolean
+          lead_time_days?: number | null
+          notes?: string | null
+          quoted_total?: number
+          requisition_id: string
+          supplier_contact?: string | null
+          supplier_name: string
+          valid_until?: string | null
+        }
+        Update: {
+          attachment_path?: string | null
+          created_at?: string
+          id?: string
+          is_selected?: boolean
+          lead_time_days?: number | null
+          notes?: string | null
+          quoted_total?: number
+          requisition_id?: string
+          supplier_contact?: string | null
+          supplier_name?: string
+          valid_until?: string | null
+        }
+        Relationships: []
+      }
+      req_workflow_steps: {
+        Row: {
+          approver_role: string
+          created_at: string
+          id: string
+          sla_hours: number | null
+          step_name: string
+          step_order: number
+          workflow_id: string
+        }
+        Insert: {
+          approver_role: string
+          created_at?: string
+          id?: string
+          sla_hours?: number | null
+          step_name: string
+          step_order: number
+          workflow_id: string
+        }
+        Update: {
+          approver_role?: string
+          created_at?: string
+          id?: string
+          sla_hours?: number | null
+          step_name?: string
+          step_order?: number
+          workflow_id?: string
+        }
+        Relationships: []
+      }
+      requisition_items: {
+        Row: {
+          category: string | null
+          created_at: string
+          id: string
+          item_name: string
+          notes: string | null
+          qty: number
+          requisition_id: string
+          total: number
+          unit: string
+          unit_price: number
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          item_name: string
+          notes?: string | null
+          qty?: number
+          requisition_id: string
+          total?: number
+          unit?: string
+          unit_price?: number
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          item_name?: string
+          notes?: string | null
+          qty?: number
+          requisition_id?: string
+          total?: number
+          unit?: string
+          unit_price?: number
+        }
+        Relationships: []
+      }
+      requisitions: {
+        Row: {
+          branch_id: string | null
+          budget_gl_account_id: string | null
+          created_at: string
+          currency: string
+          current_step: number
+          department: string | null
+          estimated_total: number
+          id: string
+          is_emergency: boolean
+          justification: string | null
+          notes: string | null
+          parent_req_id: string | null
+          priority: string
+          recurrence_rule: string | null
+          req_number: string
+          requester_id: string | null
+          requester_name: string
+          required_by: string | null
+          status: string
+          suggested_supplier: string | null
+          title: string
+          updated_at: string
+          workflow_id: string | null
+        }
+        Insert: {
+          branch_id?: string | null
+          budget_gl_account_id?: string | null
+          created_at?: string
+          currency?: string
+          current_step?: number
+          department?: string | null
+          estimated_total?: number
+          id?: string
+          is_emergency?: boolean
+          justification?: string | null
+          notes?: string | null
+          parent_req_id?: string | null
+          priority?: string
+          recurrence_rule?: string | null
+          req_number: string
+          requester_id?: string | null
+          requester_name: string
+          required_by?: string | null
+          status?: string
+          suggested_supplier?: string | null
+          title: string
+          updated_at?: string
+          workflow_id?: string | null
+        }
+        Update: {
+          branch_id?: string | null
+          budget_gl_account_id?: string | null
+          created_at?: string
+          currency?: string
+          current_step?: number
+          department?: string | null
+          estimated_total?: number
+          id?: string
+          is_emergency?: boolean
+          justification?: string | null
+          notes?: string | null
+          parent_req_id?: string | null
+          priority?: string
+          recurrence_rule?: string | null
+          req_number?: string
+          requester_id?: string | null
+          requester_name?: string
+          required_by?: string | null
+          status?: string
+          suggested_supplier?: string | null
+          title?: string
+          updated_at?: string
+          workflow_id?: string | null
         }
         Relationships: []
       }
