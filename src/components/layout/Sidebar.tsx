@@ -35,6 +35,7 @@ import {
   BarChart3,
   MessageSquareWarning,
   UserCircle,
+  ClipboardCheck,
 } from 'lucide-react';
 
 interface NavItem {
