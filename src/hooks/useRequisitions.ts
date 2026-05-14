@@ -23,6 +23,7 @@ export interface Requisition {
   current_step: number;
   workflow_id: string | null;
   parent_req_id: string | null;
+  recurrence_rule: string | null;
   notes: string | null;
   created_at: string;
   updated_at: string;
