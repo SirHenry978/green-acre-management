@@ -14,11 +14,11 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const rolePermissions: Record<UserRole, string[]> = {
-  super_admin: ['dashboard', 'branches', 'users', 'inventory', 'livestock', 'finance', 'attendance', 'suppliers', 'customers', 'assets', 'reports', 'settings', 'hr'],
-  branch_manager: ['dashboard', 'users', 'inventory', 'livestock', 'finance', 'attendance', 'suppliers', 'customers', 'assets', 'reports', 'hr'],
-  field_staff: ['dashboard', 'attendance', 'livestock', 'activities'],
-  accountant: ['dashboard', 'finance', 'reports', 'suppliers', 'customers'],
-  inventory_staff: ['dashboard', 'inventory', 'livestock', 'suppliers', 'assets'],
+  super_admin: ['dashboard', 'branches', 'users', 'inventory', 'livestock', 'finance', 'attendance', 'suppliers', 'customers', 'assets', 'reports', 'settings', 'hr', 'requisitions'],
+  branch_manager: ['dashboard', 'users', 'inventory', 'livestock', 'finance', 'attendance', 'suppliers', 'customers', 'assets', 'reports', 'hr', 'requisitions'],
+  field_staff: ['dashboard', 'attendance', 'livestock', 'activities', 'requisitions'],
+  accountant: ['dashboard', 'finance', 'reports', 'suppliers', 'customers', 'requisitions'],
+  inventory_staff: ['dashboard', 'inventory', 'livestock', 'suppliers', 'assets', 'requisitions'],
 };
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
