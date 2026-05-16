@@ -150,7 +150,7 @@ export const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }: 
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
+          <nav className="sidebar-scroll flex-1 space-y-1 overflow-y-auto px-3 py-4">
             {filteredNavItems.map((item) => {
               const isActive = location.pathname === item.path || location.pathname.startsWith(item.path + '/');
               const Icon = item.icon;
