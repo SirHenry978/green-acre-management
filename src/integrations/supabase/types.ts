@@ -418,6 +418,471 @@ export type Database = {
         }
         Relationships: []
       }
+      asset_assignments: {
+        Row: {
+          asset_id: string
+          assigned_date: string
+          assignee_employee_id: string | null
+          assignee_name: string
+          branch_id: string | null
+          condition_in: string | null
+          condition_out: string | null
+          created_at: string
+          department: string | null
+          id: string
+          notes: string | null
+          returned_date: string | null
+          status: string
+        }
+        Insert: {
+          asset_id: string
+          assigned_date?: string
+          assignee_employee_id?: string | null
+          assignee_name: string
+          branch_id?: string | null
+          condition_in?: string | null
+          condition_out?: string | null
+          created_at?: string
+          department?: string | null
+          id?: string
+          notes?: string | null
+          returned_date?: string | null
+          status?: string
+        }
+        Update: {
+          asset_id?: string
+          assigned_date?: string
+          assignee_employee_id?: string | null
+          assignee_name?: string
+          branch_id?: string | null
+          condition_in?: string | null
+          condition_out?: string | null
+          created_at?: string
+          department?: string | null
+          id?: string
+          notes?: string | null
+          returned_date?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
+      asset_audit_logs: {
+        Row: {
+          action: string
+          actor_name: string | null
+          actor_role: string | null
+          branch_id: string | null
+          created_at: string
+          diff: Json | null
+          entity_id: string | null
+          entity_type: string
+          id: string
+        }
+        Insert: {
+          action: string
+          actor_name?: string | null
+          actor_role?: string | null
+          branch_id?: string | null
+          created_at?: string
+          diff?: Json | null
+          entity_id?: string | null
+          entity_type: string
+          id?: string
+        }
+        Update: {
+          action?: string
+          actor_name?: string | null
+          actor_role?: string | null
+          branch_id?: string | null
+          created_at?: string
+          diff?: Json | null
+          entity_id?: string | null
+          entity_type?: string
+          id?: string
+        }
+        Relationships: []
+      }
+      asset_categories: {
+        Row: {
+          code: string | null
+          created_at: string
+          default_salvage_rate: number
+          default_useful_life_years: number
+          depreciation_method: string
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          code?: string | null
+          created_at?: string
+          default_salvage_rate?: number
+          default_useful_life_years?: number
+          depreciation_method?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string | null
+          created_at?: string
+          default_salvage_rate?: number
+          default_useful_life_years?: number
+          depreciation_method?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      asset_depreciation_entries: {
+        Row: {
+          asset_id: string
+          branch_id: string | null
+          closing_value: number
+          created_at: string
+          depreciation_amount: number
+          gl_entry_ref: string | null
+          id: string
+          notes: string | null
+          opening_value: number
+          period_end: string
+          period_start: string
+          posted_to_finance: boolean
+        }
+        Insert: {
+          asset_id: string
+          branch_id?: string | null
+          closing_value?: number
+          created_at?: string
+          depreciation_amount?: number
+          gl_entry_ref?: string | null
+          id?: string
+          notes?: string | null
+          opening_value?: number
+          period_end: string
+          period_start: string
+          posted_to_finance?: boolean
+        }
+        Update: {
+          asset_id?: string
+          branch_id?: string | null
+          closing_value?: number
+          created_at?: string
+          depreciation_amount?: number
+          gl_entry_ref?: string | null
+          id?: string
+          notes?: string | null
+          opening_value?: number
+          period_end?: string
+          period_start?: string
+          posted_to_finance?: boolean
+        }
+        Relationships: []
+      }
+      asset_disposals: {
+        Row: {
+          approval_status: string
+          approved_by: string | null
+          asset_id: string
+          book_value: number
+          branch_id: string | null
+          buyer: string | null
+          created_at: string
+          disposal_date: string
+          gain_loss: number
+          id: string
+          method: string
+          posted_to_finance: boolean
+          reason: string | null
+          sale_price: number
+        }
+        Insert: {
+          approval_status?: string
+          approved_by?: string | null
+          asset_id: string
+          book_value?: number
+          branch_id?: string | null
+          buyer?: string | null
+          created_at?: string
+          disposal_date?: string
+          gain_loss?: number
+          id?: string
+          method?: string
+          posted_to_finance?: boolean
+          reason?: string | null
+          sale_price?: number
+        }
+        Update: {
+          approval_status?: string
+          approved_by?: string | null
+          asset_id?: string
+          book_value?: number
+          branch_id?: string | null
+          buyer?: string | null
+          created_at?: string
+          disposal_date?: string
+          gain_loss?: number
+          id?: string
+          method?: string
+          posted_to_finance?: boolean
+          reason?: string | null
+          sale_price?: number
+        }
+        Relationships: []
+      }
+      asset_maintenance: {
+        Row: {
+          asset_id: string
+          branch_id: string | null
+          cost: number
+          created_at: string
+          description: string | null
+          downtime_hours: number | null
+          id: string
+          maintenance_type: string
+          next_due_date: string | null
+          notes: string | null
+          performed_by: string | null
+          performed_date: string | null
+          scheduled_date: string | null
+          status: string
+          updated_at: string
+          vendor_id: string | null
+        }
+        Insert: {
+          asset_id: string
+          branch_id?: string | null
+          cost?: number
+          created_at?: string
+          description?: string | null
+          downtime_hours?: number | null
+          id?: string
+          maintenance_type?: string
+          next_due_date?: string | null
+          notes?: string | null
+          performed_by?: string | null
+          performed_date?: string | null
+          scheduled_date?: string | null
+          status?: string
+          updated_at?: string
+          vendor_id?: string | null
+        }
+        Update: {
+          asset_id?: string
+          branch_id?: string | null
+          cost?: number
+          created_at?: string
+          description?: string | null
+          downtime_hours?: number | null
+          id?: string
+          maintenance_type?: string
+          next_due_date?: string | null
+          notes?: string | null
+          performed_by?: string | null
+          performed_date?: string | null
+          scheduled_date?: string | null
+          status?: string
+          updated_at?: string
+          vendor_id?: string | null
+        }
+        Relationships: []
+      }
+      asset_notifications: {
+        Row: {
+          body: string | null
+          branch_id: string | null
+          created_at: string
+          id: string
+          is_read: boolean
+          kind: string
+          link: string | null
+          ref_id: string | null
+          title: string
+          user_name: string | null
+          user_role: string | null
+        }
+        Insert: {
+          body?: string | null
+          branch_id?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          kind: string
+          link?: string | null
+          ref_id?: string | null
+          title: string
+          user_name?: string | null
+          user_role?: string | null
+        }
+        Update: {
+          body?: string | null
+          branch_id?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          kind?: string
+          link?: string | null
+          ref_id?: string | null
+          title?: string
+          user_name?: string | null
+          user_role?: string | null
+        }
+        Relationships: []
+      }
+      asset_vendors: {
+        Row: {
+          address: string | null
+          branch_id: string | null
+          category: string | null
+          contact_person: string | null
+          created_at: string
+          email: string | null
+          id: string
+          is_active: boolean
+          name: string
+          phone: string | null
+          rating: number | null
+          services_offered: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          branch_id?: string | null
+          category?: string | null
+          contact_person?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          phone?: string | null
+          rating?: number | null
+          services_offered?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          branch_id?: string | null
+          category?: string | null
+          contact_person?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          phone?: string | null
+          rating?: number | null
+          services_offered?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      assets: {
+        Row: {
+          accumulated_depreciation: number
+          asset_code: string
+          asset_type: string
+          branch_id: string | null
+          category_id: string | null
+          condition: string
+          created_at: string
+          current_value: number
+          depreciation_method: string
+          description: string | null
+          gl_account_id: string | null
+          id: string
+          image_url: string | null
+          last_depreciated_at: string | null
+          livestock_id: string | null
+          location: string | null
+          manufacturer: string | null
+          model: string | null
+          name: string
+          notes: string | null
+          purchase_cost: number
+          purchase_date: string | null
+          salvage_value: number
+          serial_number: string | null
+          status: string
+          supplier_id: string | null
+          updated_at: string
+          useful_life_years: number
+          vendor_id: string | null
+          warranty_expires_on: string | null
+        }
+        Insert: {
+          accumulated_depreciation?: number
+          asset_code: string
+          asset_type?: string
+          branch_id?: string | null
+          category_id?: string | null
+          condition?: string
+          created_at?: string
+          current_value?: number
+          depreciation_method?: string
+          description?: string | null
+          gl_account_id?: string | null
+          id?: string
+          image_url?: string | null
+          last_depreciated_at?: string | null
+          livestock_id?: string | null
+          location?: string | null
+          manufacturer?: string | null
+          model?: string | null
+          name: string
+          notes?: string | null
+          purchase_cost?: number
+          purchase_date?: string | null
+          salvage_value?: number
+          serial_number?: string | null
+          status?: string
+          supplier_id?: string | null
+          updated_at?: string
+          useful_life_years?: number
+          vendor_id?: string | null
+          warranty_expires_on?: string | null
+        }
+        Update: {
+          accumulated_depreciation?: number
+          asset_code?: string
+          asset_type?: string
+          branch_id?: string | null
+          category_id?: string | null
+          condition?: string
+          created_at?: string
+          current_value?: number
+          depreciation_method?: string
+          description?: string | null
+          gl_account_id?: string | null
+          id?: string
+          image_url?: string | null
+          last_depreciated_at?: string | null
+          livestock_id?: string | null
+          location?: string | null
+          manufacturer?: string | null
+          model?: string | null
+          name?: string
+          notes?: string | null
+          purchase_cost?: number
+          purchase_date?: string | null
+          salvage_value?: number
+          serial_number?: string | null
+          status?: string
+          supplier_id?: string | null
+          updated_at?: string
+          useful_life_years?: number
+          vendor_id?: string | null
+          warranty_expires_on?: string | null
+        }
+        Relationships: []
+      }
       credit_notes: {
         Row: {
           branch_id: string
