@@ -66,7 +66,7 @@ const Assets = () => {
   const { data: notifications = [] } = useAssetNotifications();
   const { data: auditLogs = [] } = useAssetAuditLogs();
   const { data: livestock = [] } = useLivestock();
-  const { data: glAccounts = [] } = useGLAccounts();
+  const { accounts: glAccounts = [] } = useGLAccounts();
   const m = useAssetMutations();
 
   const [search, setSearch] = useState('');
