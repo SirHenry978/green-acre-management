@@ -36,6 +36,7 @@ import {
   MessageSquareWarning,
   UserCircle,
   ClipboardCheck,
+  ClipboardSignature,
 } from 'lucide-react';
 
 interface NavItem {
@@ -62,6 +63,7 @@ const navItems: NavItem[] = [
   { name: 'Agri News', path: '/agri-news', icon: Newspaper, permission: 'dashboard' },
   { name: 'HR & Payroll', path: '/hr', icon: UserCog, permission: 'hr' },
   { name: 'Leave', path: '/leave', icon: CalendarDays, permission: 'dashboard' },
+  { name: 'Requisitions', path: '/requisitions', icon: ClipboardSignature, permission: 'requisitions' },
   {
     name: 'Accommodation',
     path: '/accommodation',
