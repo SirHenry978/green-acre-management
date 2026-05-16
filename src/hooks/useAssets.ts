@@ -17,7 +17,7 @@ export const useAssetCategories = () =>
         .select('*')
         .order('name');
       if (error) throw error;
-      return data || [];
+      return (data as any[]) || [];
     },
   });
 
@@ -31,7 +31,7 @@ export const useAssetVendors = () => {
         branchId,
       );
       if (error) throw error;
-      return data || [];
+      return (data as any[]) || [];
     },
   });
 };
@@ -46,7 +46,7 @@ export const useAssets = () => {
         branchId,
       );
       if (error) throw error;
-      return data || [];
+      return (data as any[]) || [];
     },
   });
 };
@@ -60,7 +60,7 @@ export const useAssignments = () =>
         .select('*')
         .order('assigned_date', { ascending: false });
       if (error) throw error;
-      return data || [];
+      return (data as any[]) || [];
     },
   });
 
@@ -73,7 +73,7 @@ export const useMaintenance = () =>
         .select('*')
         .order('scheduled_date', { ascending: false });
       if (error) throw error;
-      return data || [];
+      return (data as any[]) || [];
     },
   });
 
@@ -86,7 +86,7 @@ export const useDepreciationEntries = () =>
         .select('*')
         .order('period_end', { ascending: false });
       if (error) throw error;
-      return data || [];
+      return (data as any[]) || [];
     },
   });
 
@@ -99,7 +99,7 @@ export const useDisposals = () =>
         .select('*')
         .order('disposal_date', { ascending: false });
       if (error) throw error;
-      return data || [];
+      return (data as any[]) || [];
     },
   });
 
@@ -113,7 +113,7 @@ export const useAssetNotifications = () =>
         .order('created_at', { ascending: false })
         .limit(100);
       if (error) throw error;
-      return data || [];
+      return (data as any[]) || [];
     },
   });
 
@@ -127,7 +127,7 @@ export const useAssetAuditLogs = () =>
         .order('created_at', { ascending: false })
         .limit(200);
       if (error) throw error;
-      return data || [];
+      return (data as any[]) || [];
     },
   });
 
