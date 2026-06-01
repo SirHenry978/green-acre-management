@@ -290,13 +290,22 @@ export const useAssetMutations = () => {
   // Compute & post a depreciation period (straight-line by default)
   const runDepreciation = useMutation({
     mutationFn: async ({ asset, periodMonths }: { asset: any; periodMonths: number }) => {
-      const annual = Math.max(
-        ((asset.purchase_cost || 0) - (asset.salvage_value || 0)) / Math.max(asset.useful_life_years || 1, 1),
-        0,
-      );
-      const dep = (annual * periodMonths) / 12;
+      const method = asset.depreciation_method || 'straight_line';
+      const life = Math.max(asset.useful_life_years || 1, 1);
+      const salvage = asset.salvage_value || 0;
       const opening = asset.current_value || asset.purchase_cost || 0;
-      const closing = Math.max(opening - dep, asset.salvage_value || 0);
+      let dep = 0;
+      if (method === 'declining_balance') {
+        // Double-declining rate
+        const rate = (2 / life) * (periodMonths / 12);
+        dep = Math.max(opening * rate, 0);
+      } else if (method === 'none') {
+        dep = 0;
+      } else {
+        const annual = Math.max(((asset.purchase_cost || 0) - salvage) / life, 0);
+        dep = (annual * periodMonths) / 12;
+      }
+      const closing = Math.max(opening - dep, salvage);
       const today = new Date();
       const periodStart = new Date(today.getFullYear(), today.getMonth() - periodMonths + 1, 1)
         .toISOString().slice(0, 10);
