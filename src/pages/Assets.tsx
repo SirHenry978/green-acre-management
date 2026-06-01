@@ -626,6 +626,51 @@ const Assets = () => {
               <Card className="p-5"><p className="text-sm text-muted-foreground">Disposed Value</p>
                 <p className="text-3xl font-bold font-display">{fmt(disposals.reduce((s,d)=>s+Number(d.sale_price||0),0))}</p></Card>
             </div>
+            <div className="grid gap-4 lg:grid-cols-2">
+              <Card className="p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-semibold">Monthly Depreciation</h3>
+                  <Button size="sm" variant="ghost" onClick={()=>exportCsv('monthly-depreciation.csv', depByMonth)}><Download className="h-3 w-3"/></Button>
+                </div>
+                <ResponsiveContainer width="100%" height={240}>
+                  <BarChart data={depByMonth}>
+                    <XAxis dataKey="month" /><YAxis /><Tooltip />
+                    <Bar dataKey="amount" fill="hsl(var(--primary))" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </Card>
+              <Card className="p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-semibold">Annual Depreciation</h3>
+                  <Button size="sm" variant="ghost" onClick={()=>exportCsv('annual-depreciation.csv', depByYear)}><Download className="h-3 w-3"/></Button>
+                </div>
+                <ResponsiveContainer width="100%" height={240}>
+                  <BarChart data={depByYear}>
+                    <XAxis dataKey="year" /><YAxis /><Tooltip />
+                    <Bar dataKey="amount" fill="hsl(var(--accent))" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </Card>
+            </div>
+            <Card className="p-5">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-semibold">Asset Valuation Report</h3>
+                <Button size="sm" variant="outline" className="gap-2" onClick={()=>exportCsv('asset-valuation.csv', assets.map((a)=>({
+                  code: a.asset_code, name: a.name, type: a.asset_type,
+                  original_cost: Number(a.purchase_cost||0),
+                  accumulated_depreciation: Number(a.accumulated_depreciation||0),
+                  current_value: Number(a.current_value||0),
+                })))}><Download className="h-4 w-4"/> Export</Button>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-3 text-sm">
+                <div><p className="text-muted-foreground">Total Original Cost</p>
+                  <p className="text-2xl font-bold font-display">{fmt(assets.reduce((s,a)=>s+Number(a.purchase_cost||0),0))}</p></div>
+                <div><p className="text-muted-foreground">Total Accumulated Depreciation</p>
+                  <p className="text-2xl font-bold font-display text-destructive">{fmt(assets.reduce((s,a)=>s+Number(a.accumulated_depreciation||0),0))}</p></div>
+                <div><p className="text-muted-foreground">Total Book Value</p>
+                  <p className="text-2xl font-bold font-display text-success">{fmt(stats.value)}</p></div>
+              </div>
+            </Card>
             <div className="flex gap-2">
               <Button variant="outline" onClick={()=>exportCsv('asset-register.csv', assets)}>Register CSV</Button>
               <Button variant="outline" onClick={()=>exportCsv('depreciation.csv', depreciation)}>Depreciation CSV</Button>
