@@ -17,6 +17,7 @@ import {
 import {
   LayoutDashboard, Plus, Warehouse, Layers, UserCheck, Wrench, TrendingDown,
   FileBarChart, Trash2, Store, Bell, History, RefreshCw, Search, Download,
+  Calculator, BookOpen, CalendarClock, Settings as SettingsIcon,
 } from 'lucide-react';
 import {
   useAssets, useAssetCategories, useAssetVendors, useAssignments, useMaintenance,
@@ -27,6 +28,7 @@ import { useLivestock } from '@/hooks/useLivestock';
 import { useGLAccounts } from '@/hooks/useGLAccounts';
 import {
   BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, PieChart, Pie, Cell, Legend,
+  LineChart, Line, CartesianGrid,
 } from 'recharts';
 
 const STATUS_COLORS: Record<string, string> = {
@@ -105,6 +107,71 @@ const Assets = () => {
     a.name?.toLowerCase().includes(search.toLowerCase()) ||
     a.asset_code?.toLowerCase().includes(search.toLowerCase()));
 
+  // ---- Depreciation helpers (Settings / Schedule / Book Value / Reports) ----
+  const [scheduleAssetId, setScheduleAssetId] = useState<string>('');
+  const scheduleAsset = assets.find((a) => a.id === scheduleAssetId) || assets[0];
+
+  const buildSchedule = (asset: any, freq: 'monthly' | 'yearly' = 'yearly') => {
+    if (!asset) return [];
+    const method = asset.depreciation_method || 'straight_line';
+    const life = Math.max(asset.useful_life_years || 1, 1);
+    const salvage = Number(asset.salvage_value || 0);
+    const cost = Number(asset.purchase_cost || 0);
+    const steps = freq === 'monthly' ? life * 12 : life;
+    const periodMonths = freq === 'monthly' ? 1 : 12;
+    let opening = cost;
+    let accum = 0;
+    const rows: any[] = [];
+    for (let i = 1; i <= steps; i++) {
+      let dep = 0;
+      if (method === 'declining_balance') {
+        const rate = (2 / life) * (periodMonths / 12);
+        dep = Math.max(opening * rate, 0);
+      } else if (method === 'none') {
+        dep = 0;
+      } else {
+        const annual = Math.max((cost - salvage) / life, 0);
+        dep = (annual * periodMonths) / 12;
+      }
+      let closing = opening - dep;
+      if (closing < salvage) {
+        dep = Math.max(opening - salvage, 0);
+        closing = salvage;
+      }
+      accum += dep;
+      rows.push({
+        period: i,
+        opening,
+        depreciation: dep,
+        accumulated: accum,
+        closing,
+      });
+      opening = closing;
+      if (closing <= salvage) break;
+    }
+    return rows;
+  };
+
+  // Annual depreciation by year (from posted entries)
+  const depByYear = useMemo(() => {
+    const map = new Map<string, number>();
+    depreciation.forEach((d: any) => {
+      const y = String(new Date(d.period_end).getFullYear());
+      map.set(y, (map.get(y) || 0) + Number(d.depreciation_amount || 0));
+    });
+    return Array.from(map, ([year, amount]) => ({ year, amount })).sort((a, b) => a.year.localeCompare(b.year));
+  }, [depreciation]);
+
+  const depByMonth = useMemo(() => {
+    const map = new Map<string, number>();
+    depreciation.forEach((d: any) => {
+      const dt = new Date(d.period_end);
+      const key = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}`;
+      map.set(key, (map.get(key) || 0) + Number(d.depreciation_amount || 0));
+    });
+    return Array.from(map, ([month, amount]) => ({ month, amount })).sort((a, b) => a.month.localeCompare(b.month));
+  }, [depreciation]);
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -133,6 +200,9 @@ const Assets = () => {
             <TabsTrigger value="assignments" className="gap-2"><UserCheck className="h-4 w-4"/> Assignments</TabsTrigger>
             <TabsTrigger value="maintenance" className="gap-2"><Wrench className="h-4 w-4"/> Maintenance</TabsTrigger>
             <TabsTrigger value="depreciation" className="gap-2"><TrendingDown className="h-4 w-4"/> Depreciation</TabsTrigger>
+            <TabsTrigger value="dep-settings" className="gap-2"><SettingsIcon className="h-4 w-4"/> Dep. Settings</TabsTrigger>
+            <TabsTrigger value="schedule" className="gap-2"><CalendarClock className="h-4 w-4"/> Schedule</TabsTrigger>
+            <TabsTrigger value="book-value" className="gap-2"><BookOpen className="h-4 w-4"/> Book Value</TabsTrigger>
             <TabsTrigger value="reports" className="gap-2"><FileBarChart className="h-4 w-4"/> Reports</TabsTrigger>
             <TabsTrigger value="disposal" className="gap-2"><Trash2 className="h-4 w-4"/> Disposal</TabsTrigger>
             <TabsTrigger value="vendors" className="gap-2"><Store className="h-4 w-4"/> Vendors</TabsTrigger>
