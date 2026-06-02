@@ -23,6 +23,7 @@ import LandingPage from "./pages/LandingPage";
 import Weather from "./pages/Weather";
 import AgriNews from "./pages/AgriNews";
 import FarmProjects from "./pages/FarmProjects";
+import ProjectDetail from "./pages/ProjectDetail";
 import HumanResources from "./pages/HumanResources";
 import LeaveApplication from "./pages/LeaveApplication";
 import Accommodation from "./pages/Accommodation";
@@ -55,6 +56,7 @@ const App = () => (
             <Route path="/weather" element={<Weather />} />
             <Route path="/agri-news" element={<AgriNews />} />
             <Route path="/farm-projects" element={<FarmProjects />} />
+            <Route path="/farm-projects/:id" element={<ProjectDetail />} />
             <Route path="/hr" element={<HumanResources />} />
             <Route path="/leave" element={<LeaveApplication />} />
             <Route path="/accommodation" element={<Accommodation />} />
