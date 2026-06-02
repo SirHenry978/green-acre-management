@@ -431,6 +431,7 @@ export type Database = {
           department: string | null
           id: string
           notes: string | null
+          project_id: string | null
           returned_date: string | null
           status: string
         }
@@ -446,6 +447,7 @@ export type Database = {
           department?: string | null
           id?: string
           notes?: string | null
+          project_id?: string | null
           returned_date?: string | null
           status?: string
         }
@@ -461,6 +463,7 @@ export type Database = {
           department?: string | null
           id?: string
           notes?: string | null
+          project_id?: string | null
           returned_date?: string | null
           status?: string
         }
@@ -1171,45 +1174,66 @@ export type Database = {
       }
       farm_projects: {
         Row: {
+          archived: boolean
           branch_id: string
           budget: number | null
           created_at: string
           description: string | null
           end_date: string | null
+          gps_lat: number | null
+          gps_lng: number | null
           id: string
+          location_name: string | null
           manager_name: string | null
           name: string
+          objectives: string | null
           priority: string
+          project_type: string | null
+          revenue: number | null
           spent: number | null
           start_date: string | null
           status: string
           updated_at: string
         }
         Insert: {
+          archived?: boolean
           branch_id: string
           budget?: number | null
           created_at?: string
           description?: string | null
           end_date?: string | null
+          gps_lat?: number | null
+          gps_lng?: number | null
           id?: string
+          location_name?: string | null
           manager_name?: string | null
           name: string
+          objectives?: string | null
           priority?: string
+          project_type?: string | null
+          revenue?: number | null
           spent?: number | null
           start_date?: string | null
           status?: string
           updated_at?: string
         }
         Update: {
+          archived?: boolean
           branch_id?: string
           budget?: number | null
           created_at?: string
           description?: string | null
           end_date?: string | null
+          gps_lat?: number | null
+          gps_lng?: number | null
           id?: string
+          location_name?: string | null
           manager_name?: string | null
           name?: string
+          objectives?: string | null
           priority?: string
+          project_type?: string | null
+          revenue?: number | null
           spent?: number | null
           start_date?: string | null
           status?: string
@@ -1219,50 +1243,68 @@ export type Database = {
       }
       farm_tasks: {
         Row: {
+          actual_hours: number | null
           assigned_to: string | null
           branch_id: string
+          checklist: Json | null
           completed_at: string | null
           created_at: string
           description: string | null
           due_date: string | null
+          estimated_hours: number | null
           id: string
           parent_task_id: string | null
+          phase_id: string | null
+          predecessor_task_id: string | null
           priority: string
           project_id: string
           start_date: string | null
           status: string
+          subtask_of: string | null
           title: string
           updated_at: string
         }
         Insert: {
+          actual_hours?: number | null
           assigned_to?: string | null
           branch_id: string
+          checklist?: Json | null
           completed_at?: string | null
           created_at?: string
           description?: string | null
           due_date?: string | null
+          estimated_hours?: number | null
           id?: string
           parent_task_id?: string | null
+          phase_id?: string | null
+          predecessor_task_id?: string | null
           priority?: string
           project_id: string
           start_date?: string | null
           status?: string
+          subtask_of?: string | null
           title: string
           updated_at?: string
         }
         Update: {
+          actual_hours?: number | null
           assigned_to?: string | null
           branch_id?: string
+          checklist?: Json | null
           completed_at?: string | null
           created_at?: string
           description?: string | null
           due_date?: string | null
+          estimated_hours?: number | null
           id?: string
           parent_task_id?: string | null
+          phase_id?: string | null
+          predecessor_task_id?: string | null
           priority?: string
           project_id?: string
           start_date?: string | null
           status?: string
+          subtask_of?: string | null
           title?: string
           updated_at?: string
         }
@@ -1505,6 +1547,7 @@ export type Database = {
           issuer_name: string
           item_name: string
           notes: string | null
+          project_id: string | null
           purpose: string | null
           quantity: number
           recipient_name: string
@@ -1526,6 +1569,7 @@ export type Database = {
           issuer_name: string
           item_name: string
           notes?: string | null
+          project_id?: string | null
           purpose?: string | null
           quantity: number
           recipient_name: string
@@ -1547,6 +1591,7 @@ export type Database = {
           issuer_name?: string
           item_name?: string
           notes?: string | null
+          project_id?: string | null
           purpose?: string | null
           quantity?: number
           recipient_name?: string
@@ -1891,6 +1936,7 @@ export type Database = {
           id: string
           name: string | null
           notes: string | null
+          project_id: string | null
           purchase_price: number | null
           shelter_id: string | null
           status: string
@@ -1913,6 +1959,7 @@ export type Database = {
           id?: string
           name?: string | null
           notes?: string | null
+          project_id?: string | null
           purchase_price?: number | null
           shelter_id?: string | null
           status?: string
@@ -1935,6 +1982,7 @@ export type Database = {
           id?: string
           name?: string | null
           notes?: string | null
+          project_id?: string | null
           purchase_price?: number | null
           shelter_id?: string | null
           status?: string
@@ -2350,6 +2398,492 @@ export type Database = {
           phone?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      project_activity_log: {
+        Row: {
+          action: string
+          actor: string | null
+          branch_id: string | null
+          created_at: string
+          id: string
+          meta: Json | null
+          project_id: string
+        }
+        Insert: {
+          action: string
+          actor?: string | null
+          branch_id?: string | null
+          created_at?: string
+          id?: string
+          meta?: Json | null
+          project_id: string
+        }
+        Update: {
+          action?: string
+          actor?: string | null
+          branch_id?: string | null
+          created_at?: string
+          id?: string
+          meta?: Json | null
+          project_id?: string
+        }
+        Relationships: []
+      }
+      project_closures: {
+        Row: {
+          branch_id: string | null
+          closed_at: string
+          closed_by: string | null
+          financial_summary: Json | null
+          id: string
+          lessons_learned: string | null
+          performance_rating: number
+          project_id: string
+          yield_summary: string | null
+        }
+        Insert: {
+          branch_id?: string | null
+          closed_at?: string
+          closed_by?: string | null
+          financial_summary?: Json | null
+          id?: string
+          lessons_learned?: string | null
+          performance_rating?: number
+          project_id: string
+          yield_summary?: string | null
+        }
+        Update: {
+          branch_id?: string | null
+          closed_at?: string
+          closed_by?: string | null
+          financial_summary?: Json | null
+          id?: string
+          lessons_learned?: string | null
+          performance_rating?: number
+          project_id?: string
+          yield_summary?: string | null
+        }
+        Relationships: []
+      }
+      project_comments: {
+        Row: {
+          author_name: string
+          body: string
+          branch_id: string | null
+          created_at: string
+          id: string
+          parent_id: string | null
+          project_id: string
+        }
+        Insert: {
+          author_name: string
+          body: string
+          branch_id?: string | null
+          created_at?: string
+          id?: string
+          parent_id?: string | null
+          project_id: string
+        }
+        Update: {
+          author_name?: string
+          body?: string
+          branch_id?: string | null
+          created_at?: string
+          id?: string
+          parent_id?: string | null
+          project_id?: string
+        }
+        Relationships: []
+      }
+      project_documents: {
+        Row: {
+          branch_id: string | null
+          created_at: string
+          file_name: string
+          file_size: number | null
+          file_type: string | null
+          file_url: string
+          id: string
+          project_id: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          branch_id?: string | null
+          created_at?: string
+          file_name: string
+          file_size?: number | null
+          file_type?: string | null
+          file_url: string
+          id?: string
+          project_id: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          branch_id?: string | null
+          created_at?: string
+          file_name?: string
+          file_size?: number | null
+          file_type?: string | null
+          file_url?: string
+          id?: string
+          project_id?: string
+          uploaded_by?: string | null
+        }
+        Relationships: []
+      }
+      project_expenses: {
+        Row: {
+          amount: number
+          branch_id: string | null
+          category: string
+          created_at: string
+          created_by: string | null
+          description: string
+          expense_date: string
+          gl_entry_ref: string | null
+          id: string
+          posted_to_finance: boolean
+          project_id: string
+        }
+        Insert: {
+          amount?: number
+          branch_id?: string | null
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description: string
+          expense_date?: string
+          gl_entry_ref?: string | null
+          id?: string
+          posted_to_finance?: boolean
+          project_id: string
+        }
+        Update: {
+          amount?: number
+          branch_id?: string | null
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          expense_date?: string
+          gl_entry_ref?: string | null
+          id?: string
+          posted_to_finance?: boolean
+          project_id?: string
+        }
+        Relationships: []
+      }
+      project_milestones: {
+        Row: {
+          branch_id: string | null
+          completed_at: string | null
+          created_at: string
+          deliverables: string | null
+          due_date: string | null
+          id: string
+          phase_id: string | null
+          project_id: string
+          status: string
+          title: string
+        }
+        Insert: {
+          branch_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          deliverables?: string | null
+          due_date?: string | null
+          id?: string
+          phase_id?: string | null
+          project_id: string
+          status?: string
+          title: string
+        }
+        Update: {
+          branch_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          deliverables?: string | null
+          due_date?: string | null
+          id?: string
+          phase_id?: string | null
+          project_id?: string
+          status?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      project_notifications: {
+        Row: {
+          body: string | null
+          branch_id: string | null
+          created_at: string
+          id: string
+          is_read: boolean
+          kind: string
+          project_id: string
+          title: string
+        }
+        Insert: {
+          body?: string | null
+          branch_id?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          kind: string
+          project_id: string
+          title: string
+        }
+        Update: {
+          body?: string | null
+          branch_id?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          kind?: string
+          project_id?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      project_observations: {
+        Row: {
+          branch_id: string | null
+          created_at: string
+          gps_lat: number | null
+          gps_lng: number | null
+          id: string
+          note: string
+          observed_at: string
+          observer_name: string | null
+          photo_url: string | null
+          project_id: string
+        }
+        Insert: {
+          branch_id?: string | null
+          created_at?: string
+          gps_lat?: number | null
+          gps_lng?: number | null
+          id?: string
+          note: string
+          observed_at?: string
+          observer_name?: string | null
+          photo_url?: string | null
+          project_id: string
+        }
+        Update: {
+          branch_id?: string | null
+          created_at?: string
+          gps_lat?: number | null
+          gps_lng?: number | null
+          id?: string
+          note?: string
+          observed_at?: string
+          observer_name?: string | null
+          photo_url?: string | null
+          project_id?: string
+        }
+        Relationships: []
+      }
+      project_phases: {
+        Row: {
+          branch_id: string | null
+          created_at: string
+          end_date: string | null
+          id: string
+          name: string
+          progress_pct: number
+          project_id: string
+          sequence: number
+          start_date: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          branch_id?: string | null
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          name: string
+          progress_pct?: number
+          project_id: string
+          sequence?: number
+          start_date?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          branch_id?: string | null
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          name?: string
+          progress_pct?: number
+          project_id?: string
+          sequence?: number
+          start_date?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      project_resources: {
+        Row: {
+          branch_id: string | null
+          created_at: string
+          id: string
+          project_id: string
+          qty_planned: number
+          qty_used: number
+          resource_id: string | null
+          resource_name: string
+          resource_type: string
+          scheduled_from: string | null
+          scheduled_to: string | null
+          status: string
+          unit_cost: number
+        }
+        Insert: {
+          branch_id?: string | null
+          created_at?: string
+          id?: string
+          project_id: string
+          qty_planned?: number
+          qty_used?: number
+          resource_id?: string | null
+          resource_name: string
+          resource_type: string
+          scheduled_from?: string | null
+          scheduled_to?: string | null
+          status?: string
+          unit_cost?: number
+        }
+        Update: {
+          branch_id?: string | null
+          created_at?: string
+          id?: string
+          project_id?: string
+          qty_planned?: number
+          qty_used?: number
+          resource_id?: string | null
+          resource_name?: string
+          resource_type?: string
+          scheduled_from?: string | null
+          scheduled_to?: string | null
+          status?: string
+          unit_cost?: number
+        }
+        Relationships: []
+      }
+      project_risks: {
+        Row: {
+          branch_id: string | null
+          created_at: string
+          description: string | null
+          id: string
+          impact: string
+          likelihood: string
+          mitigation: string | null
+          owner: string | null
+          project_id: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          branch_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          impact?: string
+          likelihood?: string
+          mitigation?: string | null
+          owner?: string | null
+          project_id: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          branch_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          impact?: string
+          likelihood?: string
+          mitigation?: string | null
+          owner?: string | null
+          project_id?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      project_team_members: {
+        Row: {
+          allocation_pct: number
+          branch_id: string | null
+          created_at: string
+          employee_id: string | null
+          id: string
+          member_name: string
+          project_id: string
+          role: string | null
+        }
+        Insert: {
+          allocation_pct?: number
+          branch_id?: string | null
+          created_at?: string
+          employee_id?: string | null
+          id?: string
+          member_name: string
+          project_id: string
+          role?: string | null
+        }
+        Update: {
+          allocation_pct?: number
+          branch_id?: string | null
+          created_at?: string
+          employee_id?: string | null
+          id?: string
+          member_name?: string
+          project_id?: string
+          role?: string | null
+        }
+        Relationships: []
+      }
+      project_weather_events: {
+        Row: {
+          branch_id: string | null
+          condition: string
+          created_at: string
+          event_date: string
+          id: string
+          impact_description: string | null
+          project_id: string
+          severity: string
+        }
+        Insert: {
+          branch_id?: string | null
+          condition: string
+          created_at?: string
+          event_date?: string
+          id?: string
+          impact_description?: string | null
+          project_id: string
+          severity?: string
+        }
+        Update: {
+          branch_id?: string | null
+          condition?: string
+          created_at?: string
+          event_date?: string
+          id?: string
+          impact_description?: string | null
+          project_id?: string
+          severity?: string
         }
         Relationships: []
       }
@@ -2806,6 +3340,7 @@ export type Database = {
           notes: string | null
           parent_req_id: string | null
           priority: string
+          project_id: string | null
           recurrence_rule: string | null
           req_number: string
           requester_id: string | null
@@ -2831,6 +3366,7 @@ export type Database = {
           notes?: string | null
           parent_req_id?: string | null
           priority?: string
+          project_id?: string | null
           recurrence_rule?: string | null
           req_number: string
           requester_id?: string | null
@@ -2856,6 +3392,7 @@ export type Database = {
           notes?: string | null
           parent_req_id?: string | null
           priority?: string
+          project_id?: string | null
           recurrence_rule?: string | null
           req_number?: string
           requester_id?: string | null

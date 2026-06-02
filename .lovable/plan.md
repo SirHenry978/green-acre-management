@@ -1,159 +1,122 @@
+# Farm Projects → Full Project Lifecycle Module
 
-# Requisition Management Module — Phase 1
+Transform the existing Farm Projects page into a comprehensive **Project Management Hub** covering planning → execution → monitoring → closure, deeply integrated with the existing FarmIQ modules.
 
-Built inside FarmIQ, reusing existing Branches, Employees, Suppliers, Warehouses, GL Accounts, and Inventory. Farm departments replace school departments. New tables get strict RLS; existing tables are left alone.
+## Scope
 
-## 1. Database (new tables, all with strict RLS)
+### 1. Planning
+- **Project setup**: objectives, scope, location (GPS lat/lng), priority, type (crop/livestock/infrastructure/research), responsible manager, team members, start/end dates, budget per category.
+- **Phases & Milestones**: break a project into ordered phases with target dates and completion %; milestones with deliverables.
+- **Dependencies**: tasks can depend on other tasks (predecessor relationships) for sequencing.
 
-```text
-app_role (enum)            super_admin, branch_manager, finance_officer,
-                           procurement_officer, store_manager, hod, staff, auditor
-user_roles                 user_id, role, branch_id  (canonical role store)
-                           + has_role(uuid, app_role) security-definer fn
+### 2. Execution
+- **Tasks & Subtasks**: extend existing kanban — add subtasks, checklists, effort estimates, actual hours, attachments.
+- **Resource Assignment**: assign employees (from `employees`), equipment/assets (from `assets`), and inventory items required.
+- **Procurement & Inventory**: link project requisitions (`requisitions` table) and inventory issues (`inventory_issues`) so consumption is tracked per project; auto-deduct from project budget.
+- **Machinery & Labor Scheduling**: simple calendar showing which assets/employees are booked per project per day.
 
-requisitions               id, req_number, branch_id, department, requester_id,
-                           title, justification, priority, is_emergency, required_by,
-                           budget_gl_account_id, suggested_supplier_id,
-                           estimated_total, currency, status (draft|submitted|under_review|
-                           pending_approval|approved|rejected|returned|procurement|
-                           ordered|delivered|received|closed|cancelled),
-                           current_step, workflow_id, parent_req_id (clone/recurring),
-                           recurrence_rule, created_at, updated_at
+### 3. Monitoring
+- **Real-time Dashboard**: progress %, budget vs spent, tasks on/off track, milestone status, upcoming deadlines, overdue items.
+- **Risks Register**: log risks with likelihood/impact/mitigation/owner/status.
+- **Field Observations**: timestamped notes with optional photo upload + GPS coordinates (mobile-friendly capture form).
+- **Weather Impact Log**: link to existing Weather module — record events that impacted the project.
+- **Documents**: file uploads (contracts, permits, reports) stored in a new `project-documents` bucket.
+- **Comments & Activity Feed**: per-project threaded comments + automatic activity log.
+- **Notifications**: deadline-approaching / overdue / milestone-completed alerts.
 
-requisition_items          requisition_id, item_name, category, qty, unit, unit_price,
-                           total, notes
+### 4. Crop & Livestock Activities
+- Link projects to `livestock` records (e.g., a "Dairy Expansion" project lists associated livestock).
+- Link projects to crops (use existing `farm_tasks` tagged with crop type) for crop production tracking.
 
-approval_workflows         id, branch_id, name, applies_to (department/amount rules JSON),
-                           is_active
+### 5. Finance Integration
+- All project expenses post to `gl_entries` with `reference_type='project'` and `reference_id=project.id`.
+- Budget categories (labor, materials, equipment, services) with per-category tracking.
+- P&L per project: revenue from livestock transfers/invoices tagged to project, minus expenses.
 
-approval_workflow_steps    workflow_id, step_order, approver_role, approver_user_id?,
-                           min_amount, max_amount, sla_hours
+### 6. Reporting & Analytics
+- **Reports tab**: project status, budget variance, resource utilization, milestone burn-up, risk heatmap, yield/output vs target.
+- CSV export per report.
+- Visual charts (Recharts): budget vs actual line, task status pie, milestone gantt-style timeline.
 
-approval_logs              requisition_id, step_order, approver_id, action
-                           (approve|reject|return|escalate|delegate|comment),
-                           comment, signature_hash, acted_at, delegated_to
+### 7. Closure
+- **Closure workflow**: mark project complete → triggers a closure form capturing performance rating, yield/output achieved, financial summary (auto-pulled), lessons learned, post-mortem notes.
+- **Archive**: closed projects move to an Archive tab with read-only view; data preserved for historical reporting.
 
-req_budgets                branch_id, gl_account_id, fiscal_year, allocated,
-                           committed, spent  (computed view + maintained by triggers)
+## Database Changes (one migration)
 
-req_quotations             requisition_id, supplier_id, quoted_total, lead_time_days,
-                           valid_until, notes, attachment_path, is_selected
+New tables (all with branch_id, RLS = allow-all per project convention):
 
-purchase_orders            id, po_number, requisition_id, supplier_id, branch_id,
-                           subtotal, tax, total, payment_terms, delivery_terms,
-                           status (draft|approved|sent|partial|received|closed|cancelled),
-                           issued_by, issued_at
+- `project_phases` — project_id, name, sequence, start_date, end_date, status, progress_pct
+- `project_milestones` — project_id, phase_id?, title, due_date, status, deliverables
+- `project_team_members` — project_id, employee_id, role, allocation_pct
+- `project_resources` — project_id, resource_type (asset|inventory), resource_id, qty_planned, qty_used, scheduled_from, scheduled_to
+- `project_risks` — project_id, title, description, likelihood, impact, mitigation, owner, status
+- `project_observations` — project_id, note, photo_url, gps_lat, gps_lng, observed_at, observer_name
+- `project_weather_events` — project_id, event_date, condition, impact_description, severity
+- `project_documents` — project_id, file_name, file_url, file_type, uploaded_by
+- `project_comments` — project_id, parent_id?, author_name, body
+- `project_activity_log` — project_id, action, actor, meta(jsonb)
+- `project_notifications` — project_id, kind, title, body, is_read
+- `project_expenses` — project_id, category, description, amount, date, posted_to_finance, gl_entry_ref
+- `project_closures` — project_id, performance_rating, yield_summary, financial_summary, lessons_learned, closed_by, closed_at
 
-purchase_order_items       po_id, item_name, qty, unit, unit_price, total, qty_received
+Extend `farm_tasks`:
+- add `phase_id uuid`, `subtask_of uuid`, `predecessor_task_id uuid`, `estimated_hours numeric`, `actual_hours numeric`, `checklist jsonb`
 
-goods_received_notes       id, grn_number, po_id, warehouse_id, branch_id,
-                           received_by, received_date, status, notes
+Extend `farm_projects`:
+- add `project_type text`, `location_name text`, `gps_lat numeric`, `gps_lng numeric`, `objectives text`, `revenue numeric`, `archived boolean default false`
 
-grn_items                  grn_id, po_item_id, qty_received, condition
+New storage bucket: `project-documents` (private).
 
-req_attachments            requisition_id|po_id|grn_id, file_path, mime, uploaded_by
-                           → Storage bucket `requisitions` (private)
+## Frontend Architecture
 
-req_notifications          user_id, kind, title, body, link, ref_id, is_read
+Refactor `src/pages/FarmProjects.tsx` from one mega-file into a focused page + module components:
 
-req_audit_logs             actor_id, entity_type, entity_id, action, diff JSONB, ip
 ```
-
-RLS pattern (every table):
-- super_admin: full access
-- auditor: read-only everywhere
-- others: scoped to their `branch_id` from `user_roles`
-- requesters: read/write own drafts; read own submitted requisitions
-- approvers: read/act on requisitions where current step matches their role/branch
-- finance_officer: budget rows + approve at finance step
-- procurement_officer: PO + quotations
-- store_manager: GRN + warehouse receipt
-
-Triggers:
-- auto req_number / po_number / grn_number per branch+year
-- on approval at final step → status=approved, commit budget
-- on PO close → spent += total, committed -= total
-- on GRN insert → update inventory_receipts, deduct stock as needed
-- on any insert/update/delete to core tables → write req_audit_logs
-
-## 2. Frontend (under `/requisitions`)
-
-```text
-src/pages/Requisitions.tsx            tabbed shell (role-aware tabs)
-src/components/requisitions/
-  RequisitionDashboard.tsx            KPIs, charts (recharts), bottlenecks
-  MyRequisitions.tsx                  list + filters; create/edit/clone
-  RequisitionForm.tsx                 multi-step wizard; multi-item; attachments
-  ApprovalsInbox.tsx                  pending for current user; approve/reject/return
-                                      /escalate/delegate with comments + signature
-  RequisitionDetail.tsx               header, items, timeline, quotations, PO, GRN,
-                                      attachments, audit trail
-  BudgetsPanel.tsx                    allocate/track per GL+fiscal year (finance/admin)
-  WorkflowBuilder.tsx                 configure chains per branch/dept/amount (admin)
-  QuotationsPanel.tsx                 add quotes, compare, select winner
-  PurchaseOrders.tsx                  generate from approved req, send, print
-  GoodsReceived.tsx                   GRN against PO, partial receipts
-  SuppliersPicker.tsx                 reuses existing suppliers
-  Reports.tsx                         spending, turnaround, top items, supplier perf;
-                                      export CSV/Excel/PDF
-  NotificationsBell.tsx               in-app notifications popover (header)
-
+src/components/projects/
+  ProjectDashboard.tsx        — KPI cards + charts
+  ProjectsList.tsx            — existing grid (kept)
+  ProjectDetail.tsx           — tabbed detail view per project
+    tabs:
+      Overview, Phases, Tasks (existing kanban), Team, Resources,
+      Procurement, Risks, Observations, Documents, Comments,
+      Finance, Reports, Closure
+  PhasesManager.tsx
+  MilestonesList.tsx
+  TeamAssignment.tsx
+  ResourceScheduler.tsx       — simple week grid
+  RisksRegister.tsx
+  ObservationsLog.tsx         — with photo upload + geolocation API
+  DocumentsPanel.tsx
+  CommentsThread.tsx
+  ProjectReports.tsx
+  ClosureForm.tsx
 src/hooks/
-  useRequisitions.ts                  CRUD + status transitions, branch-scoped
-  useApprovals.ts                     inbox + actions
-  useBudgets.ts
-  usePurchaseOrders.ts
-  useGRN.ts
-  useReqNotifications.ts              realtime via supabase channel
-  useUserRoles.ts                     reads user_roles, exposes hasRole/canAct helpers
+  useProjects.ts              — central queries/mutations for everything above
 ```
 
-Wiring:
-- Add route `/requisitions` in `src/App.tsx`
-- Add sidebar item (gated by any requisition-related role)
-- All list queries use `useCurrentBranchId` (super_admin sees all when no branch chosen)
-- Realtime subscription on `req_notifications` for the bell
+Routing: keep `/farm-projects` for list; add `/farm-projects/:id` for detail.
 
-## 3. RBAC
+## Integration Touchpoints
 
-- Seed `user_roles` for existing demo accounts (super_admin → super_admin, branch_manager → branch_manager, others → staff). Admin UI in `Users` page to assign roles per branch.
-- All UI actions gated by `hasRole()`; RLS enforces it server-side.
+- **Inventory**: `inventory_issues` gains optional `project_id` (column add). When issuing items, optionally pick a project → cost rolls into project_expenses.
+- **Requisitions**: add `project_id` column; project detail shows linked requisitions.
+- **Assets**: asset assignments can target a project (assignee_name = project name; new optional `project_id` column).
+- **Livestock**: `livestock` gains optional `project_id`; transfers tagged to project count as project revenue.
+- **HR**: team_members reference `employees.id` for staff assignment.
+- **Finance**: every `project_expenses` row posts a GL entry; reports pull from `gl_entries WHERE reference_type='project'`.
 
-## 4. Budgets & Finance integration
+## Out of Scope (for this pass)
 
-- Budgets bound to existing `gl_accounts` (expense type) per fiscal year.
-- Submission validates `allocated - committed - spent >= estimated_total`; blocks otherwise unless emergency + super_admin override (logged).
-- Approval commits budget; PO close → spent. Posts a `gl_entries` row on PO close (debit expense GL, credit "Accounts Payable" GL — auto-created if missing).
+- Native mobile app — field data collection is built as a mobile-responsive web form using the browser Geolocation API + file input camera capture. (Capacitor packaging can come later.)
+- Real-time multi-user comment subscriptions — comments will refetch on send; realtime can be enabled later by adding the table to `supabase_realtime` publication.
+- Email/SMS notifications — in-app notifications only for now.
 
-## 5. Inventory integration
+## Delivery Order
 
-- GRN posts to existing `inventory_receipts` (status=approved) and updates warehouse stock.
-- Pre-PO stock check against `inventory_receipts` aggregate; warns on duplicates.
-
-## 6. Notifications (in-app only)
-
-- Triggers create `req_notifications` rows on: submission, approval needed, approve/reject/return, budget exceeded, PO sent, GRN received, SLA overdue.
-- Bell in header shows unread count, popover with realtime updates.
-
-## 7. Audit trail
-
-- Generic trigger writes to `req_audit_logs` for requisitions, approvals, POs, GRNs, budgets, quotations, workflows.
-- Auditor role can view full log; admin UI on detail pages shows entity-scoped entries.
-
-## 8. Reports & exports
-
-- Recharts dashboards; CSV/Excel via existing `xlsx`-style util pattern; PDF via `jspdf` (already used elsewhere — confirmed in payroll exports).
-
-## 9. Out of scope (deferred)
-
-Email/SMS/push channels, 2FA, OCR scanning, AI fraud detection, supplier self-service portal, tender/bidding portal, multi-currency, contract management.
-
-## 10. Migration & rollout order
-
-1. Migration: enums, `user_roles` + `has_role`, all requisition tables, RLS, triggers, sequences, storage bucket `requisitions`.
-2. Seed demo roles + a default approval workflow per branch + sample budgets.
-3. Hooks + pages + sidebar + route.
-4. Notifications bell in header.
-5. Manual smoke test: create → submit → approve chain → PO → GRN → inventory updated → GL posted → reports populated.
-
-After approval I'll start with the migration call and then build the UI in the same turn.
+1. Migration (schema + extensions + storage bucket).
+2. `useProjects.ts` hook with all queries/mutations.
+3. New `ProjectDetail` page + tab components.
+4. Integration wiring (inventory issue, requisition, asset assignment optional project picker).
+5. Reports & closure flow.
+6. QA pass on mobile viewport for observations capture.
