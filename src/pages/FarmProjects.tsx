@@ -257,7 +257,7 @@ const FarmProjects = () => {
                   const pDone = pTasks.filter(t => t.status === 'done').length;
                   const progress = pTasks.length > 0 ? (pDone / pTasks.length) * 100 : 0;
                   return (
-                    <Card key={project.id} className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => setSelectedProjectId(project.id)}>
+                    <Card key={project.id} className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => nav(`/farm-projects/${project.id}`)}>
                       <CardHeader className="pb-2">
                         <div className="flex items-center justify-between">
                           <Badge className={statusColors[project.status] || ''}>{project.status}</Badge>
@@ -266,6 +266,7 @@ const FarmProjects = () => {
                         <CardTitle className="text-lg mt-2">{project.name}</CardTitle>
                       </CardHeader>
                       <CardContent>
+                        {project.project_type && <Badge variant="outline" className="mb-2 text-xs">{project.project_type}</Badge>}
                         {project.description && <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{project.description}</p>}
                         <div className="space-y-3">
                           <div>
