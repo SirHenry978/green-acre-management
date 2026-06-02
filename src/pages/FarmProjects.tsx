@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -37,10 +38,11 @@ const FarmProjects = () => {
   const [showCreateProject, setShowCreateProject] = useState(false);
   const [showCreateTask, setShowCreateTask] = useState(false);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
-  const [newProject, setNewProject] = useState({ name: '', description: '', priority: 'medium', budget: '', start_date: '', end_date: '', manager_name: '' });
+  const [newProject, setNewProject] = useState({ name: '', description: '', objectives: '', priority: 'medium', project_type: 'crop', budget: '', start_date: '', end_date: '', manager_name: '', location_name: '' });
   const [newTask, setNewTask] = useState({ title: '', description: '', priority: 'medium', assigned_to: '', due_date: '' });
   const queryClient = useQueryClient();
   const branchId = useCurrentBranchId();
+  const nav = useNavigate();
 
   const { data: projects = [], isLoading: loadingProjects } = useQuery({
     queryKey: ['farm-projects', branchId],
@@ -69,6 +71,9 @@ const FarmProjects = () => {
       const { error } = await supabase.from('farm_projects').insert({
         name: p.name,
         description: p.description || null,
+        objectives: p.objectives || null,
+        project_type: p.project_type,
+        location_name: p.location_name || null,
         priority: p.priority,
         budget: p.budget ? Number(p.budget) : 0,
         start_date: p.start_date || null,
@@ -82,7 +87,7 @@ const FarmProjects = () => {
       queryClient.invalidateQueries({ queryKey: ['farm-projects'] });
       toast.success('Project created!');
       setShowCreateProject(false);
-      setNewProject({ name: '', description: '', priority: 'medium', budget: '', start_date: '', end_date: '', manager_name: '' });
+      setNewProject({ name: '', description: '', objectives: '', priority: 'medium', project_type: 'crop', budget: '', start_date: '', end_date: '', manager_name: '', location_name: '' });
     },
     onError: () => toast.error('Failed to create project'),
   });
@@ -163,8 +168,19 @@ const FarmProjects = () => {
               <DialogHeader><DialogTitle>Create New Project</DialogTitle></DialogHeader>
               <div className="space-y-3">
                 <Input placeholder="Project name *" value={newProject.name} onChange={e => setNewProject(p => ({ ...p, name: e.target.value }))} />
+                <Textarea placeholder="Objectives" value={newProject.objectives} onChange={e => setNewProject(p => ({ ...p, objectives: e.target.value }))} />
                 <Textarea placeholder="Description" value={newProject.description} onChange={e => setNewProject(p => ({ ...p, description: e.target.value }))} />
                 <div className="grid grid-cols-2 gap-3">
+                  <Select value={newProject.project_type} onValueChange={v => setNewProject(p => ({ ...p, project_type: v }))}>
+                    <SelectTrigger><SelectValue placeholder="Type" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="crop">Crop Production</SelectItem>
+                      <SelectItem value="livestock">Livestock Program</SelectItem>
+                      <SelectItem value="infrastructure">Infrastructure</SelectItem>
+                      <SelectItem value="research">Research</SelectItem>
+                      <SelectItem value="general">General</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <Select value={newProject.priority} onValueChange={v => setNewProject(p => ({ ...p, priority: v }))}>
                     <SelectTrigger><SelectValue placeholder="Priority" /></SelectTrigger>
                     <SelectContent>
@@ -174,7 +190,10 @@ const FarmProjects = () => {
                       <SelectItem value="critical">Critical</SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
                   <Input placeholder="Budget" type="number" value={newProject.budget} onChange={e => setNewProject(p => ({ ...p, budget: e.target.value }))} />
+                  <Input placeholder="Location" value={newProject.location_name} onChange={e => setNewProject(p => ({ ...p, location_name: e.target.value }))} />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
