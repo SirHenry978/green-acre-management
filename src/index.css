@@ -266,3 +266,23 @@
 .sidebar-scroll:hover::-webkit-scrollbar-thumb {
   background-color: hsl(var(--sidebar-foreground) / 0.35);
 }
+
+/* Print: only show the active dialog content */
+@media print {
+  body * { visibility: hidden !important; }
+  [role="dialog"], [role="dialog"] * { visibility: visible !important; }
+  [role="dialog"] {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: none !important;
+    height: auto !important;
+    box-shadow: none !important;
+    border: none !important;
+    overflow: visible !important;
+    transform: none !important;
+    padding: 16px !important;
+  }
+  .print\:hidden { display: none !important; }
+}
