@@ -886,6 +886,222 @@ export type Database = {
         }
         Relationships: []
       }
+      canteen_audit_logs: {
+        Row: {
+          action: string
+          branch_id: string | null
+          created_at: string
+          details: Json | null
+          entity: string
+          entity_id: string | null
+          id: string
+          performed_by: string | null
+          performed_by_name: string | null
+        }
+        Insert: {
+          action: string
+          branch_id?: string | null
+          created_at?: string
+          details?: Json | null
+          entity: string
+          entity_id?: string | null
+          id?: string
+          performed_by?: string | null
+          performed_by_name?: string | null
+        }
+        Update: {
+          action?: string
+          branch_id?: string | null
+          created_at?: string
+          details?: Json | null
+          entity?: string
+          entity_id?: string | null
+          id?: string
+          performed_by?: string | null
+          performed_by_name?: string | null
+        }
+        Relationships: []
+      }
+      canteen_inventory_requests: {
+        Row: {
+          branch_id: string | null
+          created_at: string
+          fulfilled_at: string | null
+          fulfilled_by: string | null
+          id: string
+          item_name: string
+          notes: string | null
+          quantity: number
+          request_number: string | null
+          requested_by: string | null
+          status: string
+          unit: string | null
+          updated_at: string
+          warehouse_id: string | null
+        }
+        Insert: {
+          branch_id?: string | null
+          created_at?: string
+          fulfilled_at?: string | null
+          fulfilled_by?: string | null
+          id?: string
+          item_name: string
+          notes?: string | null
+          quantity?: number
+          request_number?: string | null
+          requested_by?: string | null
+          status?: string
+          unit?: string | null
+          updated_at?: string
+          warehouse_id?: string | null
+        }
+        Update: {
+          branch_id?: string | null
+          created_at?: string
+          fulfilled_at?: string | null
+          fulfilled_by?: string | null
+          id?: string
+          item_name?: string
+          notes?: string | null
+          quantity?: number
+          request_number?: string | null
+          requested_by?: string | null
+          status?: string
+          unit?: string | null
+          updated_at?: string
+          warehouse_id?: string | null
+        }
+        Relationships: []
+      }
+      canteen_meals: {
+        Row: {
+          branch_id: string | null
+          calories: number | null
+          category: string | null
+          created_at: string
+          created_by: string | null
+          day_of_week: string | null
+          description: string | null
+          id: string
+          image_url: string | null
+          ingredients: string | null
+          is_active: boolean | null
+          meal_time: string | null
+          name: string
+          price: number | null
+          updated_at: string
+        }
+        Insert: {
+          branch_id?: string | null
+          calories?: number | null
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          day_of_week?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          ingredients?: string | null
+          is_active?: boolean | null
+          meal_time?: string | null
+          name: string
+          price?: number | null
+          updated_at?: string
+        }
+        Update: {
+          branch_id?: string | null
+          calories?: number | null
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          day_of_week?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          ingredients?: string | null
+          is_active?: boolean | null
+          meal_time?: string | null
+          name?: string
+          price?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      canteen_reviews: {
+        Row: {
+          branch_id: string | null
+          comment: string | null
+          created_at: string
+          id: string
+          meal_id: string | null
+          meal_name: string | null
+          rating: number
+          reviewer_id: string | null
+          reviewer_name: string | null
+          updated_at: string
+        }
+        Insert: {
+          branch_id?: string | null
+          comment?: string | null
+          created_at?: string
+          id?: string
+          meal_id?: string | null
+          meal_name?: string | null
+          rating: number
+          reviewer_id?: string | null
+          reviewer_name?: string | null
+          updated_at?: string
+        }
+        Update: {
+          branch_id?: string | null
+          comment?: string | null
+          created_at?: string
+          id?: string
+          meal_id?: string | null
+          meal_name?: string | null
+          rating?: number
+          reviewer_id?: string | null
+          reviewer_name?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      canteen_staff: {
+        Row: {
+          branch_id: string | null
+          created_at: string
+          employee_id: string
+          id: string
+          is_active: boolean | null
+          notes: string | null
+          role: string
+          shift: string | null
+          updated_at: string
+        }
+        Insert: {
+          branch_id?: string | null
+          created_at?: string
+          employee_id: string
+          id?: string
+          is_active?: boolean | null
+          notes?: string | null
+          role?: string
+          shift?: string | null
+          updated_at?: string
+        }
+        Update: {
+          branch_id?: string | null
+          created_at?: string
+          employee_id?: string
+          id?: string
+          is_active?: boolean | null
+          notes?: string | null
+          role?: string
+          shift?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       credit_notes: {
         Row: {
           branch_id: string

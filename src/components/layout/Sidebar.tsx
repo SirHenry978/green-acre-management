@@ -38,6 +38,7 @@ import {
   ClipboardCheck,
   ClipboardSignature,
 } from 'lucide-react';
+import { UtensilsCrossed } from 'lucide-react';
 
 interface NavItem {
   name: string;
@@ -64,6 +65,7 @@ const navItems: NavItem[] = [
   { name: 'HR & Payroll', path: '/hr', icon: UserCog, permission: 'hr' },
   { name: 'Leave', path: '/leave', icon: CalendarDays, permission: 'dashboard' },
   { name: 'Requisitions', path: '/requisitions', icon: ClipboardSignature, permission: 'requisitions' },
+  { name: 'Canteen', path: '/canteen', icon: UtensilsCrossed, permission: 'dashboard' },
   {
     name: 'Accommodation',
     path: '/accommodation',
