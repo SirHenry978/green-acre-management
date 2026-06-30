@@ -14,7 +14,9 @@ import {
   TrendingUp,
   Calendar,
   ArrowLeft,
-  X
+  X,
+  Eye,
+  Printer,
 } from 'lucide-react';
 import {
   BarChart,
@@ -35,6 +37,26 @@ const Reports = () => {
   const [startDate, setStartDate] = useState('2024-01-01');
   const [endDate, setEndDate] = useState('2024-12-31');
   const [activeReport, setActiveReport] = useState<ReportType>(null);
+  const [viewRange, setViewRange] = useState<'daily' | 'weekly' | 'monthly' | 'quarterly' | 'yearly' | 'custom'>('custom');
+
+  const applyViewRange = (range: typeof viewRange) => {
+    setViewRange(range);
+    const today = new Date();
+    const fmt = (d: Date) => d.toISOString().slice(0, 10);
+    const start = new Date(today);
+    if (range === 'daily') start.setDate(today.getDate());
+    else if (range === 'weekly') start.setDate(today.getDate() - 7);
+    else if (range === 'monthly') start.setMonth(today.getMonth() - 1);
+    else if (range === 'quarterly') start.setMonth(today.getMonth() - 3);
+    else if (range === 'yearly') start.setFullYear(today.getFullYear() - 1);
+    else return;
+    setStartDate(fmt(start));
+    setEndDate(fmt(today));
+  };
+
+  const handlePrint = () => {
+    window.print();
+  };
 
   const filteredTransactions = useBranchFilter(transactions);
   const filteredInventory = useBranchFilter(inventory);
@@ -488,10 +510,34 @@ const Reports = () => {
                 </div>
                 <h3 className="font-semibold mb-1">{report.name}</h3>
                 <p className="text-sm text-muted-foreground mb-4">{report.description}</p>
-                <Button variant="outline" size="sm" className="w-full gap-2" onClick={(e) => { e.stopPropagation(); setActiveReport(report.key); }}>
-                  <FileText className="h-4 w-4" />
-                  Generate
-                </Button>
+                <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1 gap-1"
+                    title="Preview"
+                    onClick={() => setActiveReport(report.key)}
+                  >
+                    <Eye className="h-4 w-4" />
+                    Preview
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    title="Print to PDF"
+                    onClick={() => { setActiveReport(report.key); setTimeout(handlePrint, 350); }}
+                  >
+                    <Printer className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    title="Download"
+                    onClick={() => { setActiveReport(report.key); setTimeout(handlePrint, 350); }}
+                  >
+                    <Download className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             );
           })}
@@ -552,7 +598,7 @@ const Reports = () => {
 
         {/* Report Dialog */}
         <Dialog open={!!activeReport} onOpenChange={(open) => !open && setActiveReport(null)}>
-          <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto">
+          <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto print:max-w-full print:max-h-full print:shadow-none">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2 text-xl">
                 {activeReportMeta && (() => { const Icon = activeReportMeta.icon; return <Icon className="h-5 w-5" />; })()}
@@ -562,7 +608,55 @@ const Reports = () => {
                 Period: {startDate} to {endDate}
               </p>
             </DialogHeader>
-            {activeReport && reportRenderers[activeReport]?.()}
+
+            {/* Filters bar (hidden when printing) */}
+            <div className="flex flex-wrap items-center gap-3 border-b border-border pb-3 print:hidden">
+              <div className="flex items-center gap-2">
+                <Calendar className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm font-medium">Filters:</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <label className="text-xs text-muted-foreground">From</label>
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => { setStartDate(e.target.value); setViewRange('custom'); }}
+                  className="input-farm w-auto h-8 text-sm"
+                />
+              </div>
+              <div className="flex items-center gap-1">
+                <label className="text-xs text-muted-foreground">To</label>
+                <input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => { setEndDate(e.target.value); setViewRange('custom'); }}
+                  className="input-farm w-auto h-8 text-sm"
+                />
+              </div>
+              <div className="flex items-center gap-1">
+                <label className="text-xs text-muted-foreground">View Range</label>
+                <select
+                  value={viewRange}
+                  onChange={(e) => applyViewRange(e.target.value as typeof viewRange)}
+                  className="input-farm w-auto h-8 text-sm"
+                >
+                  <option value="daily">Today</option>
+                  <option value="weekly">Last 7 days</option>
+                  <option value="monthly">Last 30 days</option>
+                  <option value="quarterly">Last 3 months</option>
+                  <option value="yearly">Last 12 months</option>
+                  <option value="custom">Custom</option>
+                </select>
+              </div>
+              <Button size="sm" variant="default" className="ml-auto gap-2" onClick={handlePrint}>
+                <Printer className="h-4 w-4" />
+                Print to PDF
+              </Button>
+            </div>
+
+            <div className="print:p-0">
+              {activeReport && reportRenderers[activeReport]?.()}
+            </div>
           </DialogContent>
         </Dialog>
       </div>
