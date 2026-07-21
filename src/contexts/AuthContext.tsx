@@ -1,10 +1,11 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { User, UserRole, users, branches, Branch } from '@/data/dummyData';
+import { loginWithPassword, fetchMe, logoutTokens, tokens } from '@/lib/api';
 
 interface AuthContextType {
   user: User | null;
   branch: Branch | null;
-  login: (email: string, password: string) => boolean;
+  login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
   isAuthenticated: boolean;
   hasPermission: (permission: string) => boolean;
@@ -25,20 +26,52 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [user, setUser] = useState<User | null>(null);
   const [branch, setBranch] = useState<Branch | null>(null);
 
-  const login = (email: string, _password: string): boolean => {
-    const foundUser = users.find(u => u.email.toLowerCase() === email.toLowerCase());
-    if (foundUser) {
-      setUser(foundUser);
-      if (foundUser.branchId) {
-        const userBranch = branches.find(b => b.id === foundUser.branchId);
-        setBranch(userBranch || null);
-      }
-      return true;
+  const applyMe = (me: any) => {
+    const role = (me?.role || 'super_admin') as UserRole;
+    const resolved: User = {
+      id: String(me?.id ?? 'me'),
+      name: me?.first_name || me?.username || me?.email || 'User',
+      email: me?.email || '',
+      role,
+      branchId: me?.branch_id || undefined,
+      phone: me?.phone || undefined,
+    };
+    setUser(resolved);
+    if (resolved.branchId) {
+      setBranch(branches.find(b => b.id === resolved.branchId) || null);
     }
-    return false;
+  };
+
+  useEffect(() => {
+    if (tokens.access) {
+      fetchMe().then(applyMe).catch(() => logoutTokens());
+    }
+  }, []);
+
+  const login = async (email: string, password: string): Promise<boolean> => {
+    try {
+      await loginWithPassword(email, password);
+      const me = await fetchMe().catch(() => ({
+        id: 'me', email, first_name: email.split('@')[0], role: 'super_admin',
+      }));
+      applyMe(me);
+      return true;
+    } catch {
+      // Fallback to dummy users so the UI still works if backend is offline.
+      const foundUser = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+      if (foundUser) {
+        setUser(foundUser);
+        if (foundUser.branchId) {
+          setBranch(branches.find(b => b.id === foundUser.branchId) || null);
+        }
+        return true;
+      }
+      return false;
+    }
   };
 
   const logout = () => {
+    logoutTokens();
     setUser(null);
     setBranch(null);
   };
