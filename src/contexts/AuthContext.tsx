@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { User, UserRole, users, branches, Branch } from '@/data/dummyData';
+import { User, UserRole, branches, Branch } from '@/data/dummyData';
 import { loginWithPassword, fetchMe, logoutTokens, tokens } from '@/lib/api';
+import { hydrateAppData } from '@/data/liveData';
 
 interface AuthContextType {
   user: User | null;
@@ -51,21 +52,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
       await loginWithPassword(email, password);
-      const me = await fetchMe().catch(() => ({
-        id: 'me', email, first_name: email.split('@')[0], role: 'super_admin',
-      }));
+      const me = await fetchMe();
+      await hydrateAppData().catch(() => undefined);
       applyMe(me);
       return true;
     } catch {
-      // Fallback to dummy users so the UI still works if backend is offline.
-      const foundUser = users.find(u => u.email.toLowerCase() === email.toLowerCase());
-      if (foundUser) {
-        setUser(foundUser);
-        if (foundUser.branchId) {
-          setBranch(branches.find(b => b.id === foundUser.branchId) || null);
-        }
-        return true;
-      }
       return false;
     }
   };
