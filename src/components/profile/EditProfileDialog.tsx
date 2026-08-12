@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Save, X } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/backend';
 import { toast } from 'sonner';
 
 interface ProfileFormData {

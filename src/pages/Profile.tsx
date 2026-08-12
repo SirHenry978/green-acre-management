@@ -8,7 +8,7 @@ import { AvatarUpload } from '@/components/profile/AvatarUpload';
 import { EditProfileDialog } from '@/components/profile/EditProfileDialog';
 import { ChangePasswordDialog } from '@/components/profile/ChangePasswordDialog';
 import { MyPayslips } from '@/components/profile/MyPayslips';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/backend';
 import {
   User,
   Mail,

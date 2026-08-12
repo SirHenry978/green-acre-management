@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/backend';
 import { useEmployees } from '@/hooks/useEmployees';
 import { useLeaveTypes, LeaveType } from '@/hooks/useLeaveTypes';
 import { useAuth } from '@/contexts/AuthContext';
