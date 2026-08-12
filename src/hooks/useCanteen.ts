@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/backend';
 import { toast } from 'sonner';
 import { useCurrentBranchId } from '@/hooks/useBranchFilter';
 import { useAuth } from '@/contexts/AuthContext';

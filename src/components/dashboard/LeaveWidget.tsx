@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/backend';
 import { useNavigate } from 'react-router-dom';
 import { CalendarDays, Clock, CheckCircle2, XCircle, ArrowRight, Palmtree, Stethoscope, Home } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
