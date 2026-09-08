@@ -1,6 +1,7 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { branches } from '@/data/dummyData';
-import { Bell, Search, ChevronDown, Moon, Sun, LogOut, Menu } from 'lucide-react';
+import { Search, ChevronDown, Moon, Sun, LogOut, Menu } from 'lucide-react';
+import { NotificationsMenu } from './NotificationsMenu';
 import { useTheme } from '@/hooks/useTheme';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -104,12 +105,7 @@ export const Header = ({ sidebarCollapsed = false, onMenuToggle }: HeaderProps) 
         </button>
 
         {/* Notifications */}
-        <button className="relative rounded-lg p-2 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
-          <Bell className="h-5 w-5" />
-          <span className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground">
-            3
-          </span>
-        </button>
+        <NotificationsMenu />
 
         {/* User menu */}
         <DropdownMenu>

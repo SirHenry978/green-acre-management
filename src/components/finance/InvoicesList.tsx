@@ -33,6 +33,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { notify } from '@/lib/notifications';
 import { QRCodeSVG } from 'qrcode.react';
 import { GLAccountSelect } from './GLAccountSelect';
 import { useGLAccounts } from '@/hooks/useGLAccounts';
@@ -177,12 +178,14 @@ export const InvoicesList = ({ onGenerateReceipt }: InvoicesListProps) => {
 
     setInvoices([...invoices, newInvoice]);
     
-    if (sendEmail) {
-      const customerEmail = getCustomerEmail(formCustomerId);
-      toast.success(`Invoice created and sent to ${customerEmail}`);
-    } else {
-      toast.success('Invoice created successfully');
-    }
+    notify({
+      title: `Invoice ${newInvoice.invoiceNumber} created`,
+      message: sendEmail
+        ? `Total $${total.toLocaleString()} · sent to ${getCustomerEmail(formCustomerId)}`
+        : `Total $${total.toLocaleString()} · processed successfully`,
+      category: 'invoice',
+      link: '/finance',
+    });
     
     setIsAddDialogOpen(false);
     resetForm();
@@ -231,7 +234,12 @@ export const InvoicesList = ({ onGenerateReceipt }: InvoicesListProps) => {
         ? { ...inv, status: 'paid' as const, paidAt: new Date().toISOString().split('T')[0] } 
         : inv
     ));
-    toast.success(`Invoice ${invoice.invoiceNumber} marked as paid`);
+    notify({
+      title: `Invoice ${invoice.invoiceNumber} paid`,
+      message: `Payment of $${invoice.total.toLocaleString()} recorded`,
+      category: 'invoice',
+      link: '/finance',
+    });
   };
 
   const handleGenerateReceipt = (invoice: Invoice) => {

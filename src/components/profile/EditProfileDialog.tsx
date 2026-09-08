@@ -9,6 +9,7 @@ import {
 import { Save, X } from 'lucide-react';
 import { supabase } from '@/lib/backend';
 import { toast } from 'sonner';
+import { notify } from '@/lib/notifications';
 
 interface ProfileFormData {
   full_name: string;
@@ -59,7 +60,7 @@ export const EditProfileDialog = ({
       if (error) throw error;
 
       onProfileUpdated(formData);
-      toast.success('Profile updated successfully!');
+      notify({ title: 'Profile updated', message: 'Your profile details were saved successfully', category: 'profile', link: '/profile' });
       onOpenChange(false);
     } catch (err: any) {
       toast.error(err.message || 'Failed to update profile');
