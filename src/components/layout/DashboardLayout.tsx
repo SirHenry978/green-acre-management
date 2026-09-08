@@ -3,6 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
+import { usePendingApprovalAlerts } from '@/hooks/usePendingApprovalAlerts';
 
 interface DashboardLayoutProps {
   children: ReactNode;
