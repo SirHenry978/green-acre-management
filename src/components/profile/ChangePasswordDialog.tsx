@@ -38,7 +38,12 @@ export const ChangePasswordDialog = ({ open, onOpenChange }: ChangePasswordDialo
     try {
       const { error } = await supabase.auth.updateUser({ password: newPassword });
       if (error) throw error;
-      toast.success('Password updated successfully!');
+      notify({
+        title: 'Password updated',
+        message: 'Your account password was changed successfully',
+        category: 'profile',
+        link: '/profile',
+      });
       onOpenChange(false);
       setNewPassword('');
       setConfirmPassword('');

@@ -186,12 +186,14 @@ export const ReceiptsList = () => {
 
     setReceipts([...receipts, newReceipt]);
     
-    if (sendEmail) {
-      const customerEmail = getCustomerEmail(formCustomerId);
-      toast.success(`Receipt created and sent to ${customerEmail}`);
-    } else {
-      toast.success('Receipt created successfully');
-    }
+    notify({
+      title: `Receipt ${newReceipt.receiptNumber} created`,
+      message: sendEmail
+        ? `$${formAmount.toLocaleString()} received · sent to ${getCustomerEmail(formCustomerId)}`
+        : `$${formAmount.toLocaleString()} received via ${formPaymentMethod}`,
+      category: 'receipt',
+      link: '/finance',
+    });
     
     setIsAddDialogOpen(false);
     resetForm();
