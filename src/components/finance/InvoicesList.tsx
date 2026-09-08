@@ -33,6 +33,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { notify } from '@/lib/notifications';
 import { QRCodeSVG } from 'qrcode.react';
 import { GLAccountSelect } from './GLAccountSelect';
 import { useGLAccounts } from '@/hooks/useGLAccounts';

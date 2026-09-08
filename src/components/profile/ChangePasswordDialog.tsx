@@ -9,6 +9,7 @@ import {
 import { Eye, EyeOff, Lock, Save, X } from 'lucide-react';
 import { supabase } from '@/lib/backend';
 import { toast } from 'sonner';
+import { notify } from '@/lib/notifications';
 
 interface ChangePasswordDialogProps {
   open: boolean;
