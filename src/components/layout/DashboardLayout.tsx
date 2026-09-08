@@ -13,6 +13,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const { isAuthenticated } = useAuth();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  usePendingApprovalAlerts();
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
