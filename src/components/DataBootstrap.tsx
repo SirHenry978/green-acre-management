@@ -1,5 +1,6 @@
 import { ReactNode, useEffect, useState } from 'react';
 import { hydrateAppData } from '@/data/liveData';
+import { tokens } from '@/lib/api';
 import { Sprout } from 'lucide-react';
 
 /**
@@ -11,6 +12,11 @@ export const DataBootstrap = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     let cancelled = false;
+    // Nothing to load until the user is signed in (otherwise every request 401s).
+    if (!tokens.access) {
+      setReady(true);
+      return;
+    }
     hydrateAppData()
       .catch(() => undefined)
       .finally(() => { if (!cancelled) setReady(true); });
