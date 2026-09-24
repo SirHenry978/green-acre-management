@@ -11,8 +11,12 @@ import { PayslipViewer } from '@/components/hr/PayslipViewer';
 import { PayrollReports } from '@/components/hr/PayrollReports';
 import { LeaveManagement } from '@/components/hr/LeaveManagement';
 import { LoansAndBonuses } from '@/components/hr/LoansAndBonuses';
+import { useUrlTab } from '@/hooks/useUrlTab';
+
+const HR_TABS = ['employees', 'leave', 'payroll', 'loans', 'payslips', 'reports'] as const;
 
 const HumanResources = () => {
+  const [activeTab, setActiveTab] = useUrlTab('employees', HR_TABS);
   const {
     employees, payrollRuns, payrollItems, loading,
     createEmployee, updateEmployee, deleteEmployee,
@@ -38,7 +42,7 @@ const HumanResources = () => {
           <p className="text-muted-foreground">Manage employees, leave, payroll, payslips, and reports</p>
         </div>
 
-        <Tabs defaultValue="employees" className="space-y-4">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
           <TabsList className="grid grid-cols-6 w-full max-w-3xl">
             <TabsTrigger value="employees" className="flex items-center gap-2">
               <Users className="h-4 w-4" /><span className="hidden sm:inline">Employees</span>

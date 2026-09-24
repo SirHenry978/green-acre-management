@@ -6,8 +6,12 @@ import { HealthRecords } from '@/components/livestock/HealthRecords';
 import { TransferRecords } from '@/components/livestock/TransferRecords';
 import { LivestockReports } from '@/components/livestock/LivestockReports';
 import { Bug, Home, Stethoscope, ArrowLeftRight, FileText } from 'lucide-react';
+import { useUrlTab } from '@/hooks/useUrlTab';
+
+const LIVESTOCK_TABS = ['animals', 'shelters', 'health', 'transfers', 'reports'] as const;
 
 const Livestock = () => {
+  const [activeTab, setActiveTab] = useUrlTab('animals', LIVESTOCK_TABS);
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -18,7 +22,7 @@ const Livestock = () => {
           </p>
         </div>
 
-        <Tabs defaultValue="animals" className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="flex-wrap h-auto gap-1">
             <TabsTrigger value="animals" className="gap-2"><Bug className="h-4 w-4" /> Animals</TabsTrigger>
             <TabsTrigger value="shelters" className="gap-2"><Home className="h-4 w-4" /> Shelters</TabsTrigger>

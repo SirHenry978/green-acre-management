@@ -30,6 +30,9 @@ import {
   BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, PieChart, Pie, Cell, Legend,
   LineChart, Line, CartesianGrid,
 } from 'recharts';
+import { useUrlTab } from '@/hooks/useUrlTab';
+
+const ASSET_TABS = ['dashboard', 'register', 'categories', 'assignments', 'maintenance', 'depreciation', 'dep-settings', 'schedule', 'book-value', 'reports', 'disposal', 'vendors', 'notifications', 'audit'] as const;
 
 const STATUS_COLORS: Record<string, string> = {
   operational: 'bg-success/10 text-success',
@@ -58,6 +61,7 @@ const exportCsv = (filename: string, rows: any[]) => {
 };
 
 const Assets = () => {
+  const [activeTab, setActiveTab] = useUrlTab('dashboard', ASSET_TABS);
   const { data: assets = [] } = useAssets();
   const { data: categories = [] } = useAssetCategories();
   const { data: vendors = [] } = useAssetVendors();
@@ -192,7 +196,7 @@ const Assets = () => {
           </div>
         </div>
 
-        <Tabs defaultValue="dashboard">
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="flex-wrap h-auto gap-1">
             <TabsTrigger value="dashboard" className="gap-2"><LayoutDashboard className="h-4 w-4"/> Dashboard</TabsTrigger>
             <TabsTrigger value="register" className="gap-2"><Warehouse className="h-4 w-4"/> Asset Register</TabsTrigger>
