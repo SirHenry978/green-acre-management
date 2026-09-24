@@ -17,6 +17,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Switch } from '@/components/ui/switch';
 import { Plus, Trash2, Send, Check, X, RotateCcw, Copy, ShoppingCart, PackageCheck, FileText, ClipboardList, GitBranch, Wallet, Inbox, BarChart3 } from 'lucide-react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, Legend } from 'recharts';
+import { useUrlTab } from '@/hooks/useUrlTab';
+
+const REQUISITION_TABS = ['inbox', 'requisitions', 'pos', 'grn', 'budgets', 'workflows', 'reports'] as const;
 
 const STATUS_COLORS: Record<string, string> = {
   draft: 'bg-muted text-muted-foreground',
@@ -56,7 +59,13 @@ const Requisitions = () => {
   const { accounts } = useGLAccounts();
   const { warehouses } = useWarehouses();
   const perms = can(user?.role);
-  const [activeTab, setActiveTab] = useState('inbox');
+  const permittedTabs = REQUISITION_TABS.filter((tab) =>
+    (tab !== 'pos' || perms.procurement) &&
+    (tab !== 'grn' || perms.receive) &&
+    (tab !== 'budgets' || perms.budgets) &&
+    (tab !== 'workflows' || perms.workflows)
+  );
+  const [activeTab, setActiveTab] = useUrlTab('inbox', permittedTabs);
 
   // ----- Stats -----
   const stats = useMemo(() => {

@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Employee, useEmployees } from '@/hooks/useEmployees';
 import { useAuth } from '@/contexts/AuthContext';
 import { branches } from '@/data/dummyData';
@@ -33,6 +34,7 @@ const emptyForm = {
 
 export const EmployeesList = ({ employees, loading, createEmployee, updateEmployee, deleteEmployee }: EmployeesListProps) => {
   const { user } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [showView, setShowView] = useState(false);
@@ -45,6 +47,15 @@ export const EmployeesList = ({ employees, loading, createEmployee, updateEmploy
   );
 
   const openAdd = () => { setForm(emptyForm); setEditingId(null); setShowForm(true); };
+  useEffect(() => {
+    if (searchParams.get('add') !== 'true') return;
+    setForm(emptyForm);
+    setEditingId(null);
+    setShowForm(true);
+    const next = new URLSearchParams(searchParams);
+    next.delete('add');
+    setSearchParams(next, { replace: true });
+  }, [searchParams, setSearchParams]);
   const openEdit = (e: Employee) => {
     setForm({
       first_name: e.first_name, last_name: e.last_name, id_number: e.id_number || '',

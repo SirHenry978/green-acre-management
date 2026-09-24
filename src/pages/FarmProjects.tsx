@@ -18,6 +18,9 @@ import {
   FolderKanban, Plus, Calendar, DollarSign, Users, CheckCircle2,
   Clock, AlertCircle, BarChart3, ListTodo, Loader2, Pencil, Trash2,
 } from 'lucide-react';
+import { useUrlTab } from '@/hooks/useUrlTab';
+
+const PROJECT_TABS = ['projects', 'board', 'timeline'] as const;
 
 const statusColors: Record<string, string> = {
   planning: 'bg-muted text-muted-foreground',
@@ -35,6 +38,7 @@ const priorityColors: Record<string, string> = {
 };
 
 const FarmProjects = () => {
+  const [activeTab, setActiveTab] = useUrlTab('projects', PROJECT_TABS);
   const [showCreateProject, setShowCreateProject] = useState(false);
   const [showCreateTask, setShowCreateTask] = useState(false);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
@@ -234,7 +238,7 @@ const FarmProjects = () => {
           </CardContent></Card>
         </div>
 
-        <Tabs defaultValue="projects">
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList>
             <TabsTrigger value="projects">Projects</TabsTrigger>
             <TabsTrigger value="board">Task Board</TabsTrigger>

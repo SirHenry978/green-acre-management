@@ -21,6 +21,9 @@ import ReceiveItems from '@/components/inventory/ReceiveItems';
 import DeliveryNotes from '@/components/inventory/DeliveryNotes';
 import CreditNotes from '@/components/inventory/CreditNotes';
 import WarehouseTransferReport from '@/components/inventory/WarehouseTransferReport';
+import { useUrlTab } from '@/hooks/useUrlTab';
+
+const INVENTORY_TABS = ['stock', 'warehouses', 'issues', 'receipts', 'delivery-notes', 'credit-notes', 'report'] as const;
 
 const categoryColors: Record<string, string> = {
   seeds: 'bg-success/10 text-success',
@@ -33,6 +36,7 @@ const categoryColors: Record<string, string> = {
 };
 
 const Inventory = () => {
+  const [activeTab, setActiveTab] = useUrlTab('stock', INVENTORY_TABS);
   const { user } = useAuth();
   const branchFilteredInventory = useBranchFilter(inventory);
   const [searchQuery, setSearchQuery] = useState('');
@@ -61,7 +65,7 @@ const Inventory = () => {
           </p>
         </div>
 
-        <Tabs defaultValue="stock" className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="flex flex-wrap h-auto gap-1">
             <TabsTrigger value="stock" className="gap-1"><Package className="h-4 w-4" /> Stock</TabsTrigger>
             <TabsTrigger value="warehouses" className="gap-1"><Warehouse className="h-4 w-4" /> Warehouses</TabsTrigger>

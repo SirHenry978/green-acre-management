@@ -41,10 +41,13 @@ import {
   Legend,
 } from 'recharts';
 import { cn } from '@/lib/utils';
+import { useUrlTab } from '@/hooks/useUrlTab';
+
+const FINANCE_TABS = ['transactions', 'quotations', 'invoices', 'receipts', 'gl-accounts', 'gl-report'] as const;
 
 const Finance = () => {
   const [filterType, setFilterType] = useState<'all' | 'income' | 'expense'>('all');
-  const [activeTab, setActiveTab] = useState('transactions');
+  const [activeTab, setActiveTab] = useUrlTab('transactions', FINANCE_TABS);
 
   const filteredByBranch = useBranchFilter(transactions);
   

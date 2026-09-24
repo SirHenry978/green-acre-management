@@ -14,12 +14,16 @@ import { Plus, Trash2, Star, Utensils, Users, Boxes, MessageSquare, ScrollText, 
 import { useCanteen, CanteenMeal } from '@/hooks/useCanteen';
 import { useEmployees } from '@/hooks/useEmployees';
 import { useWarehouses } from '@/hooks/useWarehouses';
+import { useUrlTab } from '@/hooks/useUrlTab';
+
+const CANTEEN_TABS = ['meals', 'staff', 'inventory', 'reviews', 'audit'] as const;
 
 const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
 const MEAL_TIMES = ['Breakfast','Lunch','Supper','Snack'];
 const STAFF_ROLES = ['Head Chef','Chef','Sous Chef','Cook','Assistant','Cashier','Cleaner','Server'];
 
 export default function Canteen() {
+  const [activeTab, setActiveTab] = useUrlTab('meals', CANTEEN_TABS);
   const c = useCanteen();
   const { employees } = useEmployees();
   const { warehouses } = useWarehouses();
@@ -51,7 +55,7 @@ export default function Canteen() {
           <StatCard icon={<Star className="h-5 w-5" />} label="Avg rating" value={avgRating.toFixed(1)} />
         </div>
 
-        <Tabs defaultValue="meals">
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="flex-wrap h-auto">
             <TabsTrigger value="meals">Meals Chart</TabsTrigger>
             <TabsTrigger value="staff">Staff</TabsTrigger>

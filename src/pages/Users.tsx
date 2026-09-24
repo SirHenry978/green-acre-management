@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { users as initialUsers, branches, getRoleLabel, UserRole } from '@/data/dummyData';
 import { Badge } from '@/components/ui/badge';
@@ -38,7 +39,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogFooter,
 } from '@/components/ui/dialog';
 import {
@@ -96,7 +96,6 @@ interface LeaveRequest {
 
 const Users = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [usersList, setUsersList] = useState(initialUsers);
   const { toast } = useToast();
   const { employees } = useEmployees();
@@ -295,53 +294,11 @@ const Users = () => {
             <h1 className="text-3xl font-display font-bold">Users</h1>
             <p className="text-muted-foreground mt-1">Manage system users and their permissions</p>
           </div>
-          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className="gap-2">
-                <Plus className="h-4 w-4" /> Add User
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-lg">
-              <DialogHeader>
-                <DialogTitle>Add New User</DialogTitle>
-              </DialogHeader>
-              <form className="space-y-4 mt-4">
-                <div>
-                  <Label>Full Name</Label>
-                  <Input placeholder="Enter full name" className="mt-1" />
-                </div>
-                <div>
-                  <Label>Email</Label>
-                  <Input type="email" placeholder="user@email.com" className="mt-1" />
-                </div>
-                <div>
-                  <Label>Role</Label>
-                  <select className="input-farm mt-1 w-full">
-                    {allRoles.map(r => (
-                      <option key={r.value} value={r.value}>{r.label}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <Label>Assign to Branch</Label>
-                  <select className="input-farm mt-1 w-full">
-                    <option value="">All Branches (Super Admin only)</option>
-                    {branches.map(b => (
-                      <option key={b.id} value={b.id}>{b.name}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <Label>Temporary Password</Label>
-                  <Input type="password" placeholder="Create a password" className="mt-1" />
-                </div>
-                <DialogFooter>
-                  <Button type="button" variant="outline" onClick={() => setIsAddDialogOpen(false)}>Cancel</Button>
-                  <Button type="submit">Add User</Button>
-                </DialogFooter>
-              </form>
-            </DialogContent>
-          </Dialog>
+          <Button asChild className="gap-2">
+            <Link to="/hr?tab=employees&add=true">
+              <Plus className="h-4 w-4" /> Add User
+            </Link>
+          </Button>
         </div>
 
         {/* Search */}
