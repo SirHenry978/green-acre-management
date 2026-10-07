@@ -45,8 +45,12 @@ interface NavItem {
   path: string;
   icon: React.ElementType;
   permission: string;
-  children?: { name: string; path: string; icon: React.ElementType }[];
+  children?: { name: string; path: string; icon: React.ElementType; roles?: string[] }[];
 }
+
+const managementRoles = ['super_admin', 'branch_manager'];
+const procurementRoles = ['super_admin', 'branch_manager', 'inventory_staff'];
+const financeRoles = ['super_admin', 'branch_manager', 'accountant'];
 
 const navItems: NavItem[] = [
   { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, permission: 'dashboard' },
@@ -146,10 +150,10 @@ const navItems: NavItem[] = [
     children: [
       { name: 'My Inbox', path: '/requisitions?tab=inbox', icon: ClipboardCheck },
       { name: 'Requisitions', path: '/requisitions?tab=requisitions', icon: ClipboardList },
-      { name: 'Purchase Orders', path: '/requisitions?tab=pos', icon: ShoppingCart },
-      { name: 'Goods Received', path: '/requisitions?tab=grn', icon: Package },
-      { name: 'Budgets', path: '/requisitions?tab=budgets', icon: DollarSign },
-      { name: 'Workflows', path: '/requisitions?tab=workflows', icon: ClipboardSignature },
+      { name: 'Purchase Orders', path: '/requisitions?tab=pos', icon: ShoppingCart, roles: procurementRoles },
+      { name: 'Goods Received', path: '/requisitions?tab=grn', icon: Package, roles: procurementRoles },
+      { name: 'Budgets', path: '/requisitions?tab=budgets', icon: DollarSign, roles: financeRoles },
+      { name: 'Workflows', path: '/requisitions?tab=workflows', icon: ClipboardSignature, roles: managementRoles },
       { name: 'Reports', path: '/requisitions?tab=reports', icon: BarChart3 },
     ],
   },
@@ -170,13 +174,13 @@ const navItems: NavItem[] = [
     permission: 'dashboard',
     children: [
       { name: 'My Housing', path: '/accommodation?tab=my-housing', icon: UserCircle },
-      { name: 'Dashboard', path: '/accommodation?tab=dashboard', icon: DashIcon },
-      { name: 'Houses', path: '/accommodation?tab=houses', icon: HomeIcon },
-      { name: 'Rooms', path: '/accommodation?tab=rooms', icon: BedDouble },
-      { name: 'Applications', path: '/accommodation?tab=applications', icon: ClipboardList },
-      { name: 'Allocations', path: '/accommodation?tab=allocations', icon: UsersIcon },
-      { name: 'Requests', path: '/accommodation?tab=requests', icon: MessageSquareWarning },
-      { name: 'Reports', path: '/accommodation?tab=reports', icon: BarChart3 },
+      { name: 'Dashboard', path: '/accommodation?tab=dashboard', icon: DashIcon, roles: managementRoles },
+      { name: 'Houses', path: '/accommodation?tab=houses', icon: HomeIcon, roles: managementRoles },
+      { name: 'Rooms', path: '/accommodation?tab=rooms', icon: BedDouble, roles: managementRoles },
+      { name: 'Applications', path: '/accommodation?tab=applications', icon: ClipboardList, roles: managementRoles },
+      { name: 'Allocations', path: '/accommodation?tab=allocations', icon: UsersIcon, roles: managementRoles },
+      { name: 'Requests', path: '/accommodation?tab=requests', icon: MessageSquareWarning, roles: managementRoles },
+      { name: 'Reports', path: '/accommodation?tab=reports', icon: BarChart3, roles: managementRoles },
     ],
   },
   { name: 'Reports', path: '/reports', icon: FileText, permission: 'reports' },
@@ -286,7 +290,9 @@ export const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }: 
                     </button>
                     {isOpen && (
                       <div className="mt-1 ml-4 space-y-1 border-l border-sidebar-border pl-2">
-                        {item.children!.map((child) => {
+                        {item.children!.filter((child) =>
+                          !child.roles || (user ? child.roles.includes(user.role) : false),
+                        ).map((child) => {
                           const ChildIcon = child.icon;
                           const childActive =
                             location.pathname + location.search === child.path;
