@@ -12,10 +12,13 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useCurrentBranchId } from '@/hooks/useBranchFilter';
 import { Newspaper, BookOpen, Search, Plus, Sparkles, Clock, Tag, Loader2 } from 'lucide-react';
+import { useUrlTab } from '@/hooks/useUrlTab';
 
 const categories = ['All', 'Crop Science', 'Livestock', 'Market Trends', 'Technology', 'Sustainability', 'Pest Control'];
+const AGRI_NEWS_TABS = ['news', 'knowledge'] as const;
 
 const AgriNews = () => {
+  const [activeTab, setActiveTab] = useUrlTab('news', AGRI_NEWS_TABS);
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [showCreate, setShowCreate] = useState(false);
@@ -176,7 +179,7 @@ const AgriNews = () => {
           ))}
         </div>
 
-        <Tabs defaultValue="news">
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList>
             <TabsTrigger value="news"><Newspaper className="h-4 w-4 mr-1" /> News</TabsTrigger>
             <TabsTrigger value="knowledge"><BookOpen className="h-4 w-4 mr-1" /> Knowledge Base</TabsTrigger>

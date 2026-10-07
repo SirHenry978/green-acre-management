@@ -7,6 +7,9 @@ import {
   Cloud, Sun, CloudRain, Wind, Droplets, Thermometer, Eye,
   CloudSun, CloudDrizzle, CloudLightning, Sunrise, Sunset, AlertTriangle,
 } from 'lucide-react';
+import { useUrlTab } from '@/hooks/useUrlTab';
+
+const WEATHER_TABS = ['hourly', 'weekly'] as const;
 
 // Simulated weather data
 const currentWeather = {
@@ -49,6 +52,7 @@ const farmAlerts = [
 ];
 
 const Weather = () => {
+  const [activeTab, setActiveTab] = useUrlTab('hourly', WEATHER_TABS);
   const [selectedLocation] = useState('Main Farm — Harare');
 
   return (
@@ -156,7 +160,7 @@ const Weather = () => {
         </Card>
 
         {/* Forecasts */}
-        <Tabs defaultValue="hourly">
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList>
             <TabsTrigger value="hourly">Hourly</TabsTrigger>
             <TabsTrigger value="weekly">7-Day Forecast</TabsTrigger>
