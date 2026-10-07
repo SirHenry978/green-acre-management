@@ -45,27 +45,128 @@ interface NavItem {
   path: string;
   icon: React.ElementType;
   permission: string;
-  children?: { name: string; path: string; icon: React.ElementType }[];
+  children?: { name: string; path: string; icon: React.ElementType; roles?: string[] }[];
 }
+
+const managementRoles = ['super_admin', 'branch_manager'];
+const procurementRoles = ['super_admin', 'branch_manager', 'inventory_staff'];
+const financeRoles = ['super_admin', 'branch_manager', 'accountant'];
 
 const navItems: NavItem[] = [
   { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, permission: 'dashboard' },
   { name: 'Branches', path: '/branches', icon: Building2, permission: 'branches' },
   { name: 'Users', path: '/users', icon: Users, permission: 'users' },
-  { name: 'Inventory', path: '/inventory', icon: Package, permission: 'inventory' },
-  { name: 'Livestock', path: '/livestock', icon: Bug, permission: 'livestock' },
-  { name: 'Finance', path: '/finance', icon: DollarSign, permission: 'finance' },
+  {
+    name: 'Inventory', path: '/inventory', icon: Package, permission: 'inventory',
+    children: [
+      { name: 'Stock', path: '/inventory?tab=stock', icon: Package },
+      { name: 'Warehouses', path: '/inventory?tab=warehouses', icon: Warehouse },
+      { name: 'Issues', path: '/inventory?tab=issues', icon: ClipboardList },
+      { name: 'Receipts', path: '/inventory?tab=receipts', icon: ClipboardCheck },
+      { name: 'Delivery Notes', path: '/inventory?tab=delivery-notes', icon: Truck },
+      { name: 'Credit Notes', path: '/inventory?tab=credit-notes', icon: FileText },
+      { name: 'Transfer Report', path: '/inventory?tab=report', icon: BarChart3 },
+    ],
+  },
+  {
+    name: 'Livestock', path: '/livestock', icon: Bug, permission: 'livestock',
+    children: [
+      { name: 'Animals', path: '/livestock?tab=animals', icon: Bug },
+      { name: 'Shelters', path: '/livestock?tab=shelters', icon: HomeIcon },
+      { name: 'Health', path: '/livestock?tab=health', icon: ClipboardCheck },
+      { name: 'Transfers', path: '/livestock?tab=transfers', icon: Truck },
+      { name: 'Reports', path: '/livestock?tab=reports', icon: BarChart3 },
+    ],
+  },
+  {
+    name: 'Finance', path: '/finance', icon: DollarSign, permission: 'finance',
+    children: [
+      { name: 'Transactions', path: '/finance?tab=transactions', icon: DollarSign },
+      { name: 'Quotations', path: '/finance?tab=quotations', icon: FileText },
+      { name: 'Invoices', path: '/finance?tab=invoices', icon: ClipboardList },
+      { name: 'Receipts', path: '/finance?tab=receipts', icon: ClipboardCheck },
+      { name: 'GL Accounts', path: '/finance?tab=gl-accounts', icon: FolderKanban },
+      { name: 'GL Report', path: '/finance?tab=gl-report', icon: BarChart3 },
+    ],
+  },
   { name: 'Attendance', path: '/attendance', icon: Calendar, permission: 'attendance' },
   { name: 'Suppliers', path: '/suppliers', icon: Truck, permission: 'suppliers' },
   { name: 'Customers', path: '/customers', icon: ShoppingCart, permission: 'customers' },
-  { name: 'Assets', path: '/assets', icon: Warehouse, permission: 'assets' },
-  { name: 'Farm Projects', path: '/farm-projects', icon: FolderKanban, permission: 'dashboard' },
-  { name: 'Weather', path: '/weather', icon: CloudSun, permission: 'dashboard' },
-  { name: 'Agri News', path: '/agri-news', icon: Newspaper, permission: 'dashboard' },
-  { name: 'HR & Payroll', path: '/hr', icon: UserCog, permission: 'hr' },
+  {
+    name: 'Assets', path: '/assets', icon: Warehouse, permission: 'assets',
+    children: [
+      { name: 'Dashboard', path: '/assets?tab=dashboard', icon: DashIcon },
+      { name: 'Asset Register', path: '/assets?tab=register', icon: Warehouse },
+      { name: 'Categories', path: '/assets?tab=categories', icon: FolderKanban },
+      { name: 'Assignments', path: '/assets?tab=assignments', icon: UsersIcon },
+      { name: 'Maintenance', path: '/assets?tab=maintenance', icon: Settings },
+      { name: 'Depreciation', path: '/assets?tab=depreciation', icon: BarChart3 },
+      { name: 'Dep. Settings', path: '/assets?tab=dep-settings', icon: Settings },
+      { name: 'Schedule', path: '/assets?tab=schedule', icon: CalendarDays },
+      { name: 'Book Value', path: '/assets?tab=book-value', icon: DollarSign },
+      { name: 'Reports', path: '/assets?tab=reports', icon: FileText },
+      { name: 'Disposal', path: '/assets?tab=disposal', icon: ClipboardSignature },
+      { name: 'Vendors', path: '/assets?tab=vendors', icon: Truck },
+      { name: 'Notifications', path: '/assets?tab=notifications', icon: MessageSquareWarning },
+      { name: 'Audit Logs', path: '/assets?tab=audit', icon: ClipboardCheck },
+    ],
+  },
+  {
+    name: 'Farm Projects', path: '/farm-projects', icon: FolderKanban, permission: 'dashboard',
+    children: [
+      { name: 'Projects', path: '/farm-projects?tab=projects', icon: FolderKanban },
+      { name: 'Task Board', path: '/farm-projects?tab=board', icon: ClipboardList },
+      { name: 'Timeline', path: '/farm-projects?tab=timeline', icon: CalendarDays },
+    ],
+  },
+  {
+    name: 'Weather', path: '/weather', icon: CloudSun, permission: 'dashboard',
+    children: [
+      { name: 'Hourly', path: '/weather?tab=hourly', icon: CloudSun },
+      { name: '7-Day Forecast', path: '/weather?tab=weekly', icon: CalendarDays },
+    ],
+  },
+  {
+    name: 'Agri News', path: '/agri-news', icon: Newspaper, permission: 'dashboard',
+    children: [
+      { name: 'News', path: '/agri-news?tab=news', icon: Newspaper },
+      { name: 'Knowledge Base', path: '/agri-news?tab=knowledge', icon: FileText },
+    ],
+  },
+  {
+    name: 'HR & Payroll', path: '/hr', icon: UserCog, permission: 'hr',
+    children: [
+      { name: 'Employees', path: '/hr?tab=employees', icon: UsersIcon },
+      { name: 'Leave', path: '/hr?tab=leave', icon: CalendarDays },
+      { name: 'Payroll', path: '/hr?tab=payroll', icon: DollarSign },
+      { name: 'Loans & Bonuses', path: '/hr?tab=loans', icon: ClipboardList },
+      { name: 'Payslips', path: '/hr?tab=payslips', icon: FileText },
+      { name: 'Reports', path: '/hr?tab=reports', icon: BarChart3 },
+    ],
+  },
   { name: 'Leave', path: '/leave', icon: CalendarDays, permission: 'dashboard' },
-  { name: 'Requisitions', path: '/requisitions', icon: ClipboardSignature, permission: 'requisitions' },
-  { name: 'Canteen', path: '/canteen', icon: UtensilsCrossed, permission: 'dashboard' },
+  {
+    name: 'Requisitions', path: '/requisitions', icon: ClipboardSignature, permission: 'requisitions',
+    children: [
+      { name: 'My Inbox', path: '/requisitions?tab=inbox', icon: ClipboardCheck },
+      { name: 'Requisitions', path: '/requisitions?tab=requisitions', icon: ClipboardList },
+      { name: 'Purchase Orders', path: '/requisitions?tab=pos', icon: ShoppingCart, roles: procurementRoles },
+      { name: 'Goods Received', path: '/requisitions?tab=grn', icon: Package, roles: procurementRoles },
+      { name: 'Budgets', path: '/requisitions?tab=budgets', icon: DollarSign, roles: financeRoles },
+      { name: 'Workflows', path: '/requisitions?tab=workflows', icon: ClipboardSignature, roles: managementRoles },
+      { name: 'Reports', path: '/requisitions?tab=reports', icon: BarChart3 },
+    ],
+  },
+  {
+    name: 'Canteen', path: '/canteen', icon: UtensilsCrossed, permission: 'dashboard',
+    children: [
+      { name: 'Meals Chart', path: '/canteen?tab=meals', icon: UtensilsCrossed },
+      { name: 'Staff', path: '/canteen?tab=staff', icon: UsersIcon },
+      { name: 'Inventory Requests', path: '/canteen?tab=inventory', icon: Package },
+      { name: 'Reviews', path: '/canteen?tab=reviews', icon: MessageSquareWarning },
+      { name: 'Audit', path: '/canteen?tab=audit', icon: ClipboardCheck },
+    ],
+  },
   {
     name: 'Accommodation',
     path: '/accommodation',
@@ -73,13 +174,13 @@ const navItems: NavItem[] = [
     permission: 'dashboard',
     children: [
       { name: 'My Housing', path: '/accommodation?tab=my-housing', icon: UserCircle },
-      { name: 'Dashboard', path: '/accommodation?tab=dashboard', icon: DashIcon },
-      { name: 'Houses', path: '/accommodation?tab=houses', icon: HomeIcon },
-      { name: 'Rooms', path: '/accommodation?tab=rooms', icon: BedDouble },
-      { name: 'Applications', path: '/accommodation?tab=applications', icon: ClipboardList },
-      { name: 'Allocations', path: '/accommodation?tab=allocations', icon: UsersIcon },
-      { name: 'Requests', path: '/accommodation?tab=requests', icon: MessageSquareWarning },
-      { name: 'Reports', path: '/accommodation?tab=reports', icon: BarChart3 },
+      { name: 'Dashboard', path: '/accommodation?tab=dashboard', icon: DashIcon, roles: managementRoles },
+      { name: 'Houses', path: '/accommodation?tab=houses', icon: HomeIcon, roles: managementRoles },
+      { name: 'Rooms', path: '/accommodation?tab=rooms', icon: BedDouble, roles: managementRoles },
+      { name: 'Applications', path: '/accommodation?tab=applications', icon: ClipboardList, roles: managementRoles },
+      { name: 'Allocations', path: '/accommodation?tab=allocations', icon: UsersIcon, roles: managementRoles },
+      { name: 'Requests', path: '/accommodation?tab=requests', icon: MessageSquareWarning, roles: managementRoles },
+      { name: 'Reports', path: '/accommodation?tab=reports', icon: BarChart3, roles: managementRoles },
     ],
   },
   { name: 'Reports', path: '/reports', icon: FileText, permission: 'reports' },
@@ -96,9 +197,13 @@ interface SidebarProps {
 export const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }: SidebarProps) => {
   const { user, logout, hasPermission } = useAuth();
   const location = useLocation();
-  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
-    Accommodation: location.pathname.startsWith('/accommodation'),
-  });
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(
+      navItems
+        .filter((item) => item.children?.length && location.pathname.startsWith(item.path))
+        .map((item) => [item.name, true]),
+    ),
+  );
 
   const filteredNavItems = navItems.filter(item => hasPermission(item.permission));
 
@@ -185,7 +290,9 @@ export const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }: 
                     </button>
                     {isOpen && (
                       <div className="mt-1 ml-4 space-y-1 border-l border-sidebar-border pl-2">
-                        {item.children!.map((child) => {
+                        {item.children!.filter((child) =>
+                          !child.roles || (user ? child.roles.includes(user.role) : false),
+                        ).map((child) => {
                           const ChildIcon = child.icon;
                           const childActive =
                             location.pathname + location.search === child.path;
