@@ -301,7 +301,7 @@ const Assets = () => {
                           <Button size="sm" variant="ghost" onClick={()=>{setSelected(a); setMaintOpen(true);}}>Maint.</Button>
                           <Button size="sm" variant="ghost" onClick={()=>m.runDepreciation.mutate({asset: a, periodMonths: 1})}>Depreciate</Button>
                           <Button size="sm" variant="ghost" onClick={()=>{setSelected(a); setDisposeOpen(true);}}>Dispose</Button>
-                          <Button size="sm" variant="ghost" className="text-destructive" onClick={()=>m.deleteAsset.mutate(a.id)}>Delete</Button>
+                          <Button size="sm" variant="ghost" className="text-destructive" onClick={()=>{ if (window.confirm(`Delete asset "${a.name}"? This cannot be undone.`)) m.deleteAsset.mutate(a.id); }}>Delete</Button>
                         </div>
                       </TableCell>
                     </TableRow>
