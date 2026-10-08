@@ -73,6 +73,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const switchBranch = (branchId: string) => {
+    if (user?.role !== 'super_admin') return; // only admins may view other branches
+    if (!branchId) { setBranch(null); return; }
     const newBranch = branches.find(b => b.id === branchId);
     if (newBranch) {
       setBranch(newBranch);
