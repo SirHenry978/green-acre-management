@@ -79,6 +79,7 @@ export const Header = ({ sidebarCollapsed = false, onMenuToggle }: HeaderProps) 
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel>Select Branch</DropdownMenuLabel>
               <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => switchBranch('')}>All branches</DropdownMenuItem>
               {branches.map((b) => (
                 <DropdownMenuItem
                   key={b.id}
