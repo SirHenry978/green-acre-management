@@ -84,3 +84,29 @@ export function logoutTokens() {
 }
 
 export { BASE_URL as API_BASE_URL };
+
+// Recovery is public: never attach or refresh a possibly expired sign-in token.
+async function recoveryRequest(path: string, body: Record<string, string>) {
+  let res: Response;
+  try {
+    res = await fetch(`${BASE_URL}${path}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+  } catch {
+    throw new Error('Cannot reach the server. Please try again later.');
+  }
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(typeof data.detail === 'string' ? data.detail : 'Unable to reset your password. Please try again later.');
+  }
+}
+
+export function requestPasswordReset(email: string) {
+  return recoveryRequest('/api/auth/password-reset/', { email: email.trim() });
+}
+
+export function confirmPasswordReset(uid: string, token: string, password: string) {
+  return recoveryRequest('/api/auth/password-reset/confirm/', { uid, token, password });
+}
