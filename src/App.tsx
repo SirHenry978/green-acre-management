@@ -6,6 +6,7 @@ import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { DataBootstrap } from "@/components/DataBootstrap";
 import Login from "./pages/Login";
+import PasswordRecovery from "./pages/PasswordRecovery";
 import Dashboard from "./pages/Dashboard";
 import Branches from "./pages/Branches";
 import Users from "./pages/Users";
@@ -44,6 +45,8 @@ const App = () => (
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/forgot-password" element={<PasswordRecovery />} />
+            <Route path="/reset-password" element={<PasswordRecovery reset />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/branches" element={<Branches />} />
             <Route path="/users" element={<Users />} />
