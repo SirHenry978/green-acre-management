@@ -45,8 +45,8 @@ const App = () => (
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/forgot-password" element={<PasswordRecovery />} />
-            <Route path="/reset-password" element={<PasswordRecovery reset />} />
+            <Route path="/forgot-password" element={<PasswordRecovery key="forgot" />} />
+            <Route path="/reset-password" element={<PasswordRecovery key="reset" reset />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/branches" element={<Branches />} />
             <Route path="/users" element={<Users />} />
