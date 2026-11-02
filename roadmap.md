@@ -4,3 +4,9 @@
 - [x] Update downloadable Django server with email recovery endpoints and setup instructions.
 - [x] Test token security, password update, and sign-in; check preview navigation.
 - [ ] User installation and email delivery verification — requires user's server and SMTP configuration.
+
+# Farm advice
+
+- [ ] Add manager-only crop/livestock advice page and navigation.
+- [ ] Add authenticated streaming AI Gateway function and safety guidance.
+- [ ] Test access rules, input validation, and advice flow.
