@@ -31,6 +31,7 @@ import LeaveApplication from "./pages/LeaveApplication";
 import Accommodation from "./pages/Accommodation";
 import Requisitions from "./pages/Requisitions";
 import Canteen from "./pages/Canteen";
+import FarmAdvice from "./pages/FarmAdvice";
 
 const queryClient = new QueryClient();
 
@@ -68,6 +69,7 @@ const App = () => (
             <Route path="/accommodation" element={<Accommodation />} />
             <Route path="/requisitions" element={<Requisitions />} />
             <Route path="/canteen" element={<Canteen />} />
+            <Route path="/farm-advice" element={<FarmAdvice />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
