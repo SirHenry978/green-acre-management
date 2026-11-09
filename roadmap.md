@@ -7,6 +7,9 @@
 
 # Farm advice
 
-- [ ] Add manager-only crop/livestock advice page and navigation.
-- [ ] Add authenticated streaming AI Gateway function and safety guidance.
-- [ ] Test access rules, input validation, and advice flow.
+- [x] Add manager-only crop/livestock advice page and navigation.
+- [x] Add authenticated streaming AI Gateway function and safety guidance.
+- [x] Test access rules, input validation, and streamed response handling.
+- [ ] Connect Django HTTPS server address — secure configuration was declined.
+- [ ] Apply service-only AI access-state migration — Cloud database connection reported tenant not found.
+- [ ] Verify live signed-in advice flow — requires the server connection and applied migration.
