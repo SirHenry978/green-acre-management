@@ -2,6 +2,7 @@ import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import { createResponsesCall } from './responses.ts';
 import { adviceInstructions, canRequestAdvice, validProblem } from './policy.ts';
+import { getLovableAiGatewayResponseHeaders } from './run-id.ts';
 
 const json = (error: string, status: number) => new Response(JSON.stringify({ error }), { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
@@ -43,7 +44,7 @@ Deno.serve(async (req: Request) => {
     return { message, status };
   }
   try {
-    const { result } = createResponsesCall(req, { baseURL: 'https://ai.gateway.lovable.dev/v1', apiKey: key, model: 'openai/gpt-6-astra' }, [{ role: 'user', content: JSON.stringify({ kind: body.kind, subject: body.subject, description: body.description, context: body.context }) }], adviceInstructions);
+    const { result, gateway } = createResponsesCall(req, { baseURL: 'https://ai.gateway.lovable.dev/v1', apiKey: key, model: 'openai/gpt-6-astra' }, [{ role: 'user', content: JSON.stringify({ kind: body.kind, subject: body.subject, description: body.description, context: body.context }) }], adviceInstructions);
     const iterator = result.fullStream[Symbol.asyncIterator]();
     // Wait for upstream success or error before committing HTTP headers.
     let first = await iterator.next();
@@ -72,7 +73,10 @@ Deno.serve(async (req: Request) => {
       },
       async cancel() { await iterator.return?.(); },
     });
-    return new Response(stream, { headers: { ...corsHeaders, 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' } });
+    const headers = new Headers({ ...corsHeaders, 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' });
+    const runId = gateway.getRunId();
+    if (runId) headers.set('X-Lovable-AIG-Run-ID', runId);
+    return new Response(stream, { headers: getLovableAiGatewayResponseHeaders(undefined, headers) });
   } catch (error) {
     if (req.signal.aborted) return json('Stopped.', 499);
     const denied = await failure(error);
