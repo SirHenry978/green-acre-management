@@ -56,6 +56,7 @@ const financeRoles = ['super_admin', 'branch_manager', 'accountant'];
 const navItems: NavItem[] = [
   { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, permission: 'dashboard' },
   { name: 'Farm Advice', path: '/farm-advice', icon: Sparkles, permission: 'farm-advice' },
+  { name: 'Farm Calendar', path: '/farm-calendar', icon: CalendarDays, permission: 'farm-calendar' },
   { name: 'Branches', path: '/branches', icon: Building2, permission: 'branches' },
   { name: 'Users', path: '/users', icon: Users, permission: 'users' },
   {

@@ -32,6 +32,7 @@ import Accommodation from "./pages/Accommodation";
 import Requisitions from "./pages/Requisitions";
 import Canteen from "./pages/Canteen";
 import FarmAdvice from "./pages/FarmAdvice";
+import FarmCalendar from "./pages/FarmCalendar";
 
 const queryClient = new QueryClient();
 
@@ -70,6 +71,7 @@ const App = () => (
             <Route path="/requisitions" element={<Requisitions />} />
             <Route path="/canteen" element={<Canteen />} />
             <Route path="/farm-advice" element={<FarmAdvice />} />
+            <Route path="/farm-calendar" element={<FarmCalendar />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
