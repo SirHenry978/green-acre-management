@@ -2,9 +2,9 @@
 
 # Farm calendar
 
-- [ ] Add branch-scoped calendar with planting, harvesting, maintenance, and resource links.
-- [ ] Extend the downloadable Django package with calendar storage and server-side branch validation.
-- [ ] Test scheduling, editing, resource isolation, and desktop/mobile presentation.
+- [x] Add branch-scoped calendar with planting, harvesting, maintenance, and resource links.
+- [x] Extend the downloadable Django package with calendar storage and server-side branch validation.
+- [x] Test scheduling, editing, resource isolation, and desktop/mobile presentation.
 - [ ] Install the updated server on the user's computer — requires user installation.
 
 
