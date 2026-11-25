@@ -1,3 +1,10 @@
+# Selected security fixes
+
+- [x] Review only the requested findings and confirm Django handles records and uploads.
+- [x] Enable known-leaked password checks for Cloud-managed accounts.
+- [x] Remove the selected legacy Cloud table and document access policies without changing Django access or avatar policies.
+- [x] Verify effective access restrictions and update only the selected findings (11 database checks, 23 existing tests, and a fresh security scan passed).
+
 # Password recovery
 
 # Farm calendar
